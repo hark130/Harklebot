@@ -272,11 +272,9 @@ while True:
             pageTitle = rawImageURL
         elif currentURL.find(searchString) >= 0:
             pageTitle = currentURL
-#            pageTitle = rawImageURL # BUG: Copy pasta error
         else:
             for entry in comicHTML:
                 if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
-#                if entry.find(searchString) >= 0 and entry.find(imageYear) < 0: # BUG: Breaking for "...Christmas 2015..." titles
                     pageTitle = entry
                     break
 
