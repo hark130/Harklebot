@@ -318,7 +318,19 @@ while True:
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
             try:
-                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+                # urlretrieve is being blocked by websites scanning user-agents...
+                # ...for webscrapers like urllib.  urlretrieve was abandoned in...
+                # ...lieu of request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+#                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+
+                # Utilizing a request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                with urlopen(comicRequest) as comic:
+                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                        outFile.write(comic.read())
+
             except Exception as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
