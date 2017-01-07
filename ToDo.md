@@ -1,4 +1,5 @@
 # Fix Existing Code #
+    * **Repository creation/folder segmentation likely broke all the relative references to necessary modules... clone and fix!**
     * OotS Scraper
         * Find 'latest' first 
         * GitP doesn't have a default-first URL like most
