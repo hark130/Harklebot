@@ -30,6 +30,7 @@
             * Temp fix... .replace('//', 'http://')
             * Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
             * Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
+            * Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
     * trim_the_name() (Scraper Functions)
         * Implement check for forbidden filename characters
 

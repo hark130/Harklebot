@@ -32,11 +32,11 @@ from Robot_Reader_Functions import get_root_URL
 webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.xkcd.com' # <=--------------------------=UPDATE=--------------------------=>
 #targetComicURL = baseURL # Original source
-targetComicURL = 'http://www.xkcd.com/1642/' # Start here instead
+targetComicURL = 'http://www.xkcd.com/1526/' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
-imageSearchPhrase = ['imgs.xkcd.com/comics/'] # <=--------------------------=UPDATE=--------------------------=>
+imageSearchPhrase = ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '] # <=--------------------------=UPDATE=--------------------------=>
 # Find the beginning of the image reference
 imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
@@ -229,7 +229,7 @@ while True:
     if imageURL.__len__() > 0:
         tempPrefix = baseURL # Default stance
 
-        # The following kludge is necessary because of the way XKCD lists their image URLs.  Fix it later in the template.
+        # KLUDGE: The following is necessary because of the way XKCD lists their image URLs.  Fix it later in the template.
 #        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
         if imageURL.find('//') >= 0 and imageURL.find('://') < 0:
             imageURL = imageURL.replace('//','http://')
@@ -237,6 +237,11 @@ while True:
         for indicator in fullURLIndicatorList:
             if imageURL.find(indicator) >= 0:
                 tempPrefix = ''
+                # KLUDGE: The following is necessary because Template v1 doesn't take kindly to changing URL listing styles
+                if imageURL.find(indicator) != 0:
+                    print("Trimming URL... Before:\t{}".format(imageURL)) # DEBUGGING
+                    imageURL = imageURL[imageURL.find(indicator):]
+                    print("Trimming URL... After:\t{}".format(imageURL)) # DEBUGGING
                 break
         imageURL = tempPrefix + imageURL
 #        print("Raw URL:\t{}".format(rawImageURL)) # DEBUGGING
@@ -295,7 +300,7 @@ while True:
 
             imageName = imageName.replace('39', "'") # Small quirk of the website
 
-            # Another peculiarity for XKCD to ensure the file numbers are all the same 'width'
+            # KLUDGE: Another peculiarity for XKCD to ensure the file numbers are all the same 'width'
             while imageName.__len__() < 4:
                 imageName = '0' + imageName 
 
