@@ -4,6 +4,7 @@
         * Find 'latest' first 
         * GitP doesn't have a default-first URL like most
         * GitP includes a 'first' on their webpage
+        * Add check to verify this is the 'first'
     * SMBC Scraper
         * Reset 'home' once it's done downloading (Already complete?)
         * Determine why 'prev' algorithm wraps around to 'last' after reaching 'first'
@@ -16,7 +17,15 @@
             *   Strip some numbering scheme off the server's filename
                 *   -or-
             *   Is it possible to strip metadata off the downloaded file?
-    * Store 404 images and/or their URLs and come back to them later?
+        * Store 404 images and/or their URLs and come back to them later?
+        * Extricate duplicate code into Scraper_Functions_v2 (e.g., is this relative or an absolute URL, strip a string through slicing)
+        * Sometimes there's redundancy between nav-back and base URL.
+            * Utilize base URL for relative URL assignment?
+            * .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
+        * ROBOTS.TXT!
+        * (Expanded) List of acceptable image file extensions
+    * trim_the_name() (Scraper Functions)
+        * Implement check for forbidden filename characters
 
 # Complete In-Progress Code #
     * PvP Scraper
