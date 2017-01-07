@@ -7,6 +7,16 @@
     * SMBC Scraper
         * Reset 'home' once it's done downloading (Already complete?)
         * Determine why 'prev' algorithm wraps around to 'last' after reaching 'first'
+    * Template_Scraper.py
+        * Modify code to check for 'first' file after hitting max skips.  Continue(?) if not there.
+        * Protect against max filename length
+        * Can't find a predictable method of ordering images (see: Awkward Zombie):
+            *   Provide a counter if a date is not found (e.g., if dateTime == '', counter = ???)
+                *   -or-
+            *   Strip some numbering scheme off the server's filename
+                *   -or-
+            *   Is it possible to strip metadata off the downloaded file?
+    * Store 404 images and/or their URLs and come back to them later?
 
 # Complete In-Progress Code #
     * PvP Scraper
