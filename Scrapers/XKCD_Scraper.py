@@ -32,7 +32,7 @@ from Robot_Reader_Functions import get_root_URL
 webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.xkcd.com' # <=--------------------------=UPDATE=--------------------------=>
 #targetComicURL = baseURL # Original source
-targetComicURL = 'http://www.xkcd.com/1663/' # Start here instead
+targetComicURL = 'http://www.xkcd.com/1642/' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -230,7 +230,7 @@ while True:
         tempPrefix = baseURL # Default stance
 
         # The following kludge is necessary because of the way XKCD lists their image URLs.  Fix it later in the template.
-        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+#        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
         if imageURL.find('//') >= 0 and imageURL.find('://') < 0:
             imageURL = imageURL.replace('//','http://')
 
@@ -240,7 +240,7 @@ while True:
                 break
         imageURL = tempPrefix + imageURL
 #        print("Raw URL:\t{}".format(rawImageURL)) # DEBUGGING
-        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+#        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
         pass
     else:
         print("Did not find an image URL!")
