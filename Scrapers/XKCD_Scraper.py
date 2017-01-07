@@ -31,8 +31,8 @@ from Robot_Reader_Functions import get_root_URL
 ### URL SETUP ###
 webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.xkcd.com' # <=--------------------------=UPDATE=--------------------------=>
-targetComicURL = baseURL # Original source
-#targetComicURL = baseURL + '/455/' # Start here instead
+#targetComicURL = baseURL # Original source
+targetComicURL = 'http://www.xkcd.com/1663/' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -65,7 +65,7 @@ USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Fi
 #USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 MAX_SLEEP = 30              # SECONDS
 MAX_EXISTING_SKIPS = 10     # Max number of existing files to skip over before stopping
-MAX_404_SKIPS = 10          # Max number of missing images to skip over before stopping
+MAX_404_SKIPS = 20          # Max number of missing images to skip over before stopping
 random.seed()
 ########################
 ########################
@@ -244,7 +244,8 @@ while True:
         pass
     else:
         print("Did not find an image URL!")
-        sys.exit()
+        num404Skips += 1
+#        sys.exit()
 
     # PARSE IMAGE URL FOR FILENAME
     if imageURL.__len__() > 0:   

@@ -29,6 +29,7 @@
             * Even if it did, urllib doesn't like URLs like //imgs.xkcd.com/comics/team_chat.png
             * Temp fix... .replace('//', 'http://')
             * Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
+            * Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
     * trim_the_name() (Scraper Functions)
         * Implement check for forbidden filename characters
 
