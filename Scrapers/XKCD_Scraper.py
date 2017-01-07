@@ -32,7 +32,7 @@ from Robot_Reader_Functions import get_root_URL
 webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.xkcd.com' # <=--------------------------=UPDATE=--------------------------=>
 #targetComicURL = baseURL # Original source
-targetComicURL = 'http://www.xkcd.com/1526/' # Start here instead
+targetComicURL = 'http://www.xkcd.com/1507/' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -239,9 +239,9 @@ while True:
                 tempPrefix = ''
                 # KLUDGE: The following is necessary because Template v1 doesn't take kindly to changing URL listing styles
                 if imageURL.find(indicator) != 0:
-                    print("Trimming URL... Before:\t{}".format(imageURL)) # DEBUGGING
+#                    print("Trimming URL... Before:\t{}".format(imageURL)) # DEBUGGING
                     imageURL = imageURL[imageURL.find(indicator):]
-                    print("Trimming URL... After:\t{}".format(imageURL)) # DEBUGGING
+#                    print("Trimming URL... After:\t{}".format(imageURL)) # DEBUGGING
                 break
         imageURL = tempPrefix + imageURL
 #        print("Raw URL:\t{}".format(rawImageURL)) # DEBUGGING
