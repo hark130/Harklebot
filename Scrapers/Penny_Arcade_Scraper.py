@@ -20,8 +20,10 @@ from urllib.request import urlretrieve
 from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
-from Scraper_Functions_v2 import find_the_date 
-from Scraper_Functions_v2 import trim_the_name 
+# Hacky (?) method to keep modules separate from scraper code
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Modules'))
+from Scraper_Functions import find_the_date 
+from Scraper_Functions import trim_the_name 
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -71,7 +73,17 @@ random.seed()
 #########################
 ### DYNAMIC VARIABLES ###
 #########################
-SAVE_PATH = os.path.join(os.environ['USERPROFILE'], 'Pictures', webComicName)
+# Windows 7 home path
+if 'USERPROFILE' in os.environ:
+    SAVE_PATH = os.path.join(os.environ['USERPROFILE'], 'Pictures', webComicName)
+# Ubuntu 16.04 LTS    
+elif 'HOME' in os.environ:
+    SAVE_PATH = os.path.join(os.environ['HOME'], 'Pictures', webComicName)
+# ./Pictures/
+else:
+    SAVE_PATH = os.path.join('Pictures', webComicName)    
+
+
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 imageURL = ''               # Trimmed
