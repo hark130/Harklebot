@@ -24,6 +24,11 @@
             * .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
         * ROBOTS.TXT!
         * (Expanded) List of acceptable image file extensions
+        * XKCD
+            * Template adaption needed a little mangling since //imgs.xkcd.com doesn't meet the full URL requirement
+            * Even if it did, urllib doesn't like URLs like //imgs.xkcd.com/comics/team_chat.png
+            * Temp fix... .replace('//', 'http://')
+            * Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
     * trim_the_name() (Scraper Functions)
         * Implement check for forbidden filename characters
 
