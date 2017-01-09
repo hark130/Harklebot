@@ -1,4 +1,6 @@
 # Python Bytecode
 *.pyc
 *.pyo
+*.pyproj
+.vs
 
