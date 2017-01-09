@@ -1,3 +1,19 @@
+#################################################################################
+################################### HARKLEBOT ###################################
+############################## Template Scraper v1 ##############################
+##################### https://github.com/hark130/Harklebot ######################
+#################################################################################
+# Version 1
+#   Based on some intial variable settings (see: MODIFY THESE WHEN...):
+#       Checks for save path based on webcomic name
+#       Reads webpage html to find webcomic URL
+#       Reads html in an attempt to find a date and/or comic name
+#       Saves webcomic image with date (YYYMMDD) and a name (if found)
+#       Reads webpage html to find prev webcomic
+#       Continues walking/saving prev image files until first page is reached
+#################################################################################
+
+
 from urllib.request import urlopen
 from urllib.request import urlretrieve
 from urllib.request import Request
@@ -7,6 +23,7 @@ import sys, os, time, random, re
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Modules'))
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import trim_the_name 
+from Robot_Reader_Functions import get_root_URL
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -21,13 +38,13 @@ targetComicURL = baseURL # Original source
 # Find the appropriate HTML line from a list of strings
 imageSearchPhrase = ['photos.smugmug.com/Comics/Pa-comics','art.penny-arcade.com', 'penny-arcade.smugmug.com/photos/','photos.smugmug.com/photos/'] # <=--------------------------=UPDATE=--------------------------=>
 # Find the beginning of the image reference
-imageBeginPhrase = 'src="' # <=--------------------------=UPDATE=--------------------------=> 
+imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
 ### PREV URL SETUP ###
-prevSearchPhrase = 'btnPrev' # <=--------------------------=UPDATE=--------------------------=>
+prevSearchPhrase = 'btnPrev' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
 
 ### FIRST URL SETUP ###
-firstSearchPhrase = 'btnFirst' # <=--------------------------=UPDATE=--------------------------=>
+firstSearchPhrase = 'btnFirst' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
 
 ### DATE PARSING SETUP ###
 dateSearchPhrase = ['input type="hidden" name="attributes[comic_title]" value="'] # <=--------------------------=UPDATE=--------------------------=>
@@ -35,8 +52,8 @@ dateSearchPhrase = ['input type="hidden" name="attributes[comic_title]" value="'
 #dateDelimiter = ''
 
 ### NAME PARSING SETUP ###
-nameSearchPhrase = 'alt="' # <=--------------------------=UPDATE=--------------------------=>
-nameEnding = '"' # <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = 'alt="' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameEnding = '"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 ################################################
 ################################################
 ################################################
@@ -44,7 +61,8 @@ nameEnding = '"' # <=--------------------------=UPDATE=-------------------------
 ########################
 ### STATIC VARIABLES ###
 ########################
-USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
+USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
+#USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 MAX_SLEEP = 30              # SECONDS
 MAX_EXISTING_SKIPS = 10     # Max number of existing files to skip over before stopping
 MAX_404_SKIPS = 10          # Max number of missing images to skip over before stopping
@@ -56,17 +74,17 @@ random.seed()
 #########################
 ### DYNAMIC VARIABLES ###
 #########################
-# Windows 7 home path
+# Windows 7 home path environment variable
 if 'USERPROFILE' in os.environ:
     SAVE_PATH = os.path.join(os.environ['USERPROFILE'], 'Pictures', webComicName)
-# Ubuntu 16.04 LTS    
+# Ubuntu 16.04 LTS home path environment variable
 elif 'HOME' in os.environ:
     SAVE_PATH = os.path.join(os.environ['HOME'], 'Pictures', webComicName)
 # ./Pictures/
 else:
     SAVE_PATH = os.path.join('Pictures', webComicName)    
 
-
+rootURL = get_root_URL(baseURL)
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 imageURL = ''               # Trimmed
@@ -77,7 +95,7 @@ firstURL = ''               # Used to hold the URL of the first page (and stop s
 currentFileExtension = ''   # File extension of current image to download
 tempPrefix = ''             # Used to dynamically determine between relative and absolute URLs
 validFileTypeList = ['.png', '.jpg', '.gif']
-fullURLIndicatorList = [baseURL, 'www', 'http']
+fullURLIndicatorList = [rootURL, baseURL, 'www', 'http']
 numExistingSkips = 0        # Variable to store the number of files already found
 num404Skips = 0             # Variable to store the number of missing webpages
 #########################
@@ -254,11 +272,9 @@ while True:
             pageTitle = rawImageURL
         elif currentURL.find(searchString) >= 0:
             pageTitle = currentURL
-#            pageTitle = rawImageURL # BUG: Copy pasta error
         else:
             for entry in comicHTML:
                 if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
-#                if entry.find(searchString) >= 0 and entry.find(imageYear) < 0: # BUG: Breaking for "...Christmas 2015..." titles
                     pageTitle = entry
                     break
 
@@ -275,7 +291,6 @@ while True:
 #            print("The name of this image is {}".format(imageName)) # DEBUGGING 
         else:
 #            print("Did not find the name in:\n{}".format(currentURL)) # DEBUGGING
-#            imageName = '00000000BAD_NAME00000000'
             pass
         
         # CREATE FILENAME FROM PARSED DATA
@@ -301,7 +316,19 @@ while True:
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
             try:
-                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+                # urlretrieve is being blocked by websites scanning user-agents...
+                # ...for webscrapers like urllib.  urlretrieve was abandoned in...
+                # ...lieu of request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+#                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+
+                # Utilizing a request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                with urlopen(comicRequest) as comic:
+                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                        outFile.write(comic.read())
+
             except Exception as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
@@ -344,9 +371,11 @@ while True:
                 if subEntry.find(prevSearchPhrase.lower()) >= 0 and subEntry.find('href="') >= 0:
                     prevURL = subEntry[subEntry.find('href="') + 'href="'.__len__():]
                     prevURL = prevURL[:prevURL.find('"')]
-        #            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
+#                    print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
                     currentURL = prevURL
-                    tempPrefix = baseURL # Default stance
+                    # Changed tempPrefix = from baseURL to rootURL to avoid www.root.com/comics/ + /comics/20161213.png
+                    tempPrefix = rootURL # Default stance
+#                    tempPrefix = baseURL # Default stance
 
                     for indicator in fullURLIndicatorList:
                         if currentURL.find(indicator) >= 0:
@@ -354,8 +383,7 @@ while True:
                             break
                     currentURL = tempPrefix + currentURL
 
-
-        #            print("Current URL:\t{}".format(currentURL)) # DEBUGGING
+#                    print("Current URL:\t{}".format(currentURL)) # DEBUGGING
                     break
 
     # RESET TEMP VARIABLES TO AVOID DUPE DOWNLOADS AND OTHER ERRORS
@@ -374,19 +402,6 @@ while True:
     tempPrefix = ''
     pageTitle = ''              # Holds the page's title HTML entry (will be parses for "Name" portion of filename)
 
-    #try:
-    #    comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
-    #    comic = urlopen(comicRequest)
-    #except urllib.error.URLError as error:
-    #    print("ERROR:\t{} - {}".format(type(error),error))
-    #    sys.exit()
-    #else:
-    #    print("\nOpened URL:\t{}".format(currentURL)) # DEBUGGING
-    #    if skipping == False:
-    #        sleepyTime = random.randrange(0, MAX_SLEEP)
-    #        print("Sleeping {} seconds before download".format(sleepyTime))
-    #        time.sleep(sleepyTime)
-      
 #    break # Artificial exit
 
 

@@ -29,31 +29,31 @@ from Robot_Reader_Functions import get_root_URL
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
 ################################################
 ### URL SETUP ###
-webComicName = 'SMBC' # <=--------------------------=UPDATE=--------------------------=>
-baseURL = 'http://www.smbc-comics.com' # <=--------------------------=UPDATE=--------------------------=>
-targetComicURL = baseURL # Original source
+webComicName = '___UPDATE___' # <=--------------------------=UPDATE=--------------------------=>
+baseURL = '___UPDATE___' # <=--------------------------=UPDATE=--------------------------=>
+targetComicURL = '___UPDATE___' # Original source
 #targetComicURL = baseURL # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
-imageSearchPhrase = ['www.smbc-comics.com/comics/'] # <=--------------------------=UPDATE=--------------------------=>
+imageSearchPhrase = ['___UPDATE___', '___UPDATE___', '___UPDATE___'] # <=--------------------------=UPDATE=--------------------------=>
 # Find the beginning of the image reference
-imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+imageBeginPhrase = '___UPDATE___' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
 ### PREV URL SETUP ###
-prevSearchPhrase = 'prev' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+prevSearchPhrase = '___UPDATE___' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
 
 ### FIRST URL SETUP ###
-firstSearchPhrase = 'first' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+firstSearchPhrase = '___UPDATE___' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
 
 ### DATE PARSING SETUP ###
-#dateSearchPhrase = [''] # <=--------------------------=UPDATE=--------------------------=>
-dateSearchPhrase = imageSearchPhrase
+dateSearchPhrase = ['___UPDATE___'] # <=--------------------------=UPDATE=--------------------------=>
+#dateSearchPhrase = imageSearchPhrase
 #dateDelimiter = ''
 
 ### NAME PARSING SETUP ###
-nameSearchPhrase = '<title>Saturday Morning Breakfast Cereal - ' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
-nameEnding = '</title>' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = '___UPDATE___' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameEnding = '___UPDATE___' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 ################################################
 ################################################
 ################################################
@@ -272,11 +272,9 @@ while True:
             pageTitle = rawImageURL
         elif currentURL.find(searchString) >= 0:
             pageTitle = currentURL
-#            pageTitle = rawImageURL # BUG: Copy pasta error
         else:
             for entry in comicHTML:
                 if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
-#                if entry.find(searchString) >= 0 and entry.find(imageYear) < 0: # BUG: Breaking for "...Christmas 2015..." titles
                     pageTitle = entry
                     break
 
@@ -318,7 +316,19 @@ while True:
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
             try:
-                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename)) # FIX
+                # urlretrieve is being blocked by websites scanning user-agents...
+                # ...for webscrapers like urllib.  urlretrieve was abandoned in...
+                # ...lieu of request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+#                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+
+                # Utilizing a request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                with urlopen(comicRequest) as comic:
+                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                        outFile.write(comic.read())
+
             except Exception as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
