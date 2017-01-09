@@ -218,8 +218,8 @@ while True:
         # Something may have been misconfigured
         if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
-    # Sometimes, there's no "First URL" to find
-    elif firstSearchPhrase.__len__() == 0:
+    # Sometimes, there's no "First URL" to find... Only print on first run
+    elif firstSearchPhrase.__len__() == 0 and currentURL == targetComicURL:
         print("First URL search criteria not configured.") # DEBUGGING  
 
 #    print("\nFetching Image URL:")
