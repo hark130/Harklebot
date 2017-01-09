@@ -31,8 +31,8 @@ from Robot_Reader_Functions import get_root_URL
 ### URL SETUP ###
 webComicName = 'SMBC' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.smbc-comics.com' # <=--------------------------=UPDATE=--------------------------=>
-#targetComicURL = baseURL # Original source
-targetComicURL = 'http://www.smbc-comics.com/comic/the-talk-3' # Start here instead
+targetComicURL = baseURL # Original source
+#targetComicURL = 'http://www.smbc-comics.com/comic/the-talk-3' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
