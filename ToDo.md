@@ -13,7 +13,6 @@
             * Should stop when it hits first
             * Adapt Penny Arcade scraper from Template and test
         * Modify code to check for 'first' file after hitting max skips.  Continue(?) if not there.
-        * Protect against max filename length
         * Can't find a predictable method of ordering images (see: Awkward Zombie):
             *   Provide a counter if a date is not found (e.g., if dateTime == '', counter = ???)
                 *   -or-

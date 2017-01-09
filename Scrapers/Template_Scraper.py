@@ -22,6 +22,7 @@
 #           Example - http://www.smbc-comics.com/comic/2002-09-05 would consider
 #               the random link to be the first link
 #           Added a .split(</div>) to the First URL and Prev URL parsing
+#   ADDED:  A safety check to verify the filename hasn't exceeded 255 characters
 #################################################################################
 
 
@@ -77,6 +78,7 @@ USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Fi
 MAX_SLEEP = 30              # SECONDS
 MAX_EXISTING_SKIPS = 10     # Max number of existing files to skip over before stopping
 MAX_404_SKIPS = 10          # Max number of missing images to skip over before stopping
+MAX_FILENAME_LEN = 254      # Normal OS have it at 255.  Sub one for nul char(?)... just in case.
 random.seed()
 ########################
 ########################
@@ -330,8 +332,14 @@ while True:
         ## Final filename trimming
         incomingFilename = incomingFilename.replace('__','_')
         incomingFilename = incomingFilename.replace('--','-') 
+
         ## Append the filetype
         incomingFilename = incomingFilename + currentFileExtension
+
+        ## Verify the intended filename hasn't exceeded the OS maximum
+        if incomingFilename.__len__() > MAX_FILENAME_LEN:
+            incomingFilename = incomingFilename[:MAX_FILENAME_LEN - currentFileExtension.__len__()] + currentFileExtension
+
 #        print("Filename:\t{}".format(incomingFilename)) # DEBUGGING
 
     # DOWNLOAD THE FILE
