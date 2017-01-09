@@ -4,9 +4,6 @@
         * GitP doesn't have a default-first URL like most
         * GitP includes a 'first' on their webpage
         * Add check to verify this is the 'first'
-    * SMBC Scraper
-        * Reset 'home' once it's done downloading (Already complete?)
-        * Determine why 'prev' algorithm wraps around to 'last' after reaching 'first'
     * Template_Scraper.py
         * Penny Arcade
             * Old scraper loops around to newest once it hits oldest (why?)
