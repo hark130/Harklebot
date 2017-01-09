@@ -12,7 +12,12 @@
 #       Reads webpage html to find prev webcomic
 #       Continues walking/saving prev image files until first page is reached
 # Version 1.1
-#   FIXED: urlopen() doesn't like spaces in the URL
+#   FIXED:  urlopen() doesn't like spaces in the URL
+#           Example - http://www.smbc-comics.com/comics/1481723478-20161214 (1) (1).png
+#           Called replace to change spaces to %20
+#   FIXED:  False "full URL" hits from some URLs.  
+#           Example - http://pvponline.com/comic/awwwhes-just-like-my-cat
+#           Added some specificity to fullURLIndicatorList
 #################################################################################
 
 
@@ -97,7 +102,7 @@ firstURL = ''               # Used to hold the URL of the first page (and stop s
 currentFileExtension = ''   # File extension of current image to download
 tempPrefix = ''             # Used to dynamically determine between relative and absolute URLs
 validFileTypeList = ['.png', '.jpg', '.gif']
-fullURLIndicatorList = [rootURL, baseURL, 'www', 'http']
+fullURLIndicatorList = [rootURL, baseURL, 'www.', 'http:']
 numExistingSkips = 0        # Variable to store the number of files already found
 num404Skips = 0             # Variable to store the number of missing webpages
 #########################
@@ -184,7 +189,7 @@ while True:
 
 #    print("\nFetching First URL:")
     # FIND THE FIRST URL
-    if firstURL.__len__() == 0:
+    if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
         for entry in comicHTML:
             if firstURL.__len__() > 0:
                 break
@@ -202,6 +207,13 @@ while True:
                         firstURL = tempPrefix + firstURL
                         print("First URL:\t{}".format(firstURL)) # DEBUGGING
                         break # Found it. Stop looking now.
+
+        # Something may have been misconfigured
+        if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
+            print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
+    # Sometimes, there's no "First URL" to find
+    elif firstSearchPhrase.__len__() == 0:
+        print("First URL search criteria not configured.") # DEBUGGING  
 
 #    print("\nFetching Image URL:")
     # FIND THE IMAGE .GIF
@@ -356,7 +368,7 @@ while True:
     elif numExistingSkips >= MAX_EXISTING_SKIPS and MAX_EXISTING_SKIPS > 0:
         print("\n{} files already found.\nEnding scrape.".format(numExistingSkips))
         break
-    elif firstURL.__len__() == 0:
+    elif firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
         print("\nMissing First URL.  We must be there.\nCurrent URL:\t{}\nFirst URL:\t{}\n".format(currentURL,firstURL))
         break
     elif num404Skips >= MAX_404_SKIPS:
