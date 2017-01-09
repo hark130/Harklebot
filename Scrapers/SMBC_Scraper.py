@@ -32,7 +32,7 @@ from Robot_Reader_Functions import get_root_URL
 webComicName = 'SMBC' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.smbc-comics.com' # <=--------------------------=UPDATE=--------------------------=>
 targetComicURL = baseURL # Original source
-#targetComicURL = 'http://www.smbc-comics.com/comic/the-talk-3' # Start here instead
+#targetComicURL = 'http://www.smbc-comics.com/comic/2002-09-05' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -188,18 +188,21 @@ while True:
                 break
             if entry.find(firstSearchPhrase) >= 0:
                 for subEntry in entry.lower().split('</a>'):
-                    if subEntry.find(firstSearchPhrase.lower()) >= 0 and subEntry.find('href="') >= 0:
-                        firstURL = subEntry[subEntry.find('href="') + 'href="'.__len__():]
-                        firstURL = firstURL[:firstURL.find('"')]
-                        tempPrefix = baseURL # Default stance
+                    if firstURL.__len__() > 0:
+                        break
+                    for subSubEntry in subEntry.split('</div>'):
+                        if subSubEntry.find(firstSearchPhrase.lower()) >= 0 and subSubEntry.find('href="') >= 0:
+                            firstURL = subSubEntry[subSubEntry.find('href="') + 'href="'.__len__():]
+                            firstURL = firstURL[:firstURL.find('"')]
+                            tempPrefix = baseURL # Default stance
 
-                        for indicator in fullURLIndicatorList:
-                            if firstURL.find(indicator) >= 0:
-                                tempPrefix = ''
-                                break
-                        firstURL = tempPrefix + firstURL
-                        print("First URL:\t{}".format(firstURL)) # DEBUGGING
-                        break # Found it. Stop looking now.
+                            for indicator in fullURLIndicatorList:
+                                if firstURL.find(indicator) >= 0:
+                                    tempPrefix = ''
+                                    break
+                            firstURL = tempPrefix + firstURL
+                            print("First URL:\t{}".format(firstURL)) # DEBUGGING
+                            break # Found it. Stop looking now.
 
 #    print("\nFetching Image URL:")
     # FIND THE IMAGE .GIF
@@ -354,8 +357,8 @@ while True:
     elif numExistingSkips >= MAX_EXISTING_SKIPS and MAX_EXISTING_SKIPS > 0:
         print("\n{} files already found.\nEnding scrape.".format(numExistingSkips))
         break
-    elif firstURL.__len__() == 0:
-        print("\nMissing First URL.  We must be there.\nCurrent URL:\t{}\nFirst URL:\t{}\n".format(currentURL,firstURL))
+    elif firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
+        print("\nMissing First URL.  We must be there.\nCurrent URL:\t{}\n".format(currentURL))
         break
     elif num404Skips >= MAX_404_SKIPS:
         print("\n{} 'Not Found (404)' errors encountered.\nEnding scrape.".format(num404Skips))
@@ -369,23 +372,26 @@ while True:
         elif entry.find(prevSearchPhrase) >= 0:
 #            print("Trim this:\t{}".format(entry)) # DEBUGGING
             for subEntry in entry.lower().split('</a>'):
-                if subEntry.find(prevSearchPhrase.lower()) >= 0 and subEntry.find('href="') >= 0:
-                    prevURL = subEntry[subEntry.find('href="') + 'href="'.__len__():]
-                    prevURL = prevURL[:prevURL.find('"')]
-#                    print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
-                    currentURL = prevURL
-                    # Changed tempPrefix = from baseURL to rootURL to avoid www.root.com/comics/ + /comics/20161213.png
-                    tempPrefix = rootURL # Default stance
-#                    tempPrefix = baseURL # Default stance
-
-                    for indicator in fullURLIndicatorList:
-                        if currentURL.find(indicator) >= 0:
-                            tempPrefix = ''
-                            break
-                    currentURL = tempPrefix + currentURL
-
-#                    print("Current URL:\t{}".format(currentURL)) # DEBUGGING
+                if prevURL.__len__() > 0:
                     break
+                for subSubEntry in subEntry.split('</div>'):
+                    if subSubEntry.find(prevSearchPhrase.lower()) >= 0 and subSubEntry.find('href="') >= 0:
+                        prevURL = subSubEntry[subSubEntry.find('href="') + 'href="'.__len__():]
+                        prevURL = prevURL[:prevURL.find('"')]
+    #                    print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
+                        currentURL = prevURL
+                        # Changed tempPrefix = from baseURL to rootURL to avoid www.root.com/comics/ + /comics/20161213.png
+                        tempPrefix = rootURL # Default stance
+    #                    tempPrefix = baseURL # Default stance
+
+                        for indicator in fullURLIndicatorList:
+                            if currentURL.find(indicator) >= 0:
+                                tempPrefix = ''
+                                break
+                        currentURL = tempPrefix + currentURL
+
+    #                    print("Current URL:\t{}".format(currentURL)) # DEBUGGING
+                        break
 
     # RESET TEMP VARIABLES TO AVOID DUPE DOWNLOADS AND OTHER ERRORS
     incomingFilename = ''

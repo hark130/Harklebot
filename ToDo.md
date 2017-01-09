@@ -36,6 +36,8 @@
             * Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
         * SMBC
             * Some of the downloads did not come with a date.  What gives?  (e.g., Car Seat, Life Changes, The Largest Number)
+            * When starting at the first page, "random" link is read as "first" link.  Consider .split(</div>) instead of or
+            in addition to the .split(<a>) when first determining the "first" link.
     * trim_the_name() (Scraper Functions)
         * Implement check for forbidden filename characters
 
