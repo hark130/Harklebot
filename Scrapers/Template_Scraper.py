@@ -11,6 +11,8 @@
 #       Saves webcomic image with date (YYYMMDD) and a name (if found)
 #       Reads webpage html to find prev webcomic
 #       Continues walking/saving prev image files until first page is reached
+# Version 1.1
+#   FIXED: urlopen() doesn't like spaces in the URL
 #################################################################################
 
 
@@ -224,6 +226,7 @@ while True:
                 # Trim the URL
                 imageURL = entry[entry.find(imageBeginPhrase) + imageBeginPhrase.__len__():]
                 imageURL = imageURL[:imageURL.find(currentFileExtension) + currentFileExtension.__len__()]
+                imageURL = imageURL.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
                 break       # Found it. Stop looking now                  
 
     if imageURL.__len__() > 0:

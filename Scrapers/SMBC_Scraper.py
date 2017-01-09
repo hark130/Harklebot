@@ -31,8 +31,8 @@ from Robot_Reader_Functions import get_root_URL
 ### URL SETUP ###
 webComicName = 'SMBC' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.smbc-comics.com' # <=--------------------------=UPDATE=--------------------------=>
-targetComicURL = baseURL # Original source
-#targetComicURL = baseURL # Start here instead
+#targetComicURL = baseURL # Original source
+targetComicURL = 'http://www.smbc-comics.com/comic/the-talk-3' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -224,6 +224,7 @@ while True:
                 # Trim the URL
                 imageURL = entry[entry.find(imageBeginPhrase) + imageBeginPhrase.__len__():]
                 imageURL = imageURL[:imageURL.find(currentFileExtension) + currentFileExtension.__len__()]
+                imageURL = imageURL.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
                 break       # Found it. Stop looking now                  
 
     if imageURL.__len__() > 0:
@@ -272,11 +273,9 @@ while True:
             pageTitle = rawImageURL
         elif currentURL.find(searchString) >= 0:
             pageTitle = currentURL
-#            pageTitle = rawImageURL # BUG: Copy pasta error
         else:
             for entry in comicHTML:
                 if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
-#                if entry.find(searchString) >= 0 and entry.find(imageYear) < 0: # BUG: Breaking for "...Christmas 2015..." titles
                     pageTitle = entry
                     break
 
@@ -318,7 +317,19 @@ while True:
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
             try:
-                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename)) # FIX
+                # urlretrieve is being blocked by websites scanning user-agents...
+                # ...for webscrapers like urllib.  urlretrieve was abandoned in...
+                # ...lieu of request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+#                urlretrieve(imageURL, os.path.join(SAVE_PATH, incomingFilename))
+
+                # Utilizing a request-->urlopen-->write() in an attempt to...
+                # ...continue dodging websites that block webscrapers.
+                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                with urlopen(comicRequest) as comic:
+                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                        outFile.write(comic.read())
+
             except Exception as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
