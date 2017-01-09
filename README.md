@@ -13,10 +13,10 @@
         * Business Cat
         * Penny Arcade
         * Saturday Morning Breakfast Cereal
+        * Player vs Player (PvP) 
     * In Progress:
         * Ctrl-Alt-Del
         * Order of the Stick (see: Giant in the Playground)
-        * Player vs Player (PvP) 
         * Awkward Zombie
     * On Deck:
         * Cyanide and Happiness
