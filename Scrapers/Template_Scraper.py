@@ -24,6 +24,17 @@
 #           Added a .split(</div>) to the First URL and Prev URL parsing
 #   ADDED:  A safety check to verify the filename hasn't exceeded 255 characters
 #################################################################################
+#################################################################################
+# Version 1.2
+#   ADDING: If max download skips have been exceeded, check the first URL link
+#               to see if it's been downloaded yet.  If so, stop scraping.
+#               If not, continue scraping since we obviously haven't finished
+#               yet.  If max download skips have been exceeded but there's not
+#               first URL link then stop scraping as we have no way to know
+#               if we're already done or not.
+#   MODS:   This involves extricating imageURL --> filename conversion into the
+#               scraper functions module.
+#################################################################################
 
 
 from urllib.request import urlopen
