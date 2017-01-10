@@ -6,7 +6,11 @@
         * Add check to verify this is the 'first'
     * get_image_filename() [Version 1-2]
         * Consider changing list of nameSearch and string nameEnding to a dictionary combinations
+        * Build a get_image_name function since there's already a get_image_date function and have get_image_filename()
+        glue them together?
+        * New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
     * Template_Scraper.py
+        * Auto-determine USER_AGENT either dynamically determine the operating system or
         * Penny Arcade
             * Old scraper loops around to newest once it hits oldest (why?)
             * Should stop when it hits first
