@@ -1,9 +1,110 @@
+#################################################################################
+################################### HARKLEBOT ###################################
+############################## Scraper Functions v1 #############################
+##################### https://github.com/hark130/Harklebot ######################
+#################################################################################
+# Version 1
+#   This module contains the necessary functions for Harklebot scrapers to work
+#################################################################################
+#################################################################################
+# Version 1.2
+#   ADDING: Extricated imageURL --> filename conversion into a function named
+#               find_a_URL(HTML, [searchStart], [searchEnd] )
+#               get_image_filename(URL)
+#               find_the_name(URL)
+#################################################################################
+
 import os
 import re
 import time
 import re
 #import htmlentitydefs
 import collections
+
+
+'''
+    Purpose: Find a URL buried in a string of raw HTML given search criteria
+    Input:
+        htmlString - a string of raw HTML code (not a list)
+        searchStart - either a string or list of strings to begin searching with
+        searchStop - either a string or list of strings to end the search
+    Output: 
+        A string representing the given URL on success
+        An empty string if:
+            No occurrences of searchStart were found
+            searchStart and searchStop were sequential in the string
+    Exceptions:
+            TypeError('htmlString is not a string')
+            TypeError('searchPhrase is not a string or a list')
+            TypeError('<searchVar> is not a string or a list')
+            TypeError('<searchVar> is not a string or a list')
+            TypeError('<searchVar> contains a non string')
+            ValueError('htmlString is empty')
+            ValueError('searchStart is empty')
+            ValueError('<searchVar> is empty')
+            ValueError('<searchVar> contains an empty string')
+    NOTE:
+        This is a bookend search.  This function will return '<searchStart>needle<searchStop>' given:
+            'garbagegarbagegarbage<searchStart>needle<searchStop>garbagegarbagegarbage'
+'''
+def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
+    
+    retVal = ''
+
+    # 1. INPUT VALIDATION
+    ## 1.1. htmlString
+    if isinstance(htmlString, str) is False:
+        raise TypeError('htmlString is not a string')
+    elif htmlString.__len__() == 0:
+        raise ValueError('htmlString is empty')
+
+    ## 1.2. searchPhrase
+    if isinstance(searchPhrase, list) is False:
+        if isinstance(searchPhrase, str) is False:
+            raise TypeError('searchPhrase is not a string or a list')
+        else:
+            searchList = [searchPhrase]
+    else:
+        searchList = searchPhrase
+
+    if searchList.__len__() == 0:
+        raise ValueError('searchPhrase is empty')
+
+    ## 1.2. searchStart
+    if isinstance(searchStart, list) is False:
+        if isinstance(searchStart, str) is False:
+            raise TypeError('searchStart is not a string or a list')
+        else:
+            startList = [searchStart]
+    else:
+        startList = searchStart
+
+    if startList.__len__() == 0:
+        raise ValueError('searchStart is empty')
+
+    ## 1.3. searchStop
+    if isinstance(searchStop, list) is False:
+        if isinstance(searchStop, str) is False:
+            raise TypeError('searchStop is not a string or a list')
+        else:
+            stopList = [searchStop]
+    else:
+        stopList = searchStop
+
+    if stopList.__len__() == 0:
+        raise ValueError('searchStop is empty')
+
+    # 2. SPLIT THE HTML
+    htmlList = re.split('\n|</a>|</div>', htmlString)
+
+    # DEBUGGING
+    #for entry in htmlList:
+    #    print("Entry:\t{}".format(entry))
+
+    # 3. ???
+#################################### CONTINUE HERE ###############################
+
+    return retVal    
 
 
 '''
