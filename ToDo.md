@@ -4,6 +4,8 @@
         * GitP doesn't have a default-first URL like most
         * GitP includes a 'first' on their webpage
         * Add check to verify this is the 'first'
+    * get_image_filename() [Version 1-2]
+        * Consider changing list of nameSearch and string nameEnding to a dictionary combinations
     * Template_Scraper.py
         * Penny Arcade
             * Old scraper loops around to newest once it hits oldest (why?)
