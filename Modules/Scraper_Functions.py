@@ -26,6 +26,7 @@ import collections
     Purpose: Find a URL buried in a string of raw HTML given search criteria
     Input:
         htmlString - a string of raw HTML code (not a list)
+        searchPhrase - a string or list of strings that indicate we've found the right HTML line
         searchStart - either a string or list of strings to begin searching with
         searchStop - either a string or list of strings to end the search
     Output: 
@@ -36,20 +37,26 @@ import collections
     Exceptions:
             TypeError('htmlString is not a string')
             TypeError('searchPhrase is not a string or a list')
+            TypeError('searchPhrase contains a non string')
             TypeError('<searchVar> is not a string or a list')
             TypeError('<searchVar> is not a string or a list')
             TypeError('<searchVar> contains a non string')
             ValueError('htmlString is empty')
             ValueError('searchStart is empty')
+            ValueError('searchStart contains an empty string')
             ValueError('<searchVar> is empty')
             ValueError('<searchVar> contains an empty string')
     NOTE:
-        This is a bookend search.  This function will return '<searchStart>needle<searchStop>' given:
-            'garbagegarbagegarbage<searchStart>needle<searchStop>garbagegarbagegarbage'
+        This is a bookend search.  This function call:
+            find_a_URL('garbagegarbagegarbage<searchStart>needle<searchStop>garbagegarbagegarbage', 'garbagegarbage<searchStart>', <searchStart>, <searchStop>)
+        will return 'needle<searchStop>' 
 '''
 def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
     
     retVal = ''
+    searchList = [] # Will contain all the phrases to search for
+    startList = [] # Will contain all the start delimiters
+    stopList = [] # Will contain all the stop delimiters
 
     # 1. INPUT VALIDATION
     ## 1.1. htmlString
@@ -63,9 +70,15 @@ def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
         if isinstance(searchPhrase, str) is False:
             raise TypeError('searchPhrase is not a string or a list')
         else:
-            searchList = [searchPhrase]
+            searchList = [searchPhrase.lower()]
     else:
-        searchList = searchPhrase
+        for entry in searchPhrase:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchPhrase contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchPhrase contains an empty string')
+            else:
+                searchList.append(entry.lower())
 
     if searchList.__len__() == 0:
         raise ValueError('searchPhrase is empty')
@@ -75,9 +88,15 @@ def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
         if isinstance(searchStart, str) is False:
             raise TypeError('searchStart is not a string or a list')
         else:
-            startList = [searchStart]
+            startList = [searchStart.lower()]
     else:
-        startList = searchStart
+        for entry in searchStart:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchStart contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchStart contains an empty string')
+            else:
+                startList.append(entry.lower())
 
     if startList.__len__() == 0:
         raise ValueError('searchStart is empty')
@@ -87,23 +106,57 @@ def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
         if isinstance(searchStop, str) is False:
             raise TypeError('searchStop is not a string or a list')
         else:
-            stopList = [searchStop]
+            stopList = [searchStop.lower()]
     else:
-        stopList = searchStop
+        for entry in searchStop:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchStop contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchStop contains an empty string')
+            else:
+                stopList.append(entry.lower())
 
     if stopList.__len__() == 0:
         raise ValueError('searchStop is empty')
 
     # 2. SPLIT THE HTML
-    htmlList = re.split('\n|</a>|</div>', htmlString)
+    htmlList = re.split('\n|</a>|</div>', htmlString.lower())
 
     # DEBUGGING
     #for entry in htmlList:
     #    print("Entry:\t{}".format(entry))
 
-    # 3. ???
-#################################### CONTINUE HERE ###############################
+    # 3. GO SEARCHING
+    for entry in htmlList:
+        if retVal.__len__() > 0:
+            break # It's been found
+        for phrase in searchList:
+            if entry.find(phrase) >= 0:
+                ## This may be it
+                # 3.1. Find the beginning
+                for start in startList:
+                    if entry.find(start) >= 0:
+                        retVal = entry[entry.find(start) + start.__len__():]
+                        break # Found the beginning so stop looking
 
+                # 3.2. Find the end
+                if retVal.__len__() > 0:
+                    for stop in stopList:
+                        if entry.find(stop) >= 0:
+                            retVal = retVal[:retVal.find(stop) + stop.__len__()]
+                            break # Found the end so stop looking
+
+                # 3.3. Trim the URL
+                if retVal.__len__() > 0:
+                    retVal = retVal.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
+
+                # 3.4. Verify work
+                if retVal.__len__() > 0:
+                    break
+
+    ## DEBUGGING
+    #if retVal.find('\n') >= 0:
+    #    print("Return value:\t{}\nNewline:\t{}".format(retVal, retVal[retVal.find('\n'):]))
     return retVal    
 
 

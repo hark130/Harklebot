@@ -60,10 +60,10 @@ class FindURL(unittest.TestCase):
             print(repr(err))
             self.fail('Raised the wrong exception')
 
-    def test_searchPhrase_ValueError4(self):
+    def test_searchPhrase_TypeError4(self):
         try:
             find_a_URL('http://www.iamright.com', ['search for this', 'search for this other thing', ['How meta?', 'A list within a list']], ['stuff', 'other stuff'], ['things', 'other things'])
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'searchPhrase contains a non string')
         except Exception as err:
             print(repr(err))
@@ -105,10 +105,10 @@ class FindURL(unittest.TestCase):
             print(repr(err))
             self.fail('Raised the wrong exception')
 
-    def test_searchStart_ValueError4(self):
+    def test_searchStart_TypeError4(self):
         try:
             find_a_URL('http://www.iamright.com', 'search for this', ['stuff', 'other stuff', 66], ['things', 'other things'])
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'searchStart contains a non string')
         except Exception as err:
             print(repr(err))
@@ -150,21 +150,52 @@ class FindURL(unittest.TestCase):
             print(repr(err))
             self.fail('Raised the wrong exception')
 
-    def test_searchStop_ValueError4(self):
+    def test_searchStop_TypeError4(self):
         try:
             find_a_URL('http://www.iamright.com', ['search for this', 'search for this other thing'], ['stuff', 'other stuff'], ['things', {'Nothing':'matters'}, 'other things'])
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'searchStop contains a non string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
 
-    def test_PVP_HTML(self):
+    def test_PVP_HTML_image_search1(self):
         try:
-#            print(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt')) # DEBUGGING
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
-                testResutl = find_a_URL(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', 'src="', ['.png', '.jpg', '.gif'])
-            self.assertEqual(testResutl, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2016/07/pvp20160726.jpg')
+                testResult = find_a_URL(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', 'src="', ['.png', '.jpg', '.gif'])
+            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2016/07/pvp20160726.jpg'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_Business_Cat_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], '<img src="', ['.png', '.jpg', '.gif'])
+            self.assertEqual(testResult, 'http://www.businesscat.happyjar.com/wp-content/uploads/2016/12/2016-12-02-Order.png'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_SMBC_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '5-SMBC_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['Why are you looking for this?', 'src="'], '.png')
+            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482854925-20161227%20(2).png'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_SMBC_HTML_image_search2(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '6-SMBC_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['Why are you looking for this?', 'src="'], ['.nunya','.bak', 'xlsx','.png'])
+            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482770017-20161226.png'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_Penny_Arcade_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), ['photos.smugmug.com/Comics/Pa-comics','art.penny-arcade.com', 'penny-arcade.smugmug.com/photos/','photos.smugmug.com/photos/'], 'src="', ['.png', '.jpg', '.gif'])
+            self.assertEqual(testResult, 'https://art.penny-arcade.com/photos/932182163_EazuQ/0/2100x20000/932182163_EazuQ-2100x20000.jpg'.lower())
         except Exception as err:
             print(repr(err))
 

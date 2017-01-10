@@ -43,7 +43,7 @@ from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
 # Hacky (?) method to keep modules separate from scraper code
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Modules'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules'))
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import trim_the_name 
 from Robot_Reader_Functions import get_root_URL
