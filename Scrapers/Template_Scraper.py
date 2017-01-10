@@ -32,6 +32,8 @@
 #               yet.  If max download skips have been exceeded but there's not
 #               first URL link then stop scraping as we have no way to know
 #               if we're already done or not.
+#   FIXED:  Slightly less hacky version of the sys.append statement to point
+#               to the modules that are in a different directory
 #   MODS:   This involves extricating imageURL --> filename conversion into the
 #               scraper functions module.
 #################################################################################
