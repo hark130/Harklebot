@@ -167,6 +167,14 @@ class FindURL(unittest.TestCase):
         except Exception as err:
             print(repr(err))
 
+    def test_PVP_HTML_image_search2(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '11-PvP_slash_date_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', ['frick', 'frack', 'src="'], ['.png', '.jpg', '.gif'])
+            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2015/12/pvp20151231.jpg'.lower())
+        except Exception as err:
+            print(repr(err))
+
     def test_Business_Cat_HTML_image_search1(self):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
@@ -196,6 +204,15 @@ class FindURL(unittest.TestCase):
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ['photos.smugmug.com/Comics/Pa-comics','art.penny-arcade.com', 'penny-arcade.smugmug.com/photos/','photos.smugmug.com/photos/'], 'src="', ['.png', '.jpg', '.gif'])
             self.assertEqual(testResult, 'https://art.penny-arcade.com/photos/932182163_EazuQ/0/2100x20000/932182163_EazuQ-2100x20000.jpg'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_XKCD_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
+                testResult = find_a_URL(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'src="', ['.png', '.jpg', '.gif'])
+            # Mangled this assertion a bit to account for xkcd's odd relative-URLs that urlopen doesn't like
+            self.assertTrue(testResult.find('imgs.xkcd.com/comics/apollo_speeches.png'.lower()) >= 0)
         except Exception as err:
             print(repr(err))
 

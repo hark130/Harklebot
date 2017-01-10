@@ -122,10 +122,6 @@ def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
     # 2. SPLIT THE HTML
     htmlList = re.split('\n|</a>|</div>', htmlString.lower())
 
-    # DEBUGGING
-    #for entry in htmlList:
-    #    print("Entry:\t{}".format(entry))
-
     # 3. GO SEARCHING
     for entry in htmlList:
         if retVal.__len__() > 0:
@@ -154,9 +150,6 @@ def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
                 if retVal.__len__() > 0:
                     break
 
-    ## DEBUGGING
-    #if retVal.find('\n') >= 0:
-    #    print("Return value:\t{}\nNewline:\t{}".format(retVal, retVal[retVal.find('\n'):]))
     return retVal    
 
 
