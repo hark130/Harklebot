@@ -1,6 +1,8 @@
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import find_a_URL 
+from Scraper_Functions import get_image_filename
 # find_a_URL(htmlString, searchStart, searchStop)
+# get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
 import unittest
 import os
 
@@ -163,7 +165,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', 'src="', ['.png', '.jpg', '.gif'])
-            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2016/07/pvp20160726.jpg'.lower())
+            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2016/07/pvp20160726.jpg')
         except Exception as err:
             print(repr(err))
 
@@ -171,7 +173,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '11-PvP_slash_date_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', ['frick', 'frack', 'src="'], ['.png', '.jpg', '.gif'])
-            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2015/12/pvp20151231.jpg'.lower())
+            self.assertEqual(testResult, 'http://s3-us-west-2.amazonaws.com/pvponlinenew/img/comic/2015/12/pvp20151231.jpg')
         except Exception as err:
             print(repr(err))
 
@@ -179,7 +181,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], '<img src="', ['.png', '.jpg', '.gif'])
-            self.assertEqual(testResult, 'http://www.businesscat.happyjar.com/wp-content/uploads/2016/12/2016-12-02-Order.png'.lower())
+            self.assertEqual(testResult, 'http://www.businesscat.happyjar.com/wp-content/uploads/2016/12/2016-12-02-Order.png')
         except Exception as err:
             print(repr(err))
 
@@ -187,7 +189,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '5-SMBC_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['Why are you looking for this?', 'src="'], '.png')
-            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482854925-20161227%20(2).png'.lower())
+            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482854925-20161227%20(2).png')
         except Exception as err:
             print(repr(err))
 
@@ -195,7 +197,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '6-SMBC_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['Why are you looking for this?', 'src="'], ['.nunya','.bak', 'xlsx','.png'])
-            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482770017-20161226.png'.lower())
+            self.assertEqual(testResult, 'http://www.smbc-comics.com/comics/1482770017-20161226.png')
         except Exception as err:
             print(repr(err))
 
@@ -203,7 +205,7 @@ class FindURL(unittest.TestCase):
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ['photos.smugmug.com/Comics/Pa-comics','art.penny-arcade.com', 'penny-arcade.smugmug.com/photos/','photos.smugmug.com/photos/'], 'src="', ['.png', '.jpg', '.gif'])
-            self.assertEqual(testResult, 'https://art.penny-arcade.com/photos/932182163_EazuQ/0/2100x20000/932182163_EazuQ-2100x20000.jpg'.lower())
+            self.assertEqual(testResult, 'https://art.penny-arcade.com/photos/932182163_EazuQ/0/2100x20000/932182163_EazuQ-2100x20000.jpg')
         except Exception as err:
             print(repr(err))
 
@@ -212,9 +214,275 @@ class FindURL(unittest.TestCase):
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
                 testResult = find_a_URL(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'src="', ['.png', '.jpg', '.gif'])
             # Mangled this assertion a bit to account for xkcd's odd relative-URLs that urlopen doesn't like
-            self.assertTrue(testResult.find('imgs.xkcd.com/comics/apollo_speeches.png'.lower()) >= 0)
+            self.assertTrue(testResult.find('imgs.xkcd.com/comics/apollo_speeches.png') >= 0)
         except Exception as err:
             print(repr(err))
+
+class GetImageFilename(unittest.TestCase):
+
+    def test_htmlString_TypeError1(self):
+        try:
+            get_image_filename(3.14, 'search for this date', ['name', 'other names'], 'ending', True)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'htmlString is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_htmlString_TypeError2(self):
+        try:
+            get_image_filename(["don't", "put", "HTML", "code", "in", "a", "list"], ['search for this date', 'or this date'], ['name', 'other names'], 'ending')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'htmlString is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_htmlString_ValueError1(self):
+        try:
+            get_image_filename('', 'search for this date', ['name', 'other names'], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'htmlString is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_TypeError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 1/10/2017, ['name', 'other names'], 'ending', False)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase is not a string or a list')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_TypeError2(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', 20170110], ['name', 'other names'], 'ending')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_TypeError3(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', {"Not":"Possible"}], ['name', 'other names'], 'ending')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_ValueError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', '', ['name', 'other names'], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_ValueError2(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', [], ['name', 'other names'], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_dateSearchPhrase_ValueError3(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', ''], ['name', 'other names'], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'dateSearchPhrase contains an empty string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_TypeError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], 31337, 'ending', True)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase is not a string or a list')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_TypeError2(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', ['not', 'a', 'string']], 'ending')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_TypeError3(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', {'not':'good'}], 'ending')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_ValueError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', '', 'ending', False)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_ValueError2(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'I can haz date?', [], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameSearchPhrase_ValueError3(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', ''], 'ending')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPhrase contains an empty string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameEnding_TypeError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other name'], 0)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameEnding is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_nameEnding_ValueError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', '')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameEnding is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_skipDate_TypeError1(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'I mean, I guess')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'skipDate is not a bool')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_skipDate_TypeError2(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'True')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'skipDate is not a bool')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_skipDate_TypeError3(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'False')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'skipDate is not a bool')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_skipDate_TypeError4(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', [True])
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'skipDate is not a bool')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_skipDate_TypeError5(self):
+        try:
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', [False])
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'skipDate is not a bool')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test_PVP_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
+            self.assertEqual(testResult, '20160726_2016-07-26')
+        except Exception as err:
+            print(repr(err))
+
+    def test_PVP_HTML_image_search2(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '11-PvP_slash_date_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
+            # Mangled this test a bit because the found name 
+            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_Business_Cat_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], 'title="', '"')
+            self.assertEqual(testResult, '20161202_Order')
+        except Exception as err:
+            print(repr(err))
+
+    def test_SMBC_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '5-SMBC_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], '<title>Saturday Morning Breakfast Cereal - ', '</title>')
+            self.assertEqual(testResult, '20161227_Wanna-Evolve'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_SMBC_HTML_image_search2(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '6-SMBC_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['<title>Saturday Morning Breakfast Cereal - '], '</title>')
+            self.assertEqual(testResult, '20161226_Political-Philosophy'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_Penny_Arcade_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ['input type="hidden" name="attributes[comic_title]" value="'], 'alt="', '"')
+            self.assertEqual(testResult, '20100712_Our-Partial-Future'.lower())
+        except Exception as err:
+            print(repr(err))
+
+    def test_XKCD_HTML_image_search1(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', True)
+            self.assertEqual(testResult, '1484')
+        except Exception as err:
+            print(repr(err))
+
+    def test_XKCD_HTML_image_search2(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
+                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', False)
+            self.assertEqual(testResult, '00000000')
+        except Exception as err:
+            print(repr(err))
+
 
 if __name__ == '__main__':
     unittest.main()
