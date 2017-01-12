@@ -48,6 +48,8 @@ import sys, os, time, random, re
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules'))
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import trim_the_name 
+from Scraper_Functions import find_a_URL 
+from Scraper_Functions import get_image_filename
 from Robot_Reader_Functions import get_root_URL
 
 ################################################
@@ -204,31 +206,47 @@ while True:
         print("ERROR:\t{}\n{}".format(type(error),error))
         sys.exit()
     else:
-        comicHTML = comicContentDecoded.split('\n')
+#        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        pass
 
 #    print("\nFetching First URL:")
     # FIND THE FIRST URL
+    # NEW PROCEDURE FOR VERSION 1-2
+    # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
     if firstURL.__len__() == 0:
-        for entry in comicHTML:
-            if firstURL.__len__() > 0:
-                break
-            if entry.find(firstSearchPhrase) >= 0:
-                for subEntry in entry.lower().split('</a>'):
-                    if firstURL.__len__() > 0:
-                        break
-                    for subSubEntry in subEntry.split('</div>'):
-                        if subSubEntry.find(firstSearchPhrase.lower()) >= 0 and subSubEntry.find('href="') >= 0:
-                            firstURL = subSubEntry[subSubEntry.find('href="') + 'href="'.__len__():]
-                            firstURL = firstURL[:firstURL.find('"')]
-                            tempPrefix = baseURL # Default stance
+        # Find the first URL
+        firstURL = find_a_URL(comicContentDecoded, firstSearchPhrase, 'hrerf="', '"')
 
-                            for indicator in fullURLIndicatorList:
-                                if firstURL.find(indicator) >= 0:
-                                    tempPrefix = ''
-                                    break
-                            firstURL = tempPrefix + firstURL
-                            print("First URL:\t{}".format(firstURL)) # DEBUGGING
-                            break # Found it. Stop looking now.
+        # Check results because something may have been misconfigured
+        if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
+            print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING    
+
+    # Sometimes, there's no "First URL" to find... Only print on first run
+    elif firstSearchPhrase.__len__() == 0 and currentURL == targetComicURL:
+        print("First URL search criteria not configured.") # DEBUGGING        
+
+    # OLD PROCEDURE FROM VERSION 1-1
+    #if firstURL.__len__() == 0:
+    #    for entry in comicHTML:
+    #        if firstURL.__len__() > 0:
+    #            break
+    #        if entry.find(firstSearchPhrase) >= 0:
+    #            for subEntry in entry.lower().split('</a>'):
+    #                if firstURL.__len__() > 0:
+    #                    break
+    #                for subSubEntry in subEntry.split('</div>'):
+    #                    if subSubEntry.find(firstSearchPhrase.lower()) >= 0 and subSubEntry.find('href="') >= 0:
+    #                        firstURL = subSubEntry[subSubEntry.find('href="') + 'href="'.__len__():]
+    #                        firstURL = firstURL[:firstURL.find('"')]
+    #                        tempPrefix = baseURL # Default stance
+
+    #                        for indicator in fullURLIndicatorList:
+    #                            if firstURL.find(indicator) >= 0:
+    #                                tempPrefix = ''
+    #                                break
+    #                        firstURL = tempPrefix + firstURL
+    #                        print("First URL:\t{}".format(firstURL)) # DEBUGGING
+    #                        break # Found it. Stop looking now.
 
         # Something may have been misconfigured
         if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
