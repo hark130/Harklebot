@@ -9,18 +9,18 @@
 
 ## Scrapers: ##
     * Fully Functional:
-        * XKCD
-        * Business Cat
-        * Penny Arcade
-        * Saturday Morning Breakfast Cereal
-        * Player vs Player (PvP) 
+        [X] XKCD
+        [X] Business Cat
+        [X] Penny Arcade
+        [X] Saturday Morning Breakfast Cereal
+        [X] Player vs Player (PvP) 
     * In Progress:
-        * Ctrl-Alt-Del
-        * Order of the Stick (see: Giant in the Playground)
-        * Awkward Zombie
+        [/] Ctrl-Alt-Del
+        [/] Order of the Stick (see: Giant in the Playground)
+        [/] Awkward Zombie
     * On Deck:
-        * Cyanide and Happiness
-        * Accursed Dragon
+        [ ] Cyanide and Happiness
+        [ ] Accursed Dragon
     
 ## Modules: ##
       * Scraper_Functions - Functions to aid in finding appropriate image dates and names to aid in filename creation
