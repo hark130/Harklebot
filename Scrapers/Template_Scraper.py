@@ -68,18 +68,23 @@ imageSearchPhrase = ['___UPDATE___', '___UPDATE___', '___UPDATE___'] # <=-------
 imageBeginPhrase = '___UPDATE___' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
 ### PREV URL SETUP ###
+# Find the 'name' of the obligatory 'Previous Comic' navigation button
 prevSearchPhrase = '___UPDATE___' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
 
 ### FIRST URL SETUP ###
+# Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
 firstSearchPhrase = '___UPDATE___' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
 
 ### DATE PARSING SETUP ###
-dateSearchPhrase = ['___UPDATE___'] # <=--------------------------=UPDATE=--------------------------=>
-#dateSearchPhrase = imageSearchPhrase
-#dateDelimiter = ''
+# This boolean determines the nature of the date search:  True == mandatory, False == optional
+lookForDate = True # True for most pages <=--------------------------=UPDATE=--------------------------=>
+# Find the date from a list of strings to match in the page's HTML
+dateSearchPhrase = ['___UPDATE___'] # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
 
 ### NAME PARSING SETUP ###
+# Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
 nameSearchPhrase = '___UPDATE___' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+# Delimit the end of the image title with this string
 nameEnding = '___UPDATE___' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 ################################################
 ################################################
@@ -149,6 +154,7 @@ firstURL = ''               # Holds 'first' URL and determines when to stop scra
 tempPrefix = ''
 pageTitle = ''              # Holds the page's title HTML entry (will be parses for "Name" portion of filename)
 skipping = True             # Boolean variable used to determine when to 'fast forward' past image URLs that have already been downloaded
+imageNameSuffix = ''        # Holds the unique filename suffix (missing prefix and filename extension)
 ######################
 ######################
 ######################
@@ -168,7 +174,7 @@ else:
 # COMMENCE SCRAPING
 while True:
 #while comic.getcode() == 200:
-    # OPEN THE WEB PAGE
+    # 1. OPEN THE WEB PAGE
     try:
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
         comic = urlopen(comicRequest)
@@ -183,7 +189,7 @@ while True:
             print("Sleeping {} seconds before download".format(sleepyTime))
             time.sleep(sleepyTime)
 
-    # DETERMINE CHARSET OF PAGE
+    # 2. DETERMINE CHARSET OF PAGE
 #    print("\ncomic Charset:")
     comicContentType = comic.getheader('Content-Type')
 
@@ -195,7 +201,7 @@ while True:
         comicCharset.replace(' ','')
 #    print("Charset:\t{}".format(comicCharset)) # DEBUGGING
 
-    # TRANSLATE PAGE
+    # 3. TRANSLATE PAGE
     comicContent = comic.read()
 
     try:
@@ -210,77 +216,33 @@ while True:
         pass
 
 #    print("\nFetching First URL:")
-    # FIND THE FIRST URL
+    # 4. FIND THE FIRST URL
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
+
+    ## 4.1. Find the first URL if there isn't already one
     if firstURL.__len__() == 0:
-        # Find the first URL
-        firstURL = find_a_URL(comicContentDecoded, firstSearchPhrase, 'hrerf="', '"')
+        firstURL = find_a_URL(comicContentDecoded, firstSearchPhrase, 'href="', '"')
 
-        # Check results because something may have been misconfigured
-        if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
-            print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING    
-
-    # Sometimes, there's no "First URL" to find... Only print on first run
-    elif firstSearchPhrase.__len__() == 0 and currentURL == targetComicURL:
-        print("First URL search criteria not configured.") # DEBUGGING        
-
-    # OLD PROCEDURE FROM VERSION 1-1
-    #if firstURL.__len__() == 0:
-    #    for entry in comicHTML:
-    #        if firstURL.__len__() > 0:
-    #            break
-    #        if entry.find(firstSearchPhrase) >= 0:
-    #            for subEntry in entry.lower().split('</a>'):
-    #                if firstURL.__len__() > 0:
-    #                    break
-    #                for subSubEntry in subEntry.split('</div>'):
-    #                    if subSubEntry.find(firstSearchPhrase.lower()) >= 0 and subSubEntry.find('href="') >= 0:
-    #                        firstURL = subSubEntry[subSubEntry.find('href="') + 'href="'.__len__():]
-    #                        firstURL = firstURL[:firstURL.find('"')]
-    #                        tempPrefix = baseURL # Default stance
-
-    #                        for indicator in fullURLIndicatorList:
-    #                            if firstURL.find(indicator) >= 0:
-    #                                tempPrefix = ''
-    #                                break
-    #                        firstURL = tempPrefix + firstURL
-    #                        print("First URL:\t{}".format(firstURL)) # DEBUGGING
-    #                        break # Found it. Stop looking now.
-
-        # Something may have been misconfigured
-        if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
+    ## 4.2. Validate findings
+    if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
+        ### 4.2.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
+        if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
+            print("First URL search criteria not configured.") # DEBUGGING  
+        ### 4.2.2. If there's a search criteria configured but we didn't find a firstURL, something went wrong(?)
+        else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
-    # Sometimes, there's no "First URL" to find... Only print on first run
-    elif firstSearchPhrase.__len__() == 0 and currentURL == targetComicURL:
-        print("First URL search criteria not configured.") # DEBUGGING  
+    elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
+        print("First URL:\t{}".format(firstURL)) # DEBUGGING    
+
 
 #    print("\nFetching Image URL:")
-    # FIND THE IMAGE .GIF
-    for entry in comicHTML:
-        #if entry.lower().find('title') >= 0: # DEBUGGING
-        #    print(entry)
-        if imageURL.__len__() > 0:
-            break
-        for phrase in imageSearchPhrase:
-            if entry.find(phrase) >= 0:
-    #            print("FOUND THIS:\t{}".format(entry)) # DEBUGGING
+    # 5. FIND THE IMAGE .GIF
+    # NEW PROCEDURE FOR VERSION 1-2
+    # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
+    imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)               
 
-                # Preserve inital html entry
-                rawImageURL = entry
-
-                # Determine file extension
-                for extension in validFileTypeList:
-                    if entry.find(extension) >= 0:
-                        currentFileExtension = extension
-                        break
-
-                # Trim the URL
-                imageURL = entry[entry.find(imageBeginPhrase) + imageBeginPhrase.__len__():]
-                imageURL = imageURL[:imageURL.find(currentFileExtension) + currentFileExtension.__len__()]
-                imageURL = imageURL.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
-                break       # Found it. Stop looking now                  
-
+    # 6. CHANGE REALTIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
         tempPrefix = baseURL # Default stance
 
@@ -289,64 +251,84 @@ while True:
                 tempPrefix = ''
                 break
         imageURL = tempPrefix + imageURL
-#        print("Raw URL:\t{}".format(rawImageURL)) # DEBUGGING
 #        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
         pass
     else:
         print("Did not find an image URL!")
         sys.exit()
 
-    # PARSE IMAGE URL FOR FILENAME
-    if imageURL.__len__() > 0:   
+    # 7. DETERMINE THE IMAGE FILE EXTENSION
+    if imageURL.__len__() > 0:
+        for extension in validFileTypeList:
+            if imageURL.find(extension) == (imageURL.__len__() - extension.__len__()): # Verify the extension was found at the end
+                currentFileExtension = extension
+                break # Found it.  Stop looking.
 
-        # DATE
-        for entry in comicHTML:
-            if imageDate.__len__() > 0 and imageDate != '00000000':
-                break
-            for phrase in dateSearchPhrase:
-                if entry.find(phrase) >= 0:
-                    dateTimeURL = entry
-    #                print("Guessing the file date is:\t{}".format(find_the_date(dateTimeURL))) # TESTING
-                    imageDate = find_the_date(dateTimeURL)    
-                    if imageDate.__len__() > 0 and imageDate != '00000000':
-                        break
+        if currentFileExtension not in validFileTypeList:
+            print("Unable to determine image file extension from image URL")
+            sys.exit()
 
-        if imageDate.__len__() == 8 and imageDate != '00000000':
-            imageYear = imageDate[:4]
-            imageMonth = imageDate[4:6]
-            imageDay = imageDate[6:]
-        else:
-            imageYear = ''
-            imageMonth = ''
-            imageDay = ''
+    # 8. PARSE IMAGE URL FOR FILENAME
+    # NEW PROCEDURE FOR VERSION 1-2
+    # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
+    if imageURL.__len__() > 0:
+        ## 8.1. Get the unique filename suffix (does not include prefix or file extension)
+        imageNameSuffix = get_image_filename(comicContentDecoded, dateSearchPhrase, nameSearchPhrase, nameEnding, lookForDate)
 
-        # NAME
-        ## Find the title line in the page HTML
-        searchString = nameSearchPhrase
-        if rawImageURL.find(searchString) >= 0:
-            pageTitle = rawImageURL
-        elif currentURL.find(searchString) >= 0:
-            pageTitle = currentURL
-        else:
-            for entry in comicHTML:
-                if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
-                    pageTitle = entry
-                    break
+        if imageNameSuffix == '00000000':
+            print("Unable to determine a valid filename for the image!")
+            sys.exit()    
 
-        ## Parse it for a proper name
-        if pageTitle.__len__() > 0:
-            # TRIM RAW IMAGE URL
-            imageName = pageTitle[pageTitle.find(searchString) + searchString.__len__():]
-            imageName = imageName[:imageName.find(nameEnding)]
-            # TRIM UNWANTED CHARACTERS
-            imageName = trim_the_name(imageName)
+            #################################### CONTINUE HERE #########################################        
 
-            imageName = imageName.replace('39', "'") # Small quirk of the website
+#         # DATE
+#         for entry in comicHTML:
+#             if imageDate.__len__() > 0 and imageDate != '00000000':
+#                 break
+#             for phrase in dateSearchPhrase:
+#                 if entry.find(phrase) >= 0:
+#                     dateTimeURL = entry
+#     #                print("Guessing the file date is:\t{}".format(find_the_date(dateTimeURL))) # TESTING
+#                     imageDate = find_the_date(dateTimeURL)    
+#                     if imageDate.__len__() > 0 and imageDate != '00000000':
+#                         break
 
-#            print("The name of this image is {}".format(imageName)) # DEBUGGING 
-        else:
-#            print("Did not find the name in:\n{}".format(currentURL)) # DEBUGGING
-            pass
+#         if imageDate.__len__() == 8 and imageDate != '00000000':
+#             imageYear = imageDate[:4]
+#             imageMonth = imageDate[4:6]
+#             imageDay = imageDate[6:]
+#         else:
+#             imageYear = ''
+#             imageMonth = ''
+#             imageDay = ''
+
+#         # NAME
+#         ## Find the title line in the page HTML
+#         searchString = nameSearchPhrase
+#         if rawImageURL.find(searchString) >= 0:
+#             pageTitle = rawImageURL
+#         elif currentURL.find(searchString) >= 0:
+#             pageTitle = currentURL
+#         else:
+#             for entry in comicHTML:
+#                 if entry.find(searchString) >= 0 and (entry.find(imageYear) < 0 or entry.find(imageMonth) < 0 or entry.find(imageDay) < 0 or imageYear == ''):
+#                     pageTitle = entry
+#                     break
+
+#         ## Parse it for a proper name
+#         if pageTitle.__len__() > 0:
+#             # TRIM RAW IMAGE URL
+#             imageName = pageTitle[pageTitle.find(searchString) + searchString.__len__():]
+#             imageName = imageName[:imageName.find(nameEnding)]
+#             # TRIM UNWANTED CHARACTERS
+#             imageName = trim_the_name(imageName)
+
+#             imageName = imageName.replace('39', "'") # Small quirk of the website
+
+# #            print("The name of this image is {}".format(imageName)) # DEBUGGING 
+#         else:
+# #            print("Did not find the name in:\n{}".format(currentURL)) # DEBUGGING
+#             pass
         
         # CREATE FILENAME FROM PARSED DATA
         ## Beginning

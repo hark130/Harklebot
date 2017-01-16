@@ -11,7 +11,6 @@
 #   ADDING: Extricated imageURL --> filename conversion into a function named
 #               find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
 #               get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
-#               find_the_name(URL) # Maybe this isn't necessary
 #################################################################################
 
 import os
