@@ -10,6 +10,7 @@
         glue them together?
         [ ] New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
     [/] Template_Scraper.py
+        [ ] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
         [ ] Validate each reused variable after code is refactored in Version 1-2
         [ ] Auto-determine USER_AGENT by
             [ ] Dynamically determining the operating system (feasible)
@@ -59,3 +60,4 @@
     [ ] Write Accursed Dragon Scraper
     [ ] Transition 'template_scraper.py' into an object oriented solution (see: Scraper Class)
     [ ] Dynamically determine which USER_AGENT string to use based on operating system
+    [ ] Consider extricating relative-URL-made-absolute-URL algorithm into a Scraper Function module function
