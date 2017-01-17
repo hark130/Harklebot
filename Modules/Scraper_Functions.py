@@ -1,9 +1,332 @@
+#################################################################################
+################################### HARKLEBOT ###################################
+############################## Scraper Functions v1 #############################
+##################### https://github.com/hark130/Harklebot ######################
+#################################################################################
+# Version 1
+#   This module contains the necessary functions for Harklebot scrapers to work
+#################################################################################
+#################################################################################
+# Version 1.2
+#   ADDING: Extricated imageURL --> filename conversion into a function named
+#               find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
+#               get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
+#################################################################################
+
 import os
 import re
 import time
 import re
 #import htmlentitydefs
 import collections
+
+
+'''
+    Purpose: Determine a portion of an image URL's eventual filename buried in a string of raw HTML given search criteria
+    Input:
+        htmlString - a string of raw HTML code (not a list)
+        dateSearchPhrase - a string or list of strings that indicate we've found an HTML line that contains the date
+        nameSearchPhrase - a string or list of strings that indicate we've found an HTML line that contains the name
+        nameEnding - a string that delimits the end of the name (usually '"')
+        skipDate - boolean that allows the function to ignore the lack of a date
+    Output: 
+        A string representing one of the following on success
+            'YYYYMMDD-<name>'   # Date and name found
+            'YYYYMMDD'          # No name found
+            '00000000'          # If skipDate is False and no date was found, regardless of if a name was found or not
+            '<name>'            # If skipDate is True and no date was found but a name was found
+    Exceptions:
+            TypeError('htmlString is not a string')
+            TypeError('dateSearchPhrase is not a string or a list')
+            TypeError('dateSearchPhrase contains a non string')
+            TypeError('nameSearchPhrase is not a string or a list')
+            TypeError('nameSearchPhrase contains a non string')
+            TypeError('nameEnding is not a string')
+            ValueError('htmlString is empty')
+            ValueError('dateSearchPhrase is empty')
+            ValueError('dateSearchPhrase contains an empty string')
+            ValueError('nameSearchPhrase is empty')
+            ValueError('nameSearchPhrase contains an empty string')
+            ValueError('nameEnding is empty')
+    NOTE:
+        This functions return value does not constitute a stand-alone filename.
+            It will not include a file extension or an appropriate prepended phrase.
+'''
+def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDate=False):
+    
+    retVal = '00000000'
+    dateSearchList = [] # Will contain all the date phrases to search for
+    nameSearchList = [] # Will contain all the name phrases to search for
+    imageDate = ''
+    imageName = ''
+
+    # 1. INPUT VALIDATION
+    ## 1.1. htmlString
+    if isinstance(htmlString, str) is False:
+        raise TypeError('htmlString is not a string')
+    elif htmlString.__len__() == 0:
+        raise ValueError('htmlString is empty')
+
+    ## 1.2. dateSearchPhrase
+    if isinstance(dateSearchPhrase, list) is False:
+        if isinstance(dateSearchPhrase, str) is False:
+            raise TypeError('dateSearchPhrase is not a string or a list')
+        else:
+            if dateSearchPhrase.__len__() == 0:
+                raise ValueError('dateSearchPhrase is empty')
+            else:
+                dateSearchList = [dateSearchPhrase.lower()]
+    else:
+        for entry in dateSearchPhrase:
+            if isinstance(entry, str) is False:
+                raise TypeError('dateSearchPhrase contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('dateSearchPhrase contains an empty string')
+            else:
+                dateSearchList.append(entry.lower())
+
+    if dateSearchList.__len__() == 0:
+        raise ValueError('dateSearchPhrase is empty')
+
+    ## 1.3. nameSearchPhrase
+    if isinstance(nameSearchPhrase, list) is False:
+        if isinstance(nameSearchPhrase, str) is False:
+            raise TypeError('nameSearchPhrase is not a string or a list')
+        else:
+            if nameSearchPhrase.__len__() == 0:
+                raise ValueError('nameSearchPhrase is empty')
+            else:
+                nameSearchList = [nameSearchPhrase.lower()]
+    else:
+        for entry in nameSearchPhrase:
+            if isinstance(entry, str) is False:
+                raise TypeError('nameSearchPhrase contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('nameSearchPhrase contains an empty string')
+            else:
+                nameSearchList.append(entry.lower())
+
+    if nameSearchList.__len__() == 0:
+        raise ValueError('nameSearchPhrase is empty')
+
+    ## 1.4. nameEnding
+    if isinstance(nameEnding, str) is False:
+        raise TypeError('nameEnding is not a string')
+    elif nameEnding.__len__() == 0:
+        raise ValueError('nameEnding is empty')
+
+    ## 1.5. skipDate
+    if isinstance(skipDate, bool) is False:
+        raise TypeError('skipDate is not a bool')
+
+    # 2. SPLIT THE HTML
+    htmlList = re.split('\n|</a>|</div>', htmlString.lower())
+
+    # 3. GO DATE SEARCHING
+    for entry in htmlList:
+        if imageDate.__len__() == 8 and imageDate != '00000000':
+            break # Found a date.  Stop looking.
+        for phrase in dateSearchList:
+            if entry.find(phrase) >= 0:
+                imageDate = find_the_date(entry)
+                # Test the result of find_the_date()
+                if imageDate == '00000000':
+                    imageDate = ''
+                    continue
+                elif imageDate.__len__() == 8:
+                    htmlList.insert(0, entry) # Put the 'date' hit at the front of the list for 'name' searching
+                    break # Found a date.  Stop looking.
+
+    # 4. GO NAME SEARCHING
+    if (imageDate.__len__() == 8 and imageDate != '00000000') or skipDate is True:
+        for entry in htmlList:
+            if imageName.__len__() > 0:
+                break # Found a name.  Stop looking.
+            for phrase in nameSearchList:
+                if entry.find(phrase) >= 0:
+                    # 4.1. Slice the entry
+                    imageName = entry[entry.find(phrase) + phrase.__len__():]
+                    imageName = imageName[:imageName.find(nameEnding)]
+
+                    # 4.2. Trim unwanted characters
+#                    imageName = trim_the_name(imageName) # Save this until *AFTER* finding the original case-sensitive entry
+                    
+                    # 4.3. Verify work
+                    if imageName.__len__() > 0:
+                        break # Found a name.  Stop looking.
+
+        ## 5. PUT IT ALL TOGETHER
+        #retVal = imageDate
+
+        #if imageName.__len__() > 0:
+        #    retVal = retVal + '_' + imageName    
+
+        # 5. Return original case-sensitive entry
+        ## 5.1. Find original case-sensitive entry
+        if imageName.__len__() > 0:
+            temp = htmlString[htmlString.lower().find(imageName):]
+            temp = temp[:imageName.__len__()]
+            imageName = temp
+            # 5.2. Trim unwanted characters
+            imageName = trim_the_name(imageName)
+            
+        ## 5.2. Put it all together
+        ### 5.2.1. Image date Found
+        if imageDate.__len__() == 8 and imageDate != '00000000':
+            retVal = imageDate
+            ### 5.2.1. ...and image name found
+            if imageName.__len__() > 0:
+                retVal = retVal + '_' + imageName    
+        ### 5.2.2 Image date NOT found
+        elif skipDate is True and imageName.__len__() > 0:
+            ### 5.2.2. ...and image name found
+            retVal = imageName
+
+
+
+    return retVal
+
+
+'''
+    Purpose: Find a URL buried in a string of raw HTML given search criteria
+    Input:
+        htmlString - a string of raw HTML code (not a list)
+        searchPhrase - a string or list of strings that indicate we've found the right HTML line
+        searchStart - either a string or list of strings to begin searching with
+        searchStop - either a string or list of strings to end the search
+    Output: 
+        A string representing the given URL on success
+        An empty string if:
+            No occurrences of searchStart were found
+            searchStart and searchStop were sequential in the string
+    Exceptions:
+            TypeError('htmlString is not a string')
+            TypeError('searchPhrase is not a string or a list')
+            TypeError('searchPhrase contains a non string')
+            TypeError('<searchVar> is not a string or a list')
+            TypeError('<searchVar> is not a string or a list')
+            TypeError('<searchVar> contains a non string')
+            ValueError('htmlString is empty')
+            ValueError('searchStart is empty')
+            ValueError('searchStart contains an empty string')
+            ValueError('<searchVar> is empty')
+            ValueError('<searchVar> contains an empty string')
+    NOTE:
+        This is a bookend search.  This function call:
+            find_a_URL('garbagegarbagegarbage<searchStart>needle<searchStop>garbagegarbagegarbage', 'garbagegarbage<searchStart>', <searchStart>, <searchStop>)
+            ...will return 'needle<searchStop>'
+'''
+def find_a_URL(htmlString, searchPhrase, searchStart, searchStop):
+    
+    retVal = ''
+    searchList = [] # Will contain all the phrases to search for
+    startList = [] # Will contain all the start delimiters
+    stopList = [] # Will contain all the stop delimiters
+
+    # 1. INPUT VALIDATION
+    ## 1.1. htmlString
+    if isinstance(htmlString, str) is False:
+        raise TypeError('htmlString is not a string')
+    elif htmlString.__len__() == 0:
+        raise ValueError('htmlString is empty')
+
+    ## 1.2. searchPhrase
+    if isinstance(searchPhrase, list) is False:
+        if isinstance(searchPhrase, str) is False:
+            raise TypeError('searchPhrase is not a string or a list')
+        else:
+            searchList = [searchPhrase.lower()]
+    else:
+        for entry in searchPhrase:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchPhrase contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchPhrase contains an empty string')
+            else:
+                searchList.append(entry.lower())
+
+    if searchList.__len__() == 0:
+        raise ValueError('searchPhrase is empty')
+
+    ## 1.3. searchStart
+    if isinstance(searchStart, list) is False:
+        if isinstance(searchStart, str) is False:
+            raise TypeError('searchStart is not a string or a list')
+        else:
+            startList = [searchStart.lower()]
+    else:
+        for entry in searchStart:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchStart contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchStart contains an empty string')
+            else:
+                startList.append(entry.lower())
+
+    if startList.__len__() == 0:
+        raise ValueError('searchStart is empty')
+
+    ## 1.4. searchStop
+    if isinstance(searchStop, list) is False:
+        if isinstance(searchStop, str) is False:
+            raise TypeError('searchStop is not a string or a list')
+        else:
+            stopList = [searchStop.lower()]
+    else:
+        for entry in searchStop:
+            if isinstance(entry, str) is False:
+                raise TypeError('searchStop contains a non string')
+            elif entry.__len__() == 0:
+                raise ValueError('searchStop contains an empty string')
+            else:
+                stopList.append(entry.lower())
+
+    if stopList.__len__() == 0:
+        raise ValueError('searchStop is empty')
+
+    # 2. SPLIT THE HTML
+    htmlList = re.split('\n|</a>|</div>', htmlString.lower())
+
+    # 3. GO SEARCHING
+    for entry in htmlList:
+        if retVal.__len__() > 0:
+            break # It's been found
+        for phrase in searchList:
+            if entry.find(phrase) >= 0:
+                ## This may be it
+                # 3.1. Find the beginning
+                for start in startList:
+                    if entry.find(start) >= 0:
+                        retVal = entry[entry.find(start) + start.__len__():]
+                        break # Found the beginning so stop looking
+
+                # 3.2. Find the end
+                if retVal.__len__() > 0:
+                    for stop in stopList:
+                        if entry.find(stop) >= 0:
+                            retVal = retVal[:retVal.find(stop) + stop.__len__()]
+                            break # Found the end so stop looking
+
+                ### MOVED LOWER... Trim the URL after the original is found in htmlString
+                ## 3.3. Trim the URL
+                #if retVal.__len__() > 0:
+                #    retVal = retVal.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
+
+                # 3.4. Verify work
+                if retVal.__len__() > 0:
+                    break
+
+    # 4. Return original case-sensitive entry
+    ## 4.1. Find original case-sensitive entry
+    if retVal.__len__() > 0:
+        temp = htmlString[htmlString.lower().find(retVal):]
+        temp = temp[:retVal.__len__()]
+        retVal = temp
+
+        ## 4.2. Trim the URL
+        retVal = retVal.replace(' ', '%20') # urlopen() doesn't like spaces in the URL
+
+    return retVal    
 
 
 '''
@@ -53,9 +376,13 @@ def trim_the_name(potentialName):
         retVal = retVal.replace('nbsp', "")     # non-breaking space
         # CATCH ALL
         retVal = re.sub('[^A-Za-z0-9-_]+', '', retVal) # Catch all
+        # Small quirk
+        retVal = retVal.replace('39', "'")
         # CLEAN UP
-        retVal = retVal.replace('__','_')
-        retVal = retVal.replace('--','-')  
+        while retVal.find('__') >= 0:
+            retVal = retVal.replace('__','_')
+        while retVal.find('--') >= 0:
+            retVal = retVal.replace('--','-')  
     else:
         retVal = ''
 
