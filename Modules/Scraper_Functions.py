@@ -149,7 +149,7 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEndin
                     imageName = imageName[:imageName.find(nameEnding)]
 
                     # 4.2. Trim unwanted characters
-                    imageName = trim_the_name(imageName)
+#                    imageName = trim_the_name(imageName) # Save this until *AFTER* finding the original case-sensitive entry
                     
                     # 4.3. Verify work
                     if imageName.__len__() > 0:
@@ -167,6 +167,8 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEndin
             temp = htmlString[htmlString.lower().find(imageName):]
             temp = temp[:imageName.__len__()]
             imageName = temp
+            # 5.2. Trim unwanted characters
+            imageName = trim_the_name(imageName)
             
         ## 5.2. Put it all together
         ### 5.2.1. Image date Found
