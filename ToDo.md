@@ -22,10 +22,13 @@
             [ ]   Is it possible to strip metadata off the downloaded file?
         [ ] Store 404 images and/or their URLs and come back to them later?
         (This requires extrication of is_this_URLs_file_already_downloaded(URL) into a Scraper Function function)
-        [ ] Extricate duplicate code into Scraper_Functions (e.g., is this relative or an absolute URL, strip a string through slicing)
-        [ ] Sometimes there's redundancy between nav-back and base URL.
-            [ ] Utilize base URL for relative URL assignment?
-            [ ] .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
+        [ ] Extricate duplicate code into Scraper_Functions
+            [ ] Is this relative or an absolute URL <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
+            [ ] Fix problems with link that urllib doesn't like (see: //imgs.xkcd.com/comics/team_chat.png) <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
+            [ ] Strip a string through slicing
+            [ ] Sometimes there's redundancy between nav-back and base URL.
+                [ ] Utilize base URL for relative URL assignment?
+                [ ] .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
         [ ] ROBOTS.TXT!
         [ ] (Expanded) List of acceptable image file extensions
         [ ] XKCD
@@ -35,6 +38,7 @@
             [ ] Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
             [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
             [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
+            [ ] False positives on filename dates (see: http://www.xkcd.com/1779/... reading 20170120 just from 2017?!  Check get_the_filename()/get_the_date())
     [ ] trim_the_name() (Scraper Functions)
         [ ] Implement check for forbidden filename characters
 
