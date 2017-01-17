@@ -230,7 +230,7 @@ while True:
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
-        tempPrefix = baseURL # Default stance
+        tempPrefix = rootURL # Default stance
 
         for indicator in fullURLIndicatorList:
             if imageURL.find(indicator) >= 0:
@@ -347,7 +347,7 @@ while True:
 
     # 11.2. Change relative URLs to absolute URLs
     if prevURL.__len__() > 0:
-        tempPrefix = baseURL # Default stance
+        tempPrefix = rootURL # Default stance
 
         for indicator in fullURLIndicatorList:
             if prevURL.find(indicator) >= 0:
