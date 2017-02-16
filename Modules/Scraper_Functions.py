@@ -38,8 +38,6 @@ import collections
         TypeError('targetURL is not a string')
         ValueError('baseURL is empty')
         ValueError('targetURL is empty')   
-    NOTE:
-        
 '''
 def is_URL_abs(baseURL, targetURL):
     retVal = False
