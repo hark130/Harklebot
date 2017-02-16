@@ -123,7 +123,8 @@ elif 'HOME' in os.environ:
 # ./Pictures/
 else:
     SAVE_PATH = os.path.join('Pictures', webComicName)    
-rootURL = get_root_URL(baseURL)
+# No longer needs rootURL... this kludge was properly replicated in make_rel_URL_abs()
+#rootURL = get_root_URL(baseURL)
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 firstURL = ''               # Holds 'first' URL and determines when to stop scraping
