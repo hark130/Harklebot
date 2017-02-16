@@ -131,6 +131,8 @@ def is_URL_abs(baseURL, targetURL):
             http://www.cad-comic.com/sillies/ *vs* http://www.cad-comic.com
 '''
 def make_rel_URL_abs(baseURL, targetURL):
+    retVal = ''
+    
     # 1. INPUT VALIDATION
     ## 1.1. baseURL
     if isinstance(baseURL, str) is False:
@@ -144,6 +146,24 @@ def make_rel_URL_abs(baseURL, targetURL):
     elif targetURL.__len__() == 0:
         raise ValueError('targetURL is empty')    
 
+    # 2. TEST targetURL
+    ## 2.1. Is targetURL already absolute?
+    try:
+        result = is_URL_abs(baseURL, targetURL)
+    except Exception as err:
+        raise(err)
+    else:
+        if result is True:
+            retVal = targetURL
+            
+    ## 2.2. Is there overlap between baseURL and targetURL
+        else:
+            baseURLPathList = baseURL.split('/')
+            targetURLPathList = targetURL.split('/')
+            
+            ############################# CONTINUE HERE
+        
+    return retVal
 '''
     Purpose: Determine a portion of an image URL's eventual filename buried in a string of raw HTML given search criteria
     Input:
