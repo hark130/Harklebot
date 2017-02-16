@@ -57,7 +57,7 @@ def is_URL_abs(baseURL, targetURL):
         
     # 2. BUILD INDICATOR LIST
     fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:', 'https:']
-    fullURLIndicatorList.append(get_root_URL(baseURL))
+    fullURLIndicatorList = fullURLIndicatorList.append(get_root_URL(baseURL))
     
     # 3. BUILD TOP-LEVEL DOMAIN (TLD) LIST
     # https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
@@ -153,17 +153,41 @@ def make_rel_URL_abs(baseURL, targetURL):
     except Exception as err:
         raise(err)
     else:
-        if result is True:
+        if result is True: # targetURL is already an absolute URL
             retVal = targetURL
             
     ## 2.2. Is there overlap between baseURL and targetURL
         else:
+            ### 2.2.1. Split the baseURL into a list of paths
             baseURLPathList = baseURL.split('/')
-            targetURLPathList = targetURL.split('/')
             
-            ############################# CONTINUE HERE
+            ### 2.2.2. Strip the targetURL of any leading slashes
+            tempTargetURL = targetURL
+            
+            while tempTargetURL.find('/') == 0:
+                tempTargetURL = tempTargetURL[1:]
+            
+            ### 2.2.3. Split the targetURL into a list of paths
+            targetURLPathList = tempTargetURL.split('/')
+            
+            ### 2.2.4. Look for overlap while building absolute target URL
+            absTargetURLPathList = []
+            
+            for basePath in baseURLPathList:
+                if basePath == targetURLPathList[0]: # Found an overlap
+                    for targetPath in targetURLPathList: # Copy the overlap
+                        absTargetURLPathList = absTargetURLPathList.append(targetPath)
+
+                    break # Done copying
+                else: # No overlap
+                    absTargetURLPathList = absTargetURLPathList.append(basePath)
+                    
+            ### 2.2.5. Rebuild the absolute URL
+            retVal = '/'.join(absTargetURLPathList)
         
     return retVal
+
+
 '''
     Purpose: Determine a portion of an image URL's eventual filename buried in a string of raw HTML given search criteria
     Input:
