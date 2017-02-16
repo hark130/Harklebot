@@ -49,11 +49,11 @@ import urllib.error
 import sys, os, time, random, re
 # Hacky (?) method to keep modules separate from scraper code
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
-from Scraper_Functions import find_the_date 
-from Scraper_Functions import trim_the_name 
-from Scraper_Functions import find_a_URL 
-from Scraper_Functions import get_image_filename
-from Robot_Reader_Functions import get_root_URL
+#from Scraper_Functions import find_the_date 
+#from Scraper_Functions import trim_the_name 
+#from Scraper_Functions import find_a_URL 
+#from Scraper_Functions import get_image_filename
+#from Robot_Reader_Functions import get_root_URL
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
