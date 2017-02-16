@@ -14,6 +14,7 @@
 #   ADDING: New functionality to fix Ctrl-Alt-Del 'first' relative URL problem
 #           make_rel_url_abs(baseURL, targetURL)
 #           is_url_abs(baseURL, targetURL)
+#   MOVING: URL functions from Robot Reader to Scraper Functions
 #################################################################################
 
 import os
@@ -58,7 +59,7 @@ def is_url_abs(baseURL, targetURL):
         
     # 2. BUILD INDICATOR LIST
     fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:']
-    fullURLIndicatorList.append()
+    fullURLIndicatorList.append(get_root_URL(baseURL))
     
     return retVal
 
