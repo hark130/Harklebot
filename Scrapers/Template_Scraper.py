@@ -371,7 +371,7 @@ while True:
 
     prevURL = prevURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
-    # 11.2. Change relative URLs to absolute URLs
+    ## 11.2. Change relative URLs to absolute URLs
     if prevURL.__len__() > 0:
         # Ensure the prevURL is an absolute URL
         try:
