@@ -12,7 +12,7 @@ import os
 class IsURLAbs(unittest.TestCase):
 
     # Test 1 - TypeError('baseURL is not a string')
-    def test1_baseURL_TypeError1(self):
+    def test1_baseURL_TypeError01(self):
         try:
             result = is_URL_abs(3.14, 'http://www.cad-comic.com/sillies/20130115')
         except TypeError as err:
@@ -22,7 +22,7 @@ class IsURLAbs(unittest.TestCase):
             self.fail('Raised the wrong exception')
             
     # Test 2 - TypeError('baseURL is not a string')
-    def test2_baseURL_TypeError2(self):
+    def test2_baseURL_TypeError02(self):
         try:
             result = is_URL_abs(['http://www.cad-comic.com/sillies/'], 'http://www.cad-comic.com/sillies/20130115')
         except TypeError as err:
@@ -32,7 +32,7 @@ class IsURLAbs(unittest.TestCase):
             self.fail('Raised the wrong exception')
             
     # Test 3 - ValueError('baseURL is empty')
-    def test3_baseURL_ValueError1(self):
+    def test3_baseURL_ValueError01(self):
         try:
             result = is_URL_abs('', 'http://www.cad-comic.com/sillies/20130115')
         except ValueError as err:
@@ -43,7 +43,7 @@ class IsURLAbs(unittest.TestCase):
             
 
     # Test 4 - TypeError('targetURL is not a string')
-    def test4_targetURL_TypeError1(self):
+    def test4_targetURL_TypeError01(self):
         try:
             result = is_URL_abs('http://www.cad-comic.com/sillies/', {'try':'again'})
         except TypeError as err:
@@ -53,7 +53,7 @@ class IsURLAbs(unittest.TestCase):
             self.fail('Raised the wrong exception')
             
     # Test 5 - TypeError('targetURL is not a string')
-    def test5_targetURL_TypeError2(self):
+    def test5_targetURL_TypeError02(self):
         try:
             result = is_URL_abs('http://www.cad-comic.com/sillies/', ['http://www.cad-comic.com/sillies/20130115'])
         except TypeError as err:
@@ -63,7 +63,7 @@ class IsURLAbs(unittest.TestCase):
             self.fail('Raised the wrong exception')
             
     # Test 6 - ValueError('targetURL is empty')
-    def test6_targetURL_ValueError1(self):
+    def test6_targetURL_ValueError01(self):
         try:
             result = is_URL_abs('http://www.cad-comic.com/sillies/', '')
         except ValueError as err:
@@ -72,11 +72,305 @@ class IsURLAbs(unittest.TestCase):
             print(repr(err))
             self.fail('Raised the wrong exception')
             
-    # Test 7 - Valid Input - Normal
-    def test7_ValidInput1(self):
+    # Test 7 - Valid Input - Normal absolute URL
+    def test7_ValidInput01(self):
         try:
-            result = is_URL_abs(
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', 'http://www.cad-comic.com/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
             
+    # Test 8 - Valid Input - Normal absolute URL
+    def test8_ValidInput02(self):
+        try:
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', 'www.cad-comic.com/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 9 - Valid Input - Normal relative URL
+    def test9_ValidInput03(self):
+        try:
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', '/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 10 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test10_TrickyInput01(self):
+        try:
+            result = is_URL_abs('http://pvponline.com/comic', '2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+
+    # Test 11 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test11_TrickyInput02(self):
+        try:
+            result = is_URL_abs('http://pvponline.com', '/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 12 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test12_TrickyInput03(self):
+        try:
+            result = is_URL_abs('pvponline.com', '/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 13 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test13_TrickyInput04(self):
+        try:
+            result = is_URL_abs('pvponline.com/comic', '/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+
+    # Test 14 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test14_TrickyInput05(self):
+        try:
+            result = is_URL_abs('http://pvponline.com/comic', 'pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+
+    # Test 15 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test15_TrickyInput06(self):
+        try:
+            result = is_URL_abs('http://pvponline.com', 'pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 16 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test16_TrickyInput07(self):
+        try:
+            result = is_URL_abs('pvponline.com', 'http://pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 17 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test17_TrickyInput08(self):
+        try:
+            result = is_URL_abs('pvponline.com/comic', 'http://pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 18 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test18_TrickyInput09(self):
+        try:
+            result = is_URL_abs('pvponline.com/comic', 'http://www.pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 19 - Tricky Input - Mixed up association of relaqtive and aboslute
+    def test19_TrickyInput10(self):
+        try:
+            result = is_URL_abs('pvponline.com/comic', 'www.pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 20 - Bad Input - Invalid baseURL
+    def test20_BadInput01(self):
+        try:
+            result = is_URL_abs('not a URL?', '2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 21 - Bad Input - Invalid baseURL
+    def test21_BadInput02(self):
+        try:
+            result = is_URL_abs('not a URL!', 'URL')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 22 - Bad Input - Invalid baseURL
+    def test22_BadInput03(self):
+        try:
+            result = is_URL_abs('definitely not a URL', 'https://xkcd.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 23 - Bad Input - Invalid baseURL
+    def test23_BadInput04(self):
+        try:
+            result = is_URL_abs('probably not a URL', 'www.smbc-comics.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 24 - Bad Input - Invalid targetURL
+    def test24_BadURL01(self):
+        try:
+            result = is_URL_abs('www.smbc-comics.com', 'not a website?')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 25 - Bad Input - Invalid targetURL
+    def test25_BadURL02(self):
+        try:
+            result = is_URL_abs('https://xkcd.com/', 'not a website!')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 26 - Bad Input - Invalid targetURL
+    def test26_BadURL03(self):
+        try:
+            result = is_URL_abs('https://www.xkcd.com/', 'websites typically begin with www and end with a top-level domain like com or org')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)      
+            
+    # Test 27 - Bad Input - Invalid targetURL
+    def test27_BadURL04(self):
+        try:
+            result = is_URL_abs('https://www.xkcd.com/', 'websites typically begin with www. and end with a top-level domain like .com or .org')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)      
+            
+    # Test 28 - Bad Input - Invalid targetURL
+    def test28_BadURL05(self):
+        try:
+            result = is_URL_abs('https://www.xkcd.com/', 'websites typically begin with https: and end with a top-level domain like .com or .org')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)    
+            
+    # Test 29 - Bad Input - Invalid targetURL
+    def test29_BadURL06(self):
+        try:
+            result = is_URL_abs('https://www.xkcd.com/', 'websites typically begin with http: and end with a top-level domain like .com or .org')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)    
+            
+    # Test 30 - Bad Input - Invalid targetURL
+    def test30_BadURL07(self):
+        try:
+            result = is_URL_abs('www.NotAWebsite.com', 'http:\n//\nwww.\nthisisnotarealwebsitebuttheonlyeasywaytoverifythatistoattempttoopenit\n.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)    
+            
+    # Test 31 - Bad Input - Invalid targetURL
+    def test31_BadURL08(self):
+        try:
+            result = is_URL_abs('www.NotAWebsite.com', 'www.\nthisisnotarealwebsitebuttheonlyeasywaytoverifythatistoattempttoopenit\n.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)    
+            
+    # Test 32 - Bad Input - Invalid targetURL
+    def test32_BadURL09(self):
+        try:
+            result = is_URL_abs('www.NotAWebsite.com', 'https:\n//\nthisisnotarealwebsitebuttheonlyeasywaytoverifythatistoattempttoopenit\n.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)    
+            
+    # Test 33 - Bad Input - Invalid targetURL
+    def test33_BadURL10(self):
+        try:
+            result = is_URL_abs('www.NotAWebsite.com', 'https:\n//\nthisisnotarealwebsitebuttheonlyeasywaytoverifythatistoattempttoopenit\n.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)  
+            
+    # Test 34 - Bad Input - Not a single valid URL
+    def test34_BadURL11(self):
+        try:
+            result = is_URL_abs('notaURL', 'ThisisdefinitelynotaURLsinceitdoesnotincludeatopleveldomainlike.cz')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)  
+            
+    # Test 35 - Bad Input - Not a single valid URL
+    def test35_BadURL12(self):
+        try:
+            result = is_URL_abs('Alphabet', 'theAlphabetIsExtendedToInclude.bdAnd.be')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)  
+            
+    # Test 36 - Bad Input - Not a single valid URL
+    def test36_BadURL13(self):
+        try:
+            result = is_URL_abs('Alphabet', 'AlphabetIsExtendedToInclude.asAnd.at')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)  
 
 class FindURL(unittest.TestCase):
 
