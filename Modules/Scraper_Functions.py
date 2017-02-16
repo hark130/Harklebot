@@ -58,7 +58,7 @@ def is_URL_abs(baseURL, targetURL):
         raise ValueError('targetURL is empty')    
         
     # 2. BUILD INDICATOR LIST
-    fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:']
+    fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:', 'https:']
     fullURLIndicatorList.append(get_root_URL(baseURL))
     
     # 3. BUILD TOP-LEVEL DOMAIN (TLD) LIST
