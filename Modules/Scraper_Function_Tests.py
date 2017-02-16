@@ -2,11 +2,267 @@ from Scraper_Functions import find_the_date
 from Scraper_Functions import find_a_URL 
 from Scraper_Functions import get_image_filename
 from Scraper_Functions import is_URL_abs
-# def is_URL_abs(baseURL, targetURL)
+from Scraper_Functions import make_rel_URL_abs
+# make_rel_URL_abs(baseURL, targetURL)
+# is_URL_abs(baseURL, targetURL)
 # find_a_URL(htmlString, searchStart, searchStop)
 # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
 import unittest
 import os
+
+
+class MakeRelURLAbs(unittest.TestCase):
+    
+    # Test 1 - TypeError('baseURL is not a string')
+    def test1_baseURL_TypeError01(self):
+        try:
+            result = make_rel_URL_abs(3.14, 'http://www.cad-comic.com/sillies/20130115')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'baseURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 2 - TypeError('baseURL is not a string')
+    def test2_baseURL_TypeError02(self):
+        try:
+            result = make_rel_URL_abs(['http://www.cad-comic.com/sillies/'], 'http://www.cad-comic.com/sillies/20130115')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'baseURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 3 - ValueError('baseURL is empty')
+    def test3_baseURL_ValueError01(self):
+        try:
+            result = make_rel_URL_abs('', 'http://www.cad-comic.com/sillies/20130115')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'baseURL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+
+    # Test 4 - TypeError('targetURL is not a string')
+    def test4_targetURL_TypeError01(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', {'try':'again'})
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'targetURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 5 - TypeError('targetURL is not a string')
+    def test5_targetURL_TypeError02(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', ['http://www.cad-comic.com/sillies/20130115'])
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'targetURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 6 - ValueError('targetURL is empty')
+    def test6_targetURL_ValueError01(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', '')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'targetURL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 7 - Valid Input - Normal absolute URL
+    def test7_ValidInput01(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', 'http://www.cad-comic.com/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://www.cad-comic.com/sillies/20130115')
+            
+    # Test 8 - Valid Input - Normal absolute URL
+    def test8_ValidInput02(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', 'www.cad-comic.com/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'www.cad-comic.com/sillies/20130115')
+            
+    # Test 9 - Valid Input - Normal relative URL
+    def test9_ValidInput03(self):
+        try:
+            result = make_rel_URL_abs('http://www.cad-comic.com/sillies/', '/sillies/20130115')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://www.cad-comic.com/sillies/20130115')
+            
+    # Test 10 - Tricky Input - Mixed up association of relative and absolute
+    def test10_TrickyInput01(self):
+        try:
+            result = make_rel_URL_abs('http://pvponline.com/comic', '2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+
+    # Test 11 - Tricky Input - Mixed up association of relative and absolute
+    def test11_TrickyInput02(self):
+        try:
+            result = make_rel_URL_abs('http://pvponline.com', '/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+            
+    # Test 12 - Tricky Input - Mixed up association of relative and absolute
+    def test12_TrickyInput03(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com', '/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'pvponline.com/comic/2017-02-16')
+            
+    # Test 13 - Tricky Input - Mixed up association of relative and absolute
+    def test13_TrickyInput04(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com/comic', '/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'pvponline.com/comic/2017-02-16')
+
+    # Test 14 - Tricky Input - Mixed up association of relative and absolute
+    def test14_TrickyInput05(self):
+        try:
+            result = make_rel_URL_abs('http://pvponline.com/comic', 'pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+
+    # Test 15 - Tricky Input - Mixed up association of relative and absolute
+    def test15_TrickyInput06(self):
+        try:
+            result = make_rel_URL_abs('http://pvponline.com', 'pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+            
+    # Test 16 - Tricky Input - Mixed up association of relative and absolute
+    def test16_TrickyInput07(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com', 'http://pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+            
+    # Test 17 - Tricky Input - Mixed up association of relative and absolute
+    def test17_TrickyInput08(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com/comic', 'http://pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://pvponline.com/comic/2017-02-16')
+            
+    # Test 18 - Tricky Input - Mixed up association of relative and absolute
+    def test18_TrickyInput09(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com/comic', 'http://www.pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://www.pvponline.com/comic/2017-02-16')
+            
+    # Test 19 - Tricky Input - Mixed up association of relative and absolute
+    def test19_TrickyInput10(self):
+        try:
+            result = make_rel_URL_abs('pvponline.com/comic', 'www.pvponline.com/comic/2017-02-16')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'www.pvponline.com/comic/2017-02-16')
+            
+    # Test 20 - Bad Input - Invalid URLs
+    def test20_BadInput01(self):
+        try:
+            result = is_URL_abs('just/some/stuff', 'stuff/thrown/together')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == 'just/some/stuff/thrown/together')
+            
+    # Test 21 - Bad Input - Invalid URLs
+    def test21_BadInput02(self):
+        try:
+            result = is_URL_abs('/just/some/stuff', 'stuff/thrown/together')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == '/just/some/stuff/thrown/together')
+            
+    # Test 22 - Bad Input - Invalid URLs
+    def test22_BadInput03(self):
+        try:
+            result = is_URL_abs('/just/some/stuff/', 'stuff/thrown/together')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == '/just/some/stuff/thrown/together')
+            
+    # Test 22 - Bad Input - Invalid URLs
+    def test22_BadInput04(self):
+        try:
+            result = is_URL_abs('/just/some/stuff/', '/stuff/thrown/together')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == '/just/some/stuff/thrown/together')
+            
+    # Test 23 - Bad Input - Invalid URLs
+    def test23_BadInput05(self):
+        try:
+            result = is_URL_abs('/just/some/stuff/', '/stuff/thrown/together/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == '/just/some/stuff/thrown/together/')
+            
+    # Test 24 - Bad Input - Invalid URLs
+    def test24_BadInput06(self):
+        try:
+            result = is_URL_abs('/just/some/stuffing/stuffed/inside/some/other/stuff/', '/stuff/thrown/together/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result == '/just/some/stuffing/stuffed/inside/some/other/stuff/thrown/together/')
 
 
 class IsURLAbs(unittest.TestCase):
@@ -102,7 +358,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 10 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 10 - Tricky Input - Mixed up association of relative and aboslute
     def test10_TrickyInput01(self):
         try:
             result = is_URL_abs('http://pvponline.com/comic', '2017-02-16')
@@ -112,7 +368,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)
 
-    # Test 11 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 11 - Tricky Input - Mixed up association of relative and aboslute
     def test11_TrickyInput02(self):
         try:
             result = is_URL_abs('http://pvponline.com', '/comic/2017-02-16')
@@ -122,7 +378,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 12 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 12 - Tricky Input - Mixed up association of relative and aboslute
     def test12_TrickyInput03(self):
         try:
             result = is_URL_abs('pvponline.com', '/comic/2017-02-16')
@@ -132,7 +388,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 13 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 13 - Tricky Input - Mixed up association of relative and aboslute
     def test13_TrickyInput04(self):
         try:
             result = is_URL_abs('pvponline.com/comic', '/2017-02-16')
@@ -142,7 +398,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)
 
-    # Test 14 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 14 - Tricky Input - Mixed up association of relative and aboslute
     def test14_TrickyInput05(self):
         try:
             result = is_URL_abs('http://pvponline.com/comic', 'pvponline.com/comic/2017-02-16')
@@ -152,7 +408,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertTrue(result)
 
-    # Test 15 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 15 - Tricky Input - Mixed up association of relative and aboslute
     def test15_TrickyInput06(self):
         try:
             result = is_URL_abs('http://pvponline.com', 'pvponline.com/comic/2017-02-16')
@@ -162,7 +418,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertTrue(result)
             
-    # Test 16 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 16 - Tricky Input - Mixed up association of relative and aboslute
     def test16_TrickyInput07(self):
         try:
             result = is_URL_abs('pvponline.com', 'http://pvponline.com/comic/2017-02-16')
@@ -172,7 +428,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertTrue(result)
             
-    # Test 17 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 17 - Tricky Input - Mixed up association of relative and aboslute
     def test17_TrickyInput08(self):
         try:
             result = is_URL_abs('pvponline.com/comic', 'http://pvponline.com/comic/2017-02-16')
@@ -182,7 +438,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertTrue(result)
             
-    # Test 18 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 18 - Tricky Input - Mixed up association of relative and aboslute
     def test18_TrickyInput09(self):
         try:
             result = is_URL_abs('pvponline.com/comic', 'http://www.pvponline.com/comic/2017-02-16')
@@ -192,7 +448,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertTrue(result)
             
-    # Test 19 - Tricky Input - Mixed up association of relaqtive and aboslute
+    # Test 19 - Tricky Input - Mixed up association of relative and aboslute
     def test19_TrickyInput10(self):
         try:
             result = is_URL_abs('pvponline.com/comic', 'www.pvponline.com/comic/2017-02-16')
