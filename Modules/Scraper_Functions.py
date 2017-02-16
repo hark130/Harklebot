@@ -11,6 +11,9 @@
 #   ADDING: Extricated imageURL --> filename conversion into a function named
 #               find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
 #               get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
+#   ADDING: New functionality to fix Ctrl-Alt-Del 'first' relative URL problem
+#           make_rel_url_abs(baseURL, targetURL)
+#           is_url_abs(baseURL, targetURL)
 #################################################################################
 
 import os
@@ -20,6 +23,75 @@ import re
 #import htmlentitydefs
 import collections
 
+
+'''
+    Purpose: Determine if a URL represents an absolute path
+    Input:
+        baseURL - string representation of the domain name portion of a site
+        targetURL - string representation of a URL associated with baseURL
+    Output:
+        True - targetURL is absolute
+        False - targetURL is a relative URL associated with baseURL
+    Exceptions:
+        TypeError('baseURL is not a string')
+        TypeError('targetURL is not a string')
+        ValueError('baseURL is empty')
+        ValueError('targetURL is empty')   
+    NOTE:
+        
+'''
+def is_url_abs(baseURL, targetURL):
+    retVal = False
+
+    # 1. INPUT VALIDATION
+    ## 1.1. baseURL
+    if isinstance(baseURL, str) is False:
+        raise TypeError('baseURL is not a string')
+    elif baseURL.__len__() == 0:
+        raise ValueError('baseURL is empty')
+        
+    ## 1.2. targetURL
+    if isinstance(targetURL, str) is False:
+        raise TypeError('targetURL is not a string')
+    elif targetURL.__len__() == 0:
+        raise ValueError('targetURL is empty')    
+        
+    # 2. BUILD INDICATOR LIST
+    fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:']
+    fullURLIndicatorList.append()
+    
+    return retVal
+
+'''
+    Purpose: Return the absolute URL of targetURL given the baseURL
+    Input:
+        baseURL - string representation of the domain name portion of a site
+        targetURL - string representation of a URL associated with baseURL
+    Output:
+        A string which contains the absolute version of targetURL
+    Exceptions:
+        TypeError('baseURL is not a string')
+        TypeError('targetURL is not a string')
+        ValueError('baseURL is empty')
+        ValueError('targetURL is empty')    
+    NOTE:
+        targetURL may be absolute or relative
+        baseURL may be different than the "root" URL see:
+            http://www.cad-comic.com/sillies/ *vs* http://www.cad-comic.com
+'''
+def make_rel_url_abs(baseURL, targetURL):
+    # 1. INPUT VALIDATION
+    ## 1.1. baseURL
+    if isinstance(baseURL, str) is False:
+        raise TypeError('baseURL is not a string')
+    elif baseURL.__len__() == 0:
+        raise ValueError('baseURL is empty')
+        
+    ## 1.2. targetURL
+    if isinstance(targetURL, str) is False:
+        raise TypeError('targetURL is not a string')
+    elif targetURL.__len__() == 0:
+        raise ValueError('targetURL is empty')    
 
 '''
     Purpose: Determine a portion of an image URL's eventual filename buried in a string of raw HTML given search criteria
@@ -705,5 +777,93 @@ def find_the_date(pageHTML):
 
 # NOTES:
 #       Choose published over modified
+
+    return retVal
+
+
+'''
+Purpose: Remove extraneous garbage from any URL
+Input: URL - a string representing the URL to trim
+Exceptions: TypeError('URL is not a string')
+NOTE:   
+        Removes any double slashes (//) except from http://
+        Removes any spaces
+        Removes any trailing slashes (/)
+'''
+def trim_a_URL(URL):
+
+    retVal = ''
+
+    if isinstance(URL, str):
+        retVal = URL
+
+        # 1. FIX ANY ERRONEOUS DOUBLE SLASHES
+        while URL.count('://') != URL.count('//'):
+            retVal = URL.replace('//','/').replace(':/','://')
+
+        # 2. REMOVE ANY SPACES
+        retVal.replace(' ','')
+        
+        # 3. REMOVE TRAILING SLASHES
+        if retVal[retVal.__len__() - 1:] == '/':
+            retVal = retVal[:retVal.__len__() - 1]     
+    
+    else:
+        raise TypeError('URL is not a string')       
+
+    return retVal
+
+
+'''
+Purpose: Extract the root URL from any properly formed URL
+Input: URL - a string representing the URL from which to extricate a root URL
+Exceptions: 
+        ValueError('URL is not a URL')
+        TypeError('URL is not a string')
+NOTE: Calls trim_a_URL() on URL  
+'''
+def get_root_URL(URL):
+
+    retVal = ''
+    # Ordered list (most restrictive to least restrictive) of website beginnings
+    SITE_DELIMITER_START = ['www.', '//', ':', 'https', 'http']
+    # Unordered list of website TLDs
+    SITE_DELIMITER_STOP = ['.com', '.org', '.net', '.int', '.edu', '.gov', '.mil', '.arpa']
+
+    if isinstance(URL, str):
+        # 1. CLEAN UP THE URL
+        try:
+            retVal = trim_a_URL(URL)
+        except Exception as err:
+            print(repr(err))
+
+        # 2. REMOVE ANY SUBDIRECTORIES
+        ## 2.1. Check for 'http://'
+        urlIndex = retVal.find('//')
+        ## 2.2. Set the starting index as apporpriate
+        if urlIndex >= 0:
+            urlIndex += 2 # String length
+        else:
+            urlIndex = 0
+
+        # 2.3. Starting after any occurrences of 'http://', find the first subdirectory...
+        urlIndex = retVal.find('/', urlIndex)
+        if urlIndex >= 0:
+            ## ...and slice it out
+            retVal = retVal[:urlIndex]
+
+        # 3. GET TO THE TLD
+        foundSuffix = '' # Holds the TLD suffix found in the URL
+        for suffix in SITE_DELIMITER_STOP:
+            if retVal.find(suffix) >= 0:
+                foundSuffix = suffix
+                retVal = retVal[:retVal.find(suffix) + suffix.__len__()]
+                break # There should only be one so stop looking for more
+
+        # Didn't find a suffix
+        if foundSuffix.__len__() == 0:
+            raise ValueError('URL is not a URL')
+    else:
+        raise TypeError('URL is not a string')        
 
     return retVal
