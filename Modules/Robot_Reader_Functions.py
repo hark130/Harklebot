@@ -3,6 +3,8 @@ from urllib.request import urlopen
 from urllib.request import Request
 import urllib.error
 import re
+from Scraper_Functions import trim_a_URL
+from Scraper_Functions import get_root_URL
 
 
 '''
@@ -88,94 +90,6 @@ def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
     if robotsFile.__len__() >= 0:
 #        print(robotsFile) # DEBUGGING    
         retVal = parse_robots_txt(trimmedURL, robotsFile, userAgent)
-
-    return retVal
-
-
-'''
-Purpose: Remove extraneous garbage from any URL
-Input: URL - a string representing the URL to trim
-Exceptions: TypeError('URL is not a string')
-NOTE:   
-        Removes any double slashes (//) except from http://
-        Removes any spaces
-        Removes any trailing slashes (/)
-'''
-def trim_a_URL(URL):
-
-    retVal = ''
-
-    if isinstance(URL, str):
-        retVal = URL
-
-        # 1. FIX ANY ERRONEOUS DOUBLE SLASHES
-        while URL.count('://') != URL.count('//'):
-            retVal = URL.replace('//','/').replace(':/','://')
-
-        # 2. REMOVE ANY SPACES
-        retVal.replace(' ','')
-        
-        # 3. REMOVE TRAILING SLASHES
-        if retVal[retVal.__len__() - 1:] == '/':
-            retVal = retVal[:retVal.__len__() - 1]     
-    
-    else:
-        raise TypeError('URL is not a string')       
-
-    return retVal
-
-
-'''
-Purpose: Extract the root URL from any properly formed URL
-Input: URL - a string representing the URL from which to extricate a root URL
-Exceptions: 
-        ValueError('URL is not a URL')
-        TypeError('URL is not a string')
-NOTE: Calls trim_a_URL() on URL  
-'''
-def get_root_URL(URL):
-
-    retVal = ''
-    # Ordered list (most restrictive to least restrictive) of website beginnings
-    SITE_DELIMITER_START = ['www.', '//', ':', 'https', 'http']
-    # Unordered list of website TLDs
-    SITE_DELIMITER_STOP = ['.com', '.org', '.net', '.int', '.edu', '.gov', '.mil', '.arpa']
-
-    if isinstance(URL, str):
-        # 1. CLEAN UP THE URL
-        try:
-            retVal = trim_a_URL(URL)
-        except Exception as err:
-            print(repr(err))
-
-        # 2. REMOVE ANY SUBDIRECTORIES
-        ## 2.1. Check for 'http://'
-        urlIndex = retVal.find('//')
-        ## 2.2. Set the starting index as apporpriate
-        if urlIndex >= 0:
-            urlIndex += 2 # String length
-        else:
-            urlIndex = 0
-
-        # 2.3. Starting after any occurrences of 'http://', find the first subdirectory...
-        urlIndex = retVal.find('/', urlIndex)
-        if urlIndex >= 0:
-            ## ...and slice it out
-            retVal = retVal[:urlIndex]
-
-        # 3. GET TO THE TLD
-        foundSuffix = '' # Holds the TLD suffix found in the URL
-        for suffix in SITE_DELIMITER_STOP:
-            if retVal.find(suffix) >= 0:
-                foundSuffix = suffix
-                retVal = retVal[:retVal.find(suffix) + suffix.__len__()]
-                break # There should only be one so stop looking for more
-
-        # Didn't find a suffix
-        if foundSuffix.__len__() == 0:
-            raise ValueError('URL is not a URL')
-    else:
-        raise TypeError('URL is not a string')        
 
     return retVal
 
