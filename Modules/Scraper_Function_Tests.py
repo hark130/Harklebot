@@ -1,10 +1,82 @@
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import find_a_URL 
 from Scraper_Functions import get_image_filename
+from Scraper_Functions import is_URL_abs
+# def is_URL_abs(baseURL, targetURL)
 # find_a_URL(htmlString, searchStart, searchStop)
 # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
 import unittest
 import os
+
+
+class IsURLAbs(unittest.TestCase):
+
+    # Test 1 - TypeError('baseURL is not a string')
+    def test1_baseURL_TypeError1(self):
+        try:
+            result = is_URL_abs(3.14, 'http://www.cad-comic.com/sillies/20130115')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'baseURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 2 - TypeError('baseURL is not a string')
+    def test2_baseURL_TypeError2(self):
+        try:
+            result = is_URL_abs(['http://www.cad-comic.com/sillies/'], 'http://www.cad-comic.com/sillies/20130115')
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'baseURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 3 - ValueError('baseURL is empty')
+    def test3_baseURL_ValueError1(self):
+        try:
+            result = is_URL_abs('', 'http://www.cad-comic.com/sillies/20130115')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'baseURL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+
+    # Test 4 - TypeError('targetURL is not a string')
+    def test4_targetURL_TypeError1(self):
+        try:
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', {'try':'again'})
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'targetURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 5 - TypeError('targetURL is not a string')
+    def test5_targetURL_TypeError2(self):
+        try:
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', ['http://www.cad-comic.com/sillies/20130115'])
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'targetURL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 6 - ValueError('targetURL is empty')
+    def test6_targetURL_ValueError1(self):
+        try:
+            result = is_URL_abs('http://www.cad-comic.com/sillies/', '')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'targetURL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 7 - Valid Input - Normal
+    def test7_ValidInput1(self):
+        try:
+            result = is_URL_abs(
+            
 
 class FindURL(unittest.TestCase):
 
