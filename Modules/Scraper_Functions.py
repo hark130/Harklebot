@@ -12,8 +12,8 @@
 #               find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
 #               get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
 #   ADDING: New functionality to fix Ctrl-Alt-Del 'first' relative URL problem
-#           make_rel_url_abs(baseURL, targetURL)
-#           is_url_abs(baseURL, targetURL)
+#           make_rel_URL_abs(baseURL, targetURL)
+#           is_URL_abs(baseURL, targetURL)
 #   MOVING: URL functions from Robot Reader to Scraper Functions
 #################################################################################
 
@@ -41,7 +41,7 @@ import collections
     NOTE:
         
 '''
-def is_url_abs(baseURL, targetURL):
+def is_URL_abs(baseURL, targetURL):
     retVal = False
 
     # 1. INPUT VALIDATION
@@ -61,7 +61,7 @@ def is_url_abs(baseURL, targetURL):
     fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:']
     fullURLIndicatorList.append(get_root_URL(baseURL))
     
-    # 3. BUILD TOP LEVEL DOMAIN (TLD) LIST
+    # 3. BUILD TOP-LEVEL DOMAIN (TLD) LIST
     # https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
     tldList = [
         # Generic top-level domains
@@ -99,7 +99,21 @@ def is_url_abs(baseURL, targetURL):
         '.yt', '.za', '.zm', '.zw'	
     ]
     
+    # 4. TEST targetURL
+    for indicator in fullURLIndicatorList:
+        if retVal == True:
+            break # Found a match.  Stop looking.
+        if targetURL.find(indicator) >= 0:
+            for tld in tldList:
+                if indicator.find(tld) > 0: # If the indicator contains a tld...
+                    retVal = True
+                    break # Found a match.  Stop looking.
+                if targetURL.find(tld) >= targetURL.find(indicator): # If the URL's tld comes after the indicator
+                    retVal = True
+                    break # Found a match.  Stop looking.
+    
     return retVal
+
 
 '''
     Purpose: Return the absolute URL of targetURL given the baseURL
@@ -118,7 +132,7 @@ def is_url_abs(baseURL, targetURL):
         baseURL may be different than the "root" URL see:
             http://www.cad-comic.com/sillies/ *vs* http://www.cad-comic.com
 '''
-def make_rel_url_abs(baseURL, targetURL):
+def make_rel_URL_abs(baseURL, targetURL):
     # 1. INPUT VALIDATION
     ## 1.1. baseURL
     if isinstance(baseURL, str) is False:
