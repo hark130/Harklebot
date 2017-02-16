@@ -41,6 +41,9 @@
             [ ] False positives on filename dates (see: http://www.xkcd.com/1779/... reading 20170120 just from 2017?!  Check get_the_filename()/get_the_date())
     [ ] trim_the_name() (Scraper Functions)
         [ ] Implement check for forbidden filename characters
+    [/] is_URL_abs() (Scraper Functions)
+        [ ] Include regex check for invalid URL characters (/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/) see:
+            ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=.
 
 # Complete In-Progress Code #
     [ ] Write unittests for get_root_URL() in Robot_Reader_Function_Tests.py
