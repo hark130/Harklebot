@@ -42,6 +42,9 @@
     [ ] trim_the_name() (Scraper Functions)
         [ ] Implement check for forbidden filename characters
     [/] is_URL_abs() (Scraper Functions)
+    [ ] write is_URL_valid()
+        [ ] Test that start indicators are at the beginning
+        [ ] Test that stop indicators are at the end or immediately followed by a slash (/)
         [ ] Include regex check for invalid URL characters (/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/) see:
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=.
 
