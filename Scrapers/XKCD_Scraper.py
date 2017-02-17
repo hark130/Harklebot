@@ -39,6 +39,8 @@
 # Version 1.2.1
 #   FIXED:  Relative (vs Absolute) URL checks now utilize rootURL instead of
 #               baseURL (CAD-Sillies was breaking)
+#   ADDED:  is_URL_abs() functionality
+#           make_rel_URL_abs() functionality
 #################################################################################
 
 
@@ -49,20 +51,21 @@ import urllib.error
 import sys, os, time, random, re
 # Hacky (?) method to keep modules separate from scraper code
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
-from Scraper_Functions import find_the_date 
-from Scraper_Functions import trim_the_name 
+print("PATH:\t{}".format(sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))))
+#from Scraper_Functions import find_the_date 
+#from Scraper_Functions import trim_the_name 
 from Scraper_Functions import find_a_URL 
 from Scraper_Functions import get_image_filename
-from Robot_Reader_Functions import get_root_URL
+#from Robot_Reader_Functions import get_root_URL
+from Scraper_Functions import make_rel_URL_abs
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
-################################################
-### URL SETUP ###
+################################################### URL SETUP ###
 webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://www.xkcd.com/' # <=--------------------------=UPDATE=--------------------------=>
 targetComicURL = baseURL # Original source
-targetComicURL = 'http://www.xkcd.com/2/' # Start here instead
+#targetComicURL = 'http://www.xkcd.com/2/' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -124,11 +127,13 @@ elif 'HOME' in os.environ:
 # ./Pictures/
 else:
     SAVE_PATH = os.path.join('Pictures', webComicName)    
-rootURL = get_root_URL(baseURL)
+# No longer needs rootURL... this kludge was properly replicated in make_rel_URL_abs()
+#rootURL = get_root_URL(baseURL)
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 firstURL = ''               # Holds 'first' URL and determines when to stop scraping
-fullURLIndicatorList = [rootURL, baseURL, 'www.', 'http:']
+# No longer needs fullURLIndicatorList... functionality extricated into is_URL_abs()
+#fullURLIndicatorList = [rootURL, baseURL, 'www.', 'http:']
 numExistingSkips = 0        # Variable to store the number of files already found
 num404Skips = 0             # Variable to store the number of missing webpages
 skipping = True             # Boolean variable used to determine when to 'fast forward' past image URLs that have already been downloaded
@@ -188,7 +193,7 @@ while True:
     else:
         comicContentType = comicContentType[comicContentType.find('charset'):]
         comicCharset = comicContentType[comicContentType.find('=') + 1:]
-        comicCharset.replace(' ','')
+        comicCharset = comicCharset.replace(' ','')
 #    print("Charset:\t{}".format(comicCharset)) # DEBUGGING
 
     # 3. TRANSLATE PAGE
@@ -225,7 +230,15 @@ while True:
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
     elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
-        print("First URL:\t{}".format(firstURL)) # DEBUGGING    
+        # Ensure the firstURL is an absolute URL
+        try:
+            firstURL = make_rel_URL_abs(baseURL, firstURL)
+        except Exception as err:
+            print("Error encountered with make_rel_URL_abs()!") # DEBUGGING
+            print(repr(err))
+            sys.exit() # Harsh... consider running find_a_URL() again
+        else:
+            print("First URL:\t{}".format(firstURL)) # DEBUGGING    
 
 
 #    print("\nFetching Image URL:")
@@ -235,21 +248,27 @@ while True:
     imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)               
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
-    ## 6.0. XKCD Kludge... 
-    ## //imgs.xkcd.com/comics/trash.png
-    if imageURL.find('://') < 0:
-        imageURL = imageURL.replace('//', 'http://')
-
     if imageURL.__len__() > 0:
-        tempPrefix = rootURL # Default stance
+        # Ensure the imageURL is an absolute URL
+        try:
+            imageURL = make_rel_URL_abs(baseURL, imageURL)
+        except Exception as err:
+            print("Error encountered with make_rel_URL_abs()!") # DEBUGGING
+            print(repr(err))
+            sys.exit() # Harsh... consider running find_a_URL() again
+        else:
+            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+            
+# Old method prior to make_rel_URL_abs()
+#        tempPrefix = rootURL # Default stance
 
-        for indicator in fullURLIndicatorList:
-            if imageURL.find(indicator) >= 0:
-                tempPrefix = ''
-                break
-        imageURL = tempPrefix + imageURL
+#        for indicator in fullURLIndicatorList:
+#            if imageURL.find(indicator) >= 0:
+#                tempPrefix = ''
+#                break
+#        imageURL = tempPrefix + imageURL
 #        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
-        pass
+#        pass
     else:
         print("Did not find an image URL!")
         sys.exit()
@@ -356,17 +375,29 @@ while True:
 
     prevURL = prevURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
-    # 11.2. Change relative URLs to absolute URLs
+    ## 11.2. Change relative URLs to absolute URLs
     if prevURL.__len__() > 0:
-        tempPrefix = rootURL # Default stance
+        # Ensure the prevURL is an absolute URL
+        try:
+            prevURL = make_rel_URL_abs(baseURL, prevURL)
+        except Exception as err:
+            print("Error encountered with make_rel_URL_abs()!") # DEBUGGING
+            print(repr(err))
+            sys.exit() # Harsh... consider running find_a_URL() again
+        else:
+            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
+            currentURL = prevURL       
+            
+# Old method prior to make_rel_URL_abs()
+#        tempPrefix = rootURL # Default stance
 
-        for indicator in fullURLIndicatorList:
-            if prevURL.find(indicator) >= 0:
-                tempPrefix = ''
-                break
+#        for indicator in fullURLIndicatorList:
+#            if prevURL.find(indicator) >= 0:
+#                tempPrefix = ''
+#                break
 #        print("Prev URL:\t{}".format(prevURL)) # DEBUGGING                
-        currentURL = tempPrefix + prevURL
-        pass
+#        currentURL = tempPrefix + prevURL
+#        pass
 
     # 12. RESET TEMP VARIABLES TO AVOID DUPE DOWNLOADS AND OTHER ERRORS
     incomingFilename = ''       # Local filename to save the incoming image download
