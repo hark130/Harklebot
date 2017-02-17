@@ -57,6 +57,12 @@ def is_URL_valid(URL):
     # ^ matches counter examples
     # Original starting point...
     # re.compile(r"(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+&/)")
+    ### This gets close but hits on 'Hello%29world=Fun' and it shouldn't
+    # re.compile(r"(^[a-zA-Z0-9]|%[^0-9a-fA-F]{2})")
+    # if it's None:
+    #   print("Invalid entries")
+    # else:
+    #   print("No invalid entries")
     
     return retVal
 
