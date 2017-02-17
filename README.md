@@ -2,7 +2,7 @@
 # Learning Network Programming - Webcomic scrapers written in Python 3 #
 
 ## Background: ##
-  In an effort to better understand network programming, I sought out to learn while also doing something meaningful (to me).  This eventually led me to writing web scrapers for webcomics I like and webcomics I'm interested in.  So far, the journey of discovery has been enlightening.
+  In an effort to better understand network programming, I sought out to learn while also doing something meaningful (to me).  This eventually led me to writing web scrapers for webcomics I like and webcomics I'm interested in.  So far, the journey of discovery has been enlightening and frustrating.
   
 ## Disclaimer: ##
   I realize that much of my work has already been included in other modules (e.g., Beautiful Soup) but, as I said in the Background, this is a journey of discovery.  I also happen to be relatively new to Python so 'Pythonic' and 'idiomatic' feedback is welcome and encouraged.
@@ -14,8 +14,8 @@
         [X] Penny Arcade
         [X] Saturday Morning Breakfast Cereal
         [X] Player vs Player (PvP) 
+        [X] Ctrl-Alt-Del
     * In Progress:
-        [/] Ctrl-Alt-Del
         [/] Order of the Stick (see: Giant in the Playground)
         [/] Awkward Zombie
     * On Deck:
@@ -34,3 +34,4 @@
 
 ## Project's Future: ##
     1. Transition functions into class definition
+    2. Adopt Harklebot to properly utilize Robots.txt "suggestions"

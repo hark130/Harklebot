@@ -22,26 +22,26 @@
             [ ]   Is it possible to strip metadata off the downloaded file?
         [ ] Store 404 images and/or their URLs and come back to them later?
         (This requires extrication of is_this_URLs_file_already_downloaded(URL) into a Scraper Function function)
-        [ ] Extricate duplicate code into Scraper_Functions
-            [ ] Is this relative or an absolute URL <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
-            [ ] Fix problems with link that urllib doesn't like (see: //imgs.xkcd.com/comics/team_chat.png) <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
+        [/] Extricate duplicate code into Scraper_Functions
+            [X] Is this relative or an absolute URL <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
+            [X] Fix problems with link that urllib doesn't like (see: //imgs.xkcd.com/comics/team_chat.png) <=-- Do this next and use it to fix XKCD's 'First' wrap-around problem
             [ ] Strip a string through slicing
-            [ ] Sometimes there's redundancy between nav-back and base URL.
-                [ ] Utilize base URL for relative URL assignment?
-                [ ] .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
+            [X] Sometimes there's redundancy between nav-back and base URL.
+                [X] Utilize base URL for relative URL assignment?
+                [X] .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
         [ ] ROBOTS.TXT!
         [ ] (Expanded) List of acceptable image file extensions
-        [ ] XKCD
-            [ ] Template adaption needed a little mangling since //imgs.xkcd.com doesn't meet the full URL requirement
-            [ ] Even if it did, urllib doesn't like URLs like //imgs.xkcd.com/comics/team_chat.png
-            [ ] Temp fix... .replace('//', 'http://')
+        [/] XKCD
+            [X] Template adaption needed a little mangling since //imgs.xkcd.com doesn't meet the full URL requirement
+            [X] Even if it did, urllib doesn't like URLs like //imgs.xkcd.com/comics/team_chat.png
+            [X] Temp fix... .replace('//', 'http://')
             [ ] Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
             [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
             [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
             [ ] False positives on filename dates (see: http://www.xkcd.com/1779/... reading 20170120 just from 2017?!  Check get_the_filename()/get_the_date())
     [ ] trim_the_name() (Scraper Functions)
         [ ] Implement check for forbidden filename characters
-    [/] is_URL_abs() (Scraper Functions)
+    [X] is_URL_abs() (Scraper Functions)
     [ ] write is_URL_valid()
         [ ] Test that start indicators are at the beginning
         [ ] Test that stop indicators are at the end or immediately followed by a slash (/)
@@ -54,15 +54,13 @@
 
 # Backlog #
     [ ] **Write Robot Reader functions to parse boolean dictionary returned by get_page_disposition()**
-    [ ] Sanitize current scraper into 'template_scraper.py'
-    [ ] Transition previously functional scrapers into newer template_scraper.py
     [ ] Write Cyanide and Happiness Scraper
     [ ] Write Accursed Dragon Scraper
     [ ] Transition 'template_scraper.py' into an object oriented solution (see: Scraper Class)
     [ ] Dynamically determine which USER_AGENT string to use based on operating system
-    [ ] Consider extricating relative-URL-made-absolute-URL algorithm into a Scraper Function module function:
-        [ ] Allow for overlap between the relative URL and the baseURL
-        [ ] Allow for odd URLs that urllib does not like such as '//imgs.xkcd.com/comics/team_chat.png'
+    [X] Consider extricating relative-URL-made-absolute-URL algorithm into a Scraper Function module function:
+        [X] Allow for overlap between the relative URL and the baseURL
+        [X] Allow for odd URLs that urllib does not like such as '//imgs.xkcd.com/comics/team_chat.png'
 
 # Version 1-2 Completed
     [X] Template_Scraper.py
