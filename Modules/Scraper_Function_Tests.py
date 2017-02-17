@@ -1269,8 +1269,13 @@ if __name__ == '__main__':
 # FindURL
     linkerSuite = unittest.TestLoader().loadTestsFromTestCase(FindURL)
     unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+
+#### THIS FUNCTION IS NOT YET DEFINED ####
+## IsURLValid
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(IsURLValid)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
  
-#### BROKEN TESTS HERE ####   
+#### BROKEN TESTS HERE ####
 ## GetImageFilename
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetImageFilename)
 #    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
