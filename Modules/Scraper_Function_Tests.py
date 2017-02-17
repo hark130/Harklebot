@@ -1,16 +1,197 @@
 from Scraper_Functions import find_the_date 
-from Scraper_Functions import find_a_URL 
-from Scraper_Functions import get_image_filename
-from Scraper_Functions import is_URL_abs
-from Scraper_Functions import make_rel_URL_abs
-# make_rel_URL_abs(baseURL, targetURL)
-# is_URL_abs(baseURL, targetURL)
-# find_a_URL(htmlString, searchStart, searchStop)
-# get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
+from Scraper_Functions import find_a_URL            # find_a_URL(htmlString, searchStart, searchStop)
+from Scraper_Functions import get_image_filename    # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
+from Scraper_Functions import is_URL_abs            # is_URL_abs(baseURL, targetURL)
+from Scraper_Functions import make_rel_URL_abs      # make_rel_URL_abs(baseURL, targetURL)
+from Scraper_Functions import is_URL_valid          # is_URL_valid(URL)
+
 import unittest
 import os
 
 
+class IsURLValid(unittest.TestCase):
+    
+    # Test 1 - TypeError('URL is not a string')
+    def test01_TypeError01(self):
+        try:
+            result = is_URL_valid(420 / 1337)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'URL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+    
+    # Test 2 - TypeError('URL is not a string')
+    def test02_TypeError02(self):
+        try:
+            result = is_URL_valid(['http://www.thisisnotastring.org'])
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'URL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 3 - ValueError('URL is empty')
+    def test03_ValueError01(self):
+        try:
+            result = is_URL_valid('')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+            
+    # Test 4 - Valid Input
+    def test04_ValidInput01(self):
+        try:
+            result = is_URL_valid('www.somesite.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 5 - Valid Input
+    def test05_ValidInput02(self):
+        try:
+            result = is_URL_valid('http://www.somesite.org')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 5 - Valid Input
+    def test05_ValidInput03(self):
+        try:
+            result = is_URL_valid('https://www.somesite.ph')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 5 - Messy Yet Valid Input
+    def test05_MessyYetValidInput01(self):
+        try:
+            result = is_URL_valid('http://127.0.0.1:8080/test?v=123#this')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 6 - Messy Yet Valid Input
+    def test06_MessyYetValidInput02(self):
+        try:
+            result = is_URL_valid('http://api.google.com/q?exp=a%7Cb')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+             
+    # Test 7 - Messy Yet Valid Input
+    def test07_MessyYetValidInput03(self):
+        try:
+            result = is_URL_valid('http://[2001:db8:85a3::8a2e:370:7334]/foo/bar')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)        
+            
+    # Test 8 - Messy Yet Valid Input
+    def test08_MessyYetValidInput04(self):
+        try:
+            result = is_URL_valid('http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Ddigital-text&amp;field-keywords=Phyllis+Zimbler+Miller')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 9 - Messy Yet Valid Input
+    def test09_MessyYetValidInput05(self):
+        try:
+            result = is_URL_valid('ftp://username%3Apassword@domain')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 10 - Messy Yet Valid Input
+    def test10_MessyYetValidInput06(self):
+        try:
+            result = is_URL_valid('https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=5&ved=0ahUKEwiYpIT04JfSAhVDLZoKHWF0CyEQFgg1MAQ&url=http%3A%2F%2Fwww.complex.com%2Flife%2F2016%2F05%2Fbest-hashtags-dragging-donald-trump&usg=AFQjCNHPGIS5_B0_t9wbjbqQenn8iZ165g&sig2=oAIU60SQ8-OtztfPlsSsTg&cad=rja')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result)
+            
+    # Test 11 - Messy Yet Invalid Input
+    def test11_MessyYetInvalidInput01(self):
+        try:
+            result = is_URL_valid('http://mw1.google.com/mw-earth-vectordb/kml-samples/gp/seattle/gigapxl/$[level]/r$[y]_c$[x].jpg')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 12 - Messy Yet Invalid Input
+    def test12_MessyYetInvalidInput02(self):
+        try:
+            result = is_URL_valid('http://api.google.com/q?exp=a|b')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 13 - Messy Yet Invalid Input
+    def test13_MessyYetInvalidInput03(self):
+        try:
+            result = is_URL_valid('http://example.com/wp-admin/load-scripts.php?c=1&load[]=swfobject,jquery,utils&ver=3.5')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 14 - Messy Yet Invalid Input
+    def test14_MessyYetInvalidInput04(self):
+        try:
+            result = is_URL_valid('http://test.site/wp-admin/post.php?t=1347548645469?t=1347548651124?t=1347548656685?t=1347548662469?t=1347548672300?t=1347548681615?')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 15 - Messy Yet Invalid Input
+    def test15_MessyYetInvalidInput05(self):
+        try:
+            result = is_URL_valid('http://blog.sergeys.us/beer?utm_source=feedburner&amp;utm_medium=feed&amp;utm_campaign=Feed:+SergeySus+(Sergey+Sus+Photography+%C2%BB+Blog)&amp;utm_content=Google+Reader')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+    # Test 15 - Messy Yet Invalid Input
+    def test15_MessyYetInvalidInput06(self):
+        try:
+            result = is_URL_valid('ftp://username:password@domain')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse(result)
+            
+            
 class MakeRelURLAbs(unittest.TestCase):
     
     # Test 1 - TypeError('baseURL is not a string')
