@@ -18,7 +18,6 @@
 #################################################################################
 
 import os
-import re
 import time
 import re
 #import htmlentitydefs
@@ -53,6 +52,11 @@ def is_URL_valid(URL):
     ########### Vaporware says, "What?" ###########
     print("What?  Not checking:\t{}".format(URL)) # DEBUGGING
     ########### EXECUTE REGEX SEPPUKU HERE ###########
+    # %[0-9a-fA-F]{2} --> matches on HTML codes
+    # [a-zA-Z0-9] --> matches on letters and numbers in an appropriate way
+    # ^ matches counter examples
+    # Original starting point...
+    # re.compile(r"(/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+&/)")
     
     return retVal
 
