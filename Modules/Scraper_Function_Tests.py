@@ -131,8 +131,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertTrue(result)
             
-    # Test 11 - Messy Yet Invalid Input
-    def test11_MessyYetInvalidInput01(self):
+    # Test 11 - Messy And Invalid Input
+    def test11_MessyAndInvalidInput01(self):
         try:
             result = is_URL_valid('http://mw1.google.com/mw-earth-vectordb/kml-samples/gp/seattle/gigapxl/$[level]/r$[y]_c$[x].jpg')
         except Exception as err:
@@ -141,8 +141,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 12 - Messy Yet Invalid Input
-    def test12_MessyYetInvalidInput02(self):
+    # Test 12 - Messy And Invalid Input
+    def test12_MessyAndInvalidInput02(self):
         try:
             result = is_URL_valid('http://api.google.com/q?exp=a|b')
         except Exception as err:
@@ -151,8 +151,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 13 - Messy Yet Invalid Input
-    def test13_MessyYetInvalidInput03(self):
+    # Test 13 - Messy And Invalid Input
+    def test13_MessyAndInvalidInput03(self):
         try:
             result = is_URL_valid('http://example.com/wp-admin/load-scripts.php?c=1&load[]=swfobject,jquery,utils&ver=3.5')
         except Exception as err:
@@ -161,8 +161,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 14 - Messy Yet Invalid Input
-    def test14_MessyYetInvalidInput04(self):
+    # Test 14 - Messy And Invalid Input
+    def test14_MessyAndInvalidInput04(self):
         try:
             result = is_URL_valid('http://test.site/wp-admin/post.php?t=1347548645469?t=1347548651124?t=1347548656685?t=1347548662469?t=1347548672300?t=1347548681615?')
         except Exception as err:
@@ -171,8 +171,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 15 - Messy Yet Invalid Input
-    def test15_MessyYetInvalidInput05(self):
+    # Test 15 - Messy And Invalid Input
+    def test15_MessyAndInvalidInput05(self):
         try:
             result = is_URL_valid('http://blog.sergeys.us/beer?utm_source=feedburner&amp;utm_medium=feed&amp;utm_campaign=Feed:+SergeySus+(Sergey+Sus+Photography+%C2%BB+Blog)&amp;utm_content=Google+Reader')
         except Exception as err:
@@ -181,8 +181,8 @@ class IsURLValid(unittest.TestCase):
         else:
             self.assertFalse(result)
             
-    # Test 15 - Messy Yet Invalid Input
-    def test15_MessyYetInvalidInput06(self):
+    # Test 15 - Messy And Invalid Input
+    def test15_MessyAndInvalidInput06(self):
         try:
             result = is_URL_valid('ftp://username:password@domain')
         except Exception as err:
