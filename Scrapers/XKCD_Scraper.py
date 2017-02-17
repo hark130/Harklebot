@@ -261,7 +261,8 @@ while True:
             print(repr(err))
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
-            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+#            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+            pass
             
 # Old method prior to make_rel_URL_abs()
 #        tempPrefix = rootURL # Default stance
@@ -393,7 +394,7 @@ while True:
             print(repr(err))
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
-            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
+#            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
             currentURL = prevURL       
             
 # Old method prior to make_rel_URL_abs()
