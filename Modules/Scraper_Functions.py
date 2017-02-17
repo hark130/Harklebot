@@ -56,8 +56,9 @@ def is_URL_abs(baseURL, targetURL):
         raise ValueError('targetURL is empty')    
         
     # 2. BUILD INDICATOR LIST
-    fullURLIndicatorList = [baseURL, targetURL, 'www.', 'http:', 'https:']
-    fullURLIndicatorList = fullURLIndicatorList.append(get_root_URL(baseURL))
+    fullURLIndicatorList = [baseURL, '//', ':', 'www.', 'http:', 'https:']
+#    fullURLIndicatorList = fullURLIndicatorList.append(get_root_URL(baseURL)) # BROKEN
+    fullURLIndicatorList.append(get_root_URL(baseURL))
     
     # 3. BUILD TOP-LEVEL DOMAIN (TLD) LIST
     # https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
@@ -132,6 +133,8 @@ def is_URL_abs(baseURL, targetURL):
 '''
 def make_rel_URL_abs(baseURL, targetURL):
     retVal = ''
+    absTargetURLPathList = []
+    foundOverlap = False
     
     # 1. INPUT VALIDATION
     ## 1.1. baseURL
@@ -171,19 +174,28 @@ def make_rel_URL_abs(baseURL, targetURL):
             targetURLPathList = tempTargetURL.split('/')
             
             ### 2.2.4. Look for overlap while building absolute target URL
-            absTargetURLPathList = []
-            
             for basePath in baseURLPathList:
                 if basePath == targetURLPathList[0]: # Found an overlap
+                    foundOverlap = True
                     for targetPath in targetURLPathList: # Copy the overlap
-                        absTargetURLPathList = absTargetURLPathList.append(targetPath)
+#                        absTargetURLPathList = absTargetURLPathList.append(targetPath) # BROKEN
+                        absTargetURLPathList.append(targetPath)
 
                     break # Done copying
                 else: # No overlap
-                    absTargetURLPathList = absTargetURLPathList.append(basePath)
+#                    absTargetURLPathList = absTargetURLPathList.append(basePath) # BROKEN
+                    absTargetURLPathList.append(basePath)
+
+            ### 2.2.5. Append in targetPath if there was no overlap
+            if foundOverlap is False:
+                for targetPath in targetURLPathList:
+                    absTargetURLPathList.append(targetPath)
                     
-            ### 2.2.5. Rebuild the absolute URL
+            ### 2.2.6. Rebuild the absolute URL
             retVal = '/'.join(absTargetURLPathList)
+
+            ### 2.2.7. Trim the URL
+            retVal = trim_a_URL(retVal)
         
     return retVal
 
@@ -893,8 +905,8 @@ def trim_a_URL(URL):
         retVal = URL
 
         # 1. FIX ANY ERRONEOUS DOUBLE SLASHES
-        while URL.count('://') != URL.count('//'):
-            retVal = URL.replace('//','/').replace(':/','://')
+        while retVal.count('://') != retVal.count('//'):
+            retVal = retVal.replace('//','/').replace(':/','://')
 
         # 2. REMOVE ANY SPACES
         retVal.replace(' ','')
@@ -921,9 +933,43 @@ def get_root_URL(URL):
 
     retVal = ''
     # Ordered list (most restrictive to least restrictive) of website beginnings
-    SITE_DELIMITER_START = ['www.', '//', ':', 'https', 'http']
+#    SITE_DELIMITER_START = ['www.', '//', ':', 'https', 'http']
     # Unordered list of website TLDs
-    SITE_DELIMITER_STOP = ['.com', '.org', '.net', '.int', '.edu', '.gov', '.mil', '.arpa']
+    SITE_DELIMITER_STOP = [
+        # Generic top-level domains
+        '.com', '.org', '.net', '.int', 'edu', '.gov', '.mil', '.arpa', 
+        # Country code top-level domains
+        '.ac', '.ad', '.ae', '.af', '.ag', '.ai', '.al', '.am', '.an', 
+        '.ao', '.aq', '.ar', '.as', '.at', '.au', '.aw', '.ax', '.az', 
+        '.ba', '.bb', '.bd', '.be', '.bf', '.bg', '.bh', '.bi', '.bj', 
+        '.bl', '.bm', '.bn', '.bo', '.bq', '.br', '.bs', '.bt', '.bv', 
+        '.bw', '.by', '.bz', '.ca', '.cc', '.cd', '.cf', '.cg', '.ch', 
+        '.ci', '.ck', '.cl', '.cm', '.cn', '.co', '.cr', '.cu', '.cv', 
+        '.cw', '.cx', '.cy', '.cz', '.de', '.dj', '.dk', '.dm', '.do', 
+        '.dz', '.ec', '.ee', '.eg', '.eh', '.er', '.es', '.et', '.eu', 
+        '.fi', '.fj', '.fk', '.fm', '.fo', '.fr', '.ga', '.gb', '.gd', 
+        '.ge', '.gf', '.gg', '.gh', '.gi', '.gl', '.gm', '.gn', '.gb', 
+        '.gd', '.ge', '.gf', '.gg', '.gh', '.gi', '.gl', '.gm', '.gn', 
+        '.gp', '.gq', '.gr', '.gs', '.gt', '.gu', '.gw', '.gy', '.hk', 
+        '.hm', '.hn', '.hr', '.ht', '.hu', '.id', '.ie', '.il', '.im', 
+        '.in', '.io', '.iq', '.ir', '.is', '.it', '.je', '.jm', '.jo', 
+        '.jp', '.ke', '.kg', '.kh', '.ki', '.km', '.kn', '.kp', '.kr', 
+        '.kw', '.ky', '.kz', '.la', '.lb', '.lc', '.li', '.lk', '.lr', 
+        '.ls', '.lt', '.lu', '.lv', '.ly', '.ma', '.mc', '.md', '.me', 
+        '.mf', '.mg', '.mh', '.mk', '.ml', '.mm', '.mn', '.mo', '.mp', 
+        '.mq', '.mr', '.ms', '.mt', '.mu', '.mv', '.mw', '.mx', '.my', 
+        '.mz', '.na', '.nc', '.ne', '.nf', '.ng', '.ni', '.nl', '.no', 
+        '.np', '.nr', '.nu', '.nz', '.om', '.pa', '.pe', '.pf', '.pg', 
+        '.ph', '.pk', '.pl', '.pm', '.pn', '.pr', '.ps', '.pt', '.pw', 
+        '.py', '.qa', '.re', '.ro', '.rs', '.ru', '.rw', '.sa', '.sb', 
+        '.sc', '.sd', '.se', '.sg', '.sh', '.si', '.sj', '.sk', '.sl', 
+        '.sm', '.sn', '.so', '.sr', '.ss', '.st', '.su', '.sv', '.sx', 
+        '.sy', '.sz', '.tc', '.td', '.tf', '.tg', '.th', '.tj', '.tk', 
+        '.tl', '.tm', '.tn', '.to', '.tp', '.tr', '.tt', '.tv', '.tw', 
+        '.tz', '.ua', '.ug', '.uk', '.um', '.us', '.uy', '.uz', '.va', 
+        '.vc', '.ve', '.vg', '.vi', '.vn', '.vu', '.wf', '.ws', '.ye', 
+        '.yt', '.za', '.zm', '.zw'	
+    ]
 
     if isinstance(URL, str):
         # 1. CLEAN UP THE URL
