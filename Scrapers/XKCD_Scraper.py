@@ -51,7 +51,7 @@ import urllib.error
 import sys, os, time, random, re
 # Hacky (?) method to keep modules separate from scraper code
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
-print("PATH:\t{}".format(sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))))
+#print("PATH:\t{}".format(sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))))
 #from Scraper_Functions import find_the_date 
 #from Scraper_Functions import trim_the_name 
 from Scraper_Functions import find_a_URL 
@@ -93,7 +93,7 @@ dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=---------
 
 ### NAME PARSING SETUP ###
 # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
-nameSearchPhrase = 'Permanent link to this comic: http://xkcd.com/' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = ['Permanent link to this comic: http://xkcd.com/','Permanent link to this comic: https://xkcd.com/'] # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
 # Delimit the end of the image title with this string
 nameEnding = '/<br />' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 ################################################
@@ -249,6 +249,10 @@ while True:
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
+        # Clean up any URLs that begin with '//' because Request() doesn't like them
+        if imageURL.find('//') == 0:
+            imageURL = 'http:' + imageURL
+
         # Ensure the imageURL is an absolute URL
         try:
             imageURL = make_rel_URL_abs(baseURL, imageURL)
@@ -321,7 +325,7 @@ while True:
                     with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
                         outFile.write(comic.read())
 
-            except Exception as error:
+            except urllib.error.HTTPError as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
                 ## 9.1.2. Handle 404 errors
@@ -331,6 +335,10 @@ while True:
                 else:
                     print("ERROR:\t{} - {}".format(type(error),error))
                     sys.exit()
+            except Exception as error:
+                print("Image failed to download:\t{}".format(imageURL))
+                print(repr(error))
+                sys.exit()
             ## 9.1.2. Success   
             else:
                 print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
@@ -362,7 +370,7 @@ while True:
     ## First URL == http://www.penny-arcade.com/comic/1998/11/18
     ## Prev URL == http://www.penny-arcade.com/comic/1998/11/18/the-sin-of-long-load-times
     ## Solution... find the First URL inside the Prev URL
-    elif currentURL.find(firstURL) == 0:
+    elif currentURL.find(firstURL) == 0 and currentURL[firstURL.__len__():firstURL.__len__() + 1] == '/':
         print("\nFinished scraping (because we *mostly* hit the first URL)")
         print("First URL:\t{}\nCurrent URL:\t{}".format(firstURL, currentURL)) # DEBUGGING
         break
