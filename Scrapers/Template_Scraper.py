@@ -53,9 +53,10 @@ import sys, os, time, random, re
 sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
 #from Scraper_Functions import find_the_date 
 #from Scraper_Functions import trim_the_name 
-#from Scraper_Functions import find_a_URL 
-#from Scraper_Functions import get_image_filename
+from Scraper_Functions import find_a_URL 
+from Scraper_Functions import get_image_filename
 #from Robot_Reader_Functions import get_root_URL
+from Scraper_Functions import make_rel_URL_abs
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -245,6 +246,10 @@ while True:
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
+        # Clean up any URLs that begin with '//' because Request() doesn't like them
+        if imageURL.find('//') == 0:
+            imageURL = 'http:' + imageURL
+            
         # Ensure the imageURL is an absolute URL
         try:
             imageURL = make_rel_URL_abs(baseURL, imageURL)
@@ -253,7 +258,8 @@ while True:
             print(repr(err))
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
-            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+#            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
+            pass
             
 # Old method prior to make_rel_URL_abs()
 #        tempPrefix = rootURL # Default stance
@@ -317,7 +323,7 @@ while True:
                     with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
                         outFile.write(comic.read())
 
-            except Exception as error:
+            except urllib.error.HTTPError as error:
                 print("Image failed to download:\t{}".format(imageURL))
 
                 ## 9.1.2. Handle 404 errors
@@ -327,6 +333,12 @@ while True:
                 else:
                     print("ERROR:\t{} - {}".format(type(error),error))
                     sys.exit()
+
+            except Exception as error:
+                print("Image failed to download:\t{}".format(imageURL))
+                print(repr(error))
+                sys.exit()
+
             ## 9.1.2. Success   
             else:
                 print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
@@ -358,7 +370,7 @@ while True:
     ## First URL == http://www.penny-arcade.com/comic/1998/11/18
     ## Prev URL == http://www.penny-arcade.com/comic/1998/11/18/the-sin-of-long-load-times
     ## Solution... find the First URL inside the Prev URL
-    elif currentURL.find(firstURL) == 0:
+    elif currentURL.find(firstURL) == 0 and currentURL[firstURL.__len__():firstURL.__len__() + 1] == '/':
         print("\nFinished scraping (because we *mostly* hit the first URL)")
         print("First URL:\t{}\nCurrent URL:\t{}".format(firstURL, currentURL)) # DEBUGGING
         break
@@ -381,7 +393,7 @@ while True:
             print(repr(err))
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
-            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
+#            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
             currentURL = prevURL       
             
 # Old method prior to make_rel_URL_abs()
