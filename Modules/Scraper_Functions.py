@@ -64,7 +64,7 @@ def is_URL_valid(URL):
     # else:
     #   print("No invalid entries")
     ### This also gets close but fails on HTML codes
-    # re.compile(r"[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=`]")
+    # re.compile(r"[^A-Za-z0-9-._~:/?#[]@!$&'()*+,;=`]")
     
     return retVal
 
