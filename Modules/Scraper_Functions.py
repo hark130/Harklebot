@@ -26,6 +26,38 @@ import collections
 
 
 '''
+    Purpose: Determine if a URL is valid or not
+    Input:
+        URL - string representation of a URL
+    Output:
+        True - URL is valid
+        False - URL is invalid
+    Exceptions:
+        TypeError('URL is not a string')
+        ValueError('URL is empty')
+    NOTES:
+        This function is currently stubbed out and will be implemented later
+'''
+def is_URL_valid(URL):
+    retVal = False
+    
+    # 1. INPUT VALIDATION
+    ## 1.1. Verify URL is a string
+    if isinstance(URL, str) is False:
+        raise TypeError('URL is not a string')
+    ## 1.2. Verify URL is not empty
+    elif URL.__len__() == 0:
+        raise ValueError('URL is empty')
+        
+    # 2. CHECK URL FOR VALIDITY
+    ########### Vaporware says, "What?" ###########
+    print("What?  Not checking:\t{}".format(URL)) # DEBUGGING
+    ########### EXECUTE REGEX SEPPUKU HERE ###########
+    
+    return retVal
+
+
+'''
     Purpose: Determine if a URL represents an absolute path
     Input:
         baseURL - string representation of the domain name portion of a site
