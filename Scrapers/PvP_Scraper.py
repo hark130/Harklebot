@@ -103,7 +103,7 @@ nameEnding = '</title>' # Probably '"' <=--------------------------=UPDATE=-----
 USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 #USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 MAX_SLEEP = 30              # SECONDS
-MAX_EXISTING_SKIPS = 90     # Max number of existing files to skip over before stopping
+MAX_EXISTING_SKIPS = 10     # Max number of existing files to skip over before stopping
 MAX_404_SKIPS = 10          # Max number of missing images to skip over before stopping
 MAX_FILENAME_LEN = 254      # Normal OS have it at 255.  Sub one for nul char(?)... just in case.
 random.seed()
