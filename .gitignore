@@ -5,6 +5,7 @@
 # Visual Studio Files
 *.pyproj
 .vs
+*.sln
 
 # Sublime?
 *.TMP
