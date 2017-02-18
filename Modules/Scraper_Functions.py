@@ -19,6 +19,7 @@
 #################################################################################
 # Version 1.3
 #   ADDING: New functionality to find_the_date() to include YYYY.MM.DD (see: Cyanide & Happiness)
+#           is_URL_valid()... basic functionality
 #################################################################################
 
 
@@ -40,10 +41,15 @@ import collections
         TypeError('URL is not a string')
         ValueError('URL is empty')
     NOTES:
-        This function is currently stubbed out and will be implemented later
+        This function is not nearly complicated enough to be right.
+        All this function does is check for any characters that aren't allowed.
+        This function does not verify those characters are being utilized properly.
+            Example1: ftp://username:password@domain (the colon (:) should be coded out)
+            Example2: http://test.site/wp-admin/post.php?t=1347548645469? (Apparently, trailing question marks are bad)
+        As it stands, this function delivers enough value to be left alone for the time being
 '''
 def is_URL_valid(URL):
-    retVal = False
+    retVal = True
     
     # 1. INPUT VALIDATION
     ## 1.1. Verify URL is a string
@@ -55,7 +61,7 @@ def is_URL_valid(URL):
         
     # 2. CHECK URL FOR VALIDITY
     ########### Vaporware says, "What?" ###########
-    print("What?  Not checking:\t{}".format(URL)) # DEBUGGING
+#    print("\nWhat?  Not checking:\t{}".format(URL)) # DEBUGGING
     ########### EXECUTE REGEX SEPPUKU HERE ###########
     # %[0-9a-fA-F]{2} --> matches on HTML codes
     # [a-zA-Z0-9] --> matches on letters and numbers in an appropriate way
@@ -70,6 +76,14 @@ def is_URL_valid(URL):
     #   print("No invalid entries")
     ### This also gets close but fails on HTML codes
     # re.compile(r"[^A-Za-z0-9-._~:/?#[]@!$&'()*+,;=`]")
+
+# Removing brackets because of Microsoft, of all reasons
+#    badChars = re.compile(r"[^A-Za-z0-9-._%~:/?#[\]@!$&'()*+,;=`]")
+    badChars = re.compile(r"[^A-Za-z0-9-._%~:/?#[\]@!$&'()*+,;=`]")
+
+    for result in badChars.findall(URL):
+#        print(result) # DEBUGGING
+        retVal = False
     
     return retVal
 
