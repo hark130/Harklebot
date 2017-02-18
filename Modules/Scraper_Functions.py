@@ -16,6 +16,11 @@
 #           is_URL_abs(baseURL, targetURL)
 #   MOVING: URL functions from Robot Reader to Scraper Functions
 #################################################################################
+#################################################################################
+# Version 1.3
+#   ADDING: New functionality to find_the_date() to include YYYY.MM.DD (see: Cyanide & Happiness)
+#################################################################################
+
 
 import os
 import time
@@ -624,6 +629,10 @@ def trim_the_name(potentialName):
     Purpose: Find and return the date a comic was created on
     Input: A string of HTML
     Output: 'YYYYMMDD' on success, '00000000' on failure
+    Exceptions:
+        TypeError('pageHTML is not a string or list')
+        TypeError('pageHTML contains a non-string')
+        ValueError('pageHTML is empty')
 '''
 def find_the_date(pageHTML):
     currentYear = int(time.strftime("%Y"))
@@ -639,13 +648,24 @@ def find_the_date(pageHTML):
     if isinstance(pageHTML, list):
         pageList = pageHTML
     elif isinstance(pageHTML, str):
-        pageHTML.replace('<a', '<A')
-        pageList = pageHTML.split('<A')
-        pageList = pageHTML.split('\n')
+#        pageHTML.replace('<a', '<A')
+# Logic flaw... only splits on '\n'... doesn't split on '<A' at all
+#        pageList = pageHTML.split('<A')
+#        pageList = pageHTML.split('\n')
+#        re.split('<a|<A|\n', pageHTML)
+#        pageList = pageHTML
+        pageList = re.split('<a|<A|\n', pageHTML)
+    else:
+        raise TypeError('pageHTML is not a string or list')
 
     # 1. FIND APPROPRIATE ENTRIES
-    if pageList.__len__() > 0:
+    if pageList.__len__() == 0:
+        raise ValueError('pageHTML is empty')
+    else:
         for entry in pageList:
+            ## 1.0 INPUT VALIDATION
+            if isinstance(entry, str) is False:
+                raise TypeError('pageHTML contains a non-string')
 
             ## 1.1 FIND AN APPROPRIATE STRING OF NUMBERS FOR MMDDYYYY
             dateSearchObjMMDDYYYY = re.search(r'[0-1][0-9][0-3][0-9][1-2][0-9][0-9][0-9]', entry, re.M | re.I)
@@ -659,8 +679,8 @@ def find_the_date(pageHTML):
 #                print("FOUND MMDDYYYY:\t{}".format(dateFormatMatch)) # DEBUGGING
                 continue     
 
-            ## 1.2 FIND AN APPROPRIATE STRING OF NUMBERS FOR MM[-/]DD[-/]YYYY
-            dateSearchObjMM_DD_YYYY = re.search(r'[0-1][0-9][-/][0-3][0-9][-/][1-2][0-9][0-9][0-9]', entry, re.M | re.I)
+            ## 1.2 FIND AN APPROPRIATE STRING OF NUMBERS FOR MM[-/.]DD[-/.]YYYY
+            dateSearchObjMM_DD_YYYY = re.search(r'[0-1][0-9][-/.][0-3][0-9][-/.][1-2][0-9][0-9][0-9]', entry, re.M | re.I)
 
             try:
                 dateFormatMatch = dateSearchObjMM_DD_YYYY.group()
@@ -671,8 +691,8 @@ def find_the_date(pageHTML):
 #                print("FOUND MM_DD_YYYY:\t{}".format(dateFormatMatch)) # DEBUGGING
                 continue             
 
-            ## 1.3 FIND AN APPROPRIATE STRING OF NUMBERS FOR YYYY[-/]MM[-/]DD
-            dateSearchObjYYYY_MM_DD = re.search(r'[1-2][0-9][0-9][0-9][-/][0-1][0-9][-/][0-3][0-9]', entry, re.M | re.I)
+            ## 1.3 FIND AN APPROPRIATE STRING OF NUMBERS FOR YYYY[-/.]MM[-/.]DD
+            dateSearchObjYYYY_MM_DD = re.search(r'[1-2][0-9][0-9][0-9][-/.][0-1][0-9][-/.][0-3][0-9]', entry, re.M | re.I)
 
             try:
                 dateFormatMatch = dateSearchObjYYYY_MM_DD.group()
@@ -753,7 +773,7 @@ def find_the_date(pageHTML):
                         if trimmedEntry[:2].isdecimal() == True:
                             monthMatch = trimmedEntry[:2]
                         else:
-                            monthSearchObj = re.search(r'[-/][0-1][0-9]', trimmedEntry, re.M | re.I)
+                            monthSearchObj = re.search(r'[-/.][0-1][0-9]', trimmedEntry, re.M | re.I)
 
                             try:
                                 monthMatch = ''
@@ -775,7 +795,7 @@ def find_the_date(pageHTML):
                                 if trimmedEntry[:2].isdecimal() == True:
                                     dayMatch = trimmedEntry[:2]
                                 else:
-                                    daySearchObj = re.search(r'[-/][0-3]\d+(?!\d)', trimmedEntry, re.M | re.I)
+                                    daySearchObj = re.search(r'[-/.][0-3]\d+(?!\d)', trimmedEntry, re.M | re.I)
 
                                     try:
                                         dayMatch = ''
@@ -837,7 +857,7 @@ def find_the_date(pageHTML):
                         if trimmedEntry[:2].isdecimal() == True:
                             dayMatch = trimmedEntry[:2]
                         else:
-                            daySearchObj = re.search(r'[-/][0-3][0-9]', trimmedEntry, re.M | re.I)
+                            daySearchObj = re.search(r'[-/.][0-3][0-9]', trimmedEntry, re.M | re.I)
 
                             try:
                                 dayMatch = ''
@@ -857,7 +877,7 @@ def find_the_date(pageHTML):
                                 if trimmedEntry[:4].isdecimal() == True:
                                     yearMatch = trimmedEntry[:4]
                                 else:
-                                    yearSearchObj = re.search(r'[-/][1-2][0-9][0-9]\d+(?!\d)', trimmedEntry, re.M | re.I)
+                                    yearSearchObj = re.search(r'[-/.][1-2][0-9][0-9]\d+(?!\d)', trimmedEntry, re.M | re.I)
 
                                     try:
                                         yearMatch = ''

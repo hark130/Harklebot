@@ -7,7 +7,7 @@ from Scraper_Functions import is_URL_valid          # is_URL_valid(URL)
 
 import unittest
 import os
-
+import re
 
 class IsURLValid(unittest.TestCase):
     
@@ -190,8 +190,7 @@ class IsURLValid(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertFalse(result)
-            
-            
+                        
 class MakeRelURLAbs(unittest.TestCase):
     
     # Test 1 - TypeError('baseURL is not a string')
@@ -394,8 +393,6 @@ class MakeRelURLAbs(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(result == 'https://www.grumpyc.at/is/grumpy/sometimes.html')
-
-
 
 class IsURLAbs(unittest.TestCase):
 
@@ -1252,23 +1249,161 @@ class GetImageFilename(unittest.TestCase):
         except Exception as err:
             print(repr(err))
 
+class GetTheDate(unittest.TestCase):
+    
+    # Test 1 - TypeError('pageHTML is not a string or list')
+    def test01_TypeError01(self):
+        try:
+            result = find_the_date(31337 / 1337)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'pageHTML is not a string or list')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # Test 2 - TypeError('pageHTML is not a string or list')
+    def test02_TypeError02(self):
+        try:
+            result = find_the_date({'un':'list'})
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'pageHTML is not a string or list')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # Test 3 - TypeError('pageHTML contains a non-string')
+    def test03_TypeError03(self):
+        try:
+                testList = ['duck', 'duck', 'duck', ['G', 'O', 'O', 'S', 'E', '!']]
+                result = find_the_date(testList)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'pageHTML contains a non-string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # Test 4 - TypeError('pageHTML contains a non-string')
+    def test04_TypeError04(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
+                testContent = testFile.read()
+                testList = re.split('<a|<A|\n',testContent)
+                testList.append(['this','is','not','a','string'])
+                result = find_the_date(testList)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'pageHTML contains a non-string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # Test 5 - ValueError('pageHTML is empty')
+    def test05_ValueError01(self):
+        try:
+            testList = []
+            result = find_the_date(testList)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'pageHTML is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # Test 6 - Valide Input - 12-CaH_dot_date_HTML.txt
+    def test06_ValidInput01(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '12-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20170217')
+
+    # Test 7 - Valide Input - 13-CaH_dot_date_HTML.txt
+    def test07_ValidInput02(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '13-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20170215')
+
+    # Test 8 - Valide Input - 14-CaH_dot_date_HTML.txt
+    def test08_ValidInput03(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '14-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20170214')
+
+    # Test 9 - Valide Input - 15-CaH_dot_date_HTML.txt
+    def test09_ValidInput04(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '15-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20050126')
+
+    # Test 10 - Valide Input - 16-CaH_dot_date_HTML.txt
+    def test10_ValidInput05(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '16-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20050127')
+
+    # Test 11 - Valide Input - 17-CaH_dot_date_HTML.txt
+    def test11_ValidInput06(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '17-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20160529')
+
+    # Test 12 - Valide Input - 18-CaH_dot_date_HTML.txt
+    def test12_ValidInput07(self):
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '18-CaH_dot_date_HTML.txt'), 'r') as testFile:
+                result = find_the_date(testFile.read())
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == '20141202')
 
 if __name__ == '__main__':
 
 #    # Run all the tests!
 #    unittest.main(verbosity=2)
-    
-# MakeRelURLAbs
-    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(MakeRelURLAbs)
+
+# GetTheDate
+    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetTheDate)
     unittest.TextTestRunner(verbosity=2).run(linkerSuite)
     
-# IsURLAbs
-    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(IsURLAbs)
-    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+## MakeRelURLAbs
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(MakeRelURLAbs)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
     
-# FindURL
-    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(FindURL)
-    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+## IsURLAbs
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(IsURLAbs)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+    
+## FindURL
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(FindURL)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
 
 #### THIS FUNCTION IS NOT YET DEFINED ####
 ## IsURLValid
