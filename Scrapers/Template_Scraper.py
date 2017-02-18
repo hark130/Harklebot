@@ -41,6 +41,8 @@
 #               baseURL (CAD-Sillies was breaking)
 #   ADDED:  is_URL_abs() functionality
 #           make_rel_URL_abs() functionality
+#           Incorporated is_URL_valid() into Template
+#           Adding fidelity to the sys.path append to find the "Modules" folder
 #################################################################################
 
 
@@ -49,8 +51,23 @@ from urllib.request import urlretrieve
 from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
+
+################
+# LOAD MODULES #
+################
 # Hacky (?) method to keep modules separate from scraper code
-sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
+## Verify path exists before adding it to sys.path
+modulesPath = os.path.join(os.path.dirname(os.getcwd()), 'Modules')
+if os.path.isdir(modulesPath) is True:
+    print("Modules found at:\t{}".format(modulesPath)) # DEBUGGING
+    sys.path.append(modulesPath)
+else:
+    print("Modules path not found") # DEBUGGING
+    pass
+################
+################
+################
+
 #from Scraper_Functions import find_the_date 
 #from Scraper_Functions import trim_the_name 
 from Scraper_Functions import find_a_URL 
@@ -167,6 +184,16 @@ else:
 while True:
 #while comic.getcode() == 200:
     # 1. OPEN THE WEB PAGE
+    ## 1.1. Verify URL is valid
+    try:
+        if is_URL_valid(currentURL) is False:
+            print("Invalid URL:\t{}".format(currentURL)) # DEBUGGING
+            sys.exit()
+    except Exception as err:
+        print(repr(err))
+        sys.exit()
+
+    ## 1.2. Open the URL
     try:
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
         comic = urlopen(comicRequest)
@@ -181,6 +208,7 @@ while True:
             print("Sleeping {} seconds before download".format(sleepyTime))
             time.sleep(sleepyTime)
 
+
     # 2. DETERMINE CHARSET OF PAGE
 #    print("\ncomic Charset:")
     comicContentType = comic.getheader('Content-Type')
@@ -192,6 +220,7 @@ while True:
         comicCharset = comicContentType[comicContentType.find('=') + 1:]
         comicCharset = comicCharset.replace(' ','')
 #    print("Charset:\t{}".format(comicCharset)) # DEBUGGING
+
 
     # 3. TRANSLATE PAGE
     comicContent = comic.read()
@@ -207,6 +236,7 @@ while True:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
         pass
 
+
 #    print("\nFetching First URL:")
     # 4. FIND THE FIRST URL
     # NEW PROCEDURE FOR VERSION 1-2
@@ -219,15 +249,17 @@ while True:
         firstURL = firstURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
     ## 4.2. Validate findings
+    ### 4.2.1. firstURL empty and this is the first stop
     if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
-        ### 4.2.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
+        #### 4.2.1.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
         if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
             print("First URL search criteria not configured.") # DEBUGGING  
-        ### 4.2.2. If there's a search criteria configured but we didn't find a firstURL, something went wrong(?)
+        #### 4.2.2.1. If there's a search criteria configured but we didn't find a firstURL, something went wrong(?)
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
+    ### 4.2.2. Found firstURL on the first stop
     elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
-        # Ensure the firstURL is an absolute URL
+        #### 4.2.2.1. Ensure the firstURL is an absolute URL
         try:
             firstURL = make_rel_URL_abs(baseURL, firstURL)
         except Exception as err:
@@ -237,20 +269,30 @@ while True:
         else:
             print("First URL:\t{}".format(firstURL)) # DEBUGGING    
 
+        #### 4.2.2.2. Ensure the firstURL is valid
+        try:
+            if is_URL_valid(firstURL) is False:
+                print("Invalid URL:\t{}".format(firstURL)) # DEBUGGING
+#                sys.exit() # Not necessary to abort if firstURL is not found
+        except Exception as err:
+            print(repr(err))
+            sys.exit()
 
-#    print("\nFetching Image URL:")
+
     # 5. FIND THE IMAGE .GIF
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
+#    print("\nFetching Image URL:")
     imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)               
+
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
-        # Clean up any URLs that begin with '//' because Request() doesn't like them
+        ## 6.1. Clean up any URLs that begin with '//' because Request() doesn't like them
         if imageURL.find('//') == 0:
             imageURL = 'http:' + imageURL
             
-        # Ensure the imageURL is an absolute URL
+        ## 6.2. Ensure the imageURL is an absolute URL
         try:
             imageURL = make_rel_URL_abs(baseURL, imageURL)
         except Exception as err:
@@ -260,17 +302,15 @@ while True:
         else:
 #            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
             pass
-            
-# Old method prior to make_rel_URL_abs()
-#        tempPrefix = rootURL # Default stance
 
-#        for indicator in fullURLIndicatorList:
-#            if imageURL.find(indicator) >= 0:
-#                tempPrefix = ''
-#                break
-#        imageURL = tempPrefix + imageURL
-#        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
-#        pass
+        ## 6.3. Ensure URL is valid
+        try:
+            if is_URL_valid(imageURL) is False:
+                print("Invalid URL:\t{}".format(imageURL)) # DEBUGGING
+                sys.exit()
+        except Exception as err:
+            print(repr(err))
+            sys.exit()
     else:
         print("Did not find an image URL!")
         sys.exit()
@@ -383,9 +423,9 @@ while True:
 
     prevURL = prevURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
-    ## 11.2. Change relative URLs to absolute URLs
+    ## 11.2. Validate the previous URL
     if prevURL.__len__() > 0:
-        # Ensure the prevURL is an absolute URL
+        ### 11.2.1. Change relative URLs to absolute URLs
         try:
             prevURL = make_rel_URL_abs(baseURL, prevURL)
         except Exception as err:
@@ -394,18 +434,12 @@ while True:
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
 #            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
-            currentURL = prevURL       
-            
-# Old method prior to make_rel_URL_abs()
-#        tempPrefix = rootURL # Default stance
+            currentURL = prevURL 
+            # No need to validate this URL because it's validated at the top of the while loop
+    else:
+        print("\nMissing Previous URL.  We must be at the first page.\nCurrent URL:\t{}\n".format(currentURL))
+        break
 
-#        for indicator in fullURLIndicatorList:
-#            if prevURL.find(indicator) >= 0:
-#                tempPrefix = ''
-#                break
-#        print("Prev URL:\t{}".format(prevURL)) # DEBUGGING                
-#        currentURL = tempPrefix + prevURL
-#        pass
 
     # 12. RESET TEMP VARIABLES TO AVOID DUPE DOWNLOADS AND OTHER ERRORS
     incomingFilename = ''       # Local filename to save the incoming image download

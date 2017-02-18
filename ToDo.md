@@ -10,7 +10,7 @@
         glue them together?
         [ ] New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
     [/] Template_Scraper.py
-        [ ] Implement is_URL_valid()
+        [X] Implement is_URL_valid()
         [ ] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
         [ ] Auto-determine USER_AGENT by
             [ ] Dynamically determining the operating system (feasible)
