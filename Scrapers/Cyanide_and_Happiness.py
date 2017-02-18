@@ -86,13 +86,13 @@ firstSearchPhrase = 'Oldest comic' # Probably 'First' <=------------------------
 # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
 skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
 # Find the date from a list of strings to match in the page's HTML
-dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+dateSearchPhrase = ['zeta small-bottom-margin past-week-comic-title'] # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
 
 ### NAME PARSING SETUP ###
 # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
-nameSearchPhrase = '' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = 'files.explosm.net/comics/' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
 # Delimit the end of the image title with this string
-nameEnding = '' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+nameEnding = '.' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 # Cyanide & Happiness NOTE: Strips from 17 Feb 2017 do not appear to be titled in an easily parsable way.
 ################################################
 # Modify these variables based on HTML details #
