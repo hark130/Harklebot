@@ -10,6 +10,7 @@
         glue them together?
         [ ] New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
     [/] Template_Scraper.py
+        [ ] Implement is_URL_valid()
         [ ] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
         [ ] Auto-determine USER_AGENT by
             [ ] Dynamically determining the operating system (feasible)
@@ -42,11 +43,13 @@
     [ ] trim_the_name() (Scraper Functions)
         [ ] Implement check for forbidden filename characters
     [X] is_URL_abs() (Scraper Functions)
-    [ ] write is_URL_valid()
+    [/] write is_URL_valid()
         [ ] Test that start indicators are at the beginning
         [ ] Test that stop indicators are at the end or immediately followed by a slash (/)
-        [ ] Include regex check for invalid URL characters (/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/) see:
+        [/] Include regex check for invalid URL characters (/^([!#$&-;=?-[]_a-z~]|%[0-9a-fA-F]{2})+$/) see:
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=.
+        [ ] Add fidelity to verify allowed characters are utilized properly (see: ftp://username:password@domain)
+        [ ] Add some manner of sub-search which validates HTML codes from the .findall(URL) results
 
 # Complete In-Progress Code #
     [ ] Write unittests for get_root_URL() in Robot_Reader_Function_Tests.py
