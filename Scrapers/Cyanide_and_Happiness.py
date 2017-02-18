@@ -65,7 +65,7 @@ from Scraper_Functions import make_rel_URL_abs
 webComicName = 'Cyanide_and_Happiness' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://explosm.net/' # <=--------------------------=UPDATE=--------------------------=>
 #targetComicURL = baseURL # Original source
-targetComicURL = 'http://explosm.net/comics/4411' # Start here instead
+targetComicURL = 'http://explosm.net/comics/4321' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
