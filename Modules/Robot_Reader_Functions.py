@@ -56,7 +56,7 @@ def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
     # 3. TRIM THE URL
     try:
         trimmedURL = trim_a_URL(baseURL)
-        trimmedURL = get_root_URL(baseURL)
+        trimmedURL = get_root_URL(trimmedURL)
     except Exception as err:
         print(repr(err))
 #        sys.exit()
