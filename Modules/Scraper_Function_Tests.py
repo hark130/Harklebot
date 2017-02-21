@@ -4,10 +4,71 @@ from Scraper_Functions import get_image_filename    # get_image_filename(htmlStr
 from Scraper_Functions import is_URL_abs            # is_URL_abs(baseURL, targetURL)
 from Scraper_Functions import make_rel_URL_abs      # make_rel_URL_abs(baseURL, targetURL)
 from Scraper_Functions import is_URL_valid          # is_URL_valid(URL)
+from Scraper_Functions import get_root_URL          # get_root_URL(URL)
 
 import unittest
 import os
 import re
+
+
+class GetRootURL(unittest.TestCase):
+
+    def test01_URL_not_a_string(self):
+        try:
+            Robot_Functions_v1.get_root_URL(69)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'URL is not a string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    def test02_normal_URL1(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/?gws_rd=ssl'), 'https://www.google.com')
+
+    def test03_normal_URL2(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.tutorialspoint.com/python/string_find.htm'), 'https://www.tutorialspoint.com')
+
+    def test04_normal_URL3(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('http://stackoverflow.com/questions/674764/examples-for-string-find-in-python'), 'http://stackoverflow.com')
+
+    def test05_normal_URL4(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('https://docs.python.org/2/library/string.html'), 'https://docs.python.org')
+
+    def tes06t_normal_URL5(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/?gws_rd=ssl#q=weird+website+links'), 'https://www.google.com')
+
+    def test07_normal_URL6(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('awkwardzombie.com/index.php?page=0&comic=122616'), 'awkwardzombie.com')
+
+    def test08_normal_URL7(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('www.smbc-comics.com/comic/2007-11-09'), 'www.smbc-comics.com')
+
+    def test09_normal_URL8(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/#q=who+owns+.com+tld'), 'https://www.google.com')
+
+    # This test is very important as it validates the requirement to remove any subdirectories before locating the end (see: TLD) of hte base URL
+    def test10_normal_URL8(self):
+        self.assertEqual(Robot_Functions_v1.get_root_URL('http://www.blogsearchengine.org/search.html?cx=partner-pub-9634067433254658%3A5laonibews6&cof=FORID%3A10&ie=ISO-8859-1&q=who+owns+the+.com+tld&sa.x=0&sa.y=0'), 'http://www.blogsearchengine.org')
+
+    def test11_str_not_a_URL1(self):
+        try:
+            Robot_Functions_v1.get_root_URL('http : / / www . google . com')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is not a URL')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
+    # This test is valid merely because get_root_URL() does not include any country-unique TLDs (e.g., .cz, .ru)
+    def test12_str_not_a_URL2(self):
+        try:
+            Robot_Functions_v1.get_root_URL('http://www.praguemorning.cz/google-czech-republic/')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is not a URL')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+
 
 class IsURLValid(unittest.TestCase):
     
@@ -1426,6 +1487,10 @@ if __name__ == '__main__':
 
     # Run all the tests!
     unittest.main(verbosity=2, exit=False)
+    
+## GetRootURL
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetRootURL)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
 
 ## GetTheDate
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetTheDate)
