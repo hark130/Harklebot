@@ -32,27 +32,33 @@ class GetPageDisposition(unittest.TestCase):
 
     # Ctrl-Alt-Del: Standard, well-formed input
     def test_cac_comic1(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0']),{'http://www.cad-comic.com':False})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0']),
+                         {'http://www.cad-comic.com':False})
 
     # Ctrl-Alt-Del: User agent is string, not a list of strings (still valid, merely misformed)
     def test_cac_comic2(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', 'Mozilla/5.0'),{'http://www.cad-comic.com':False})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', 'Mozilla/5.0'),
+                         {'http://www.cad-comic.com':False})
 
     # Ctrl-Alt-Del: User agent is a list of valid strings
     def test_cac_comic3(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0', 'Python-urllib/3.5']),{'http://www.cad-comic.com':False})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0', 'Python-urllib/3.5']),
+                         {'http://www.cad-comic.com':False})
 
     # Saturday Morning Breakfast Cereal: Standard, well-formed input
     def test_smbc_comic1(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', ['Mozilla/5.0']),{'http://www.smbc-comics.com':True})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', ['Mozilla/5.0']),
+                         {'http://www.smbc-comics.com':True})
 
     # Saturday Morning Breakfast Cereal: User agent is string, not a list of strings (still valid, merely misformed)
     def test_smbc_comic2(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', 'Mozilla/5.0'),{'http://www.smbc-comics.com':True})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', 'Mozilla/5.0'),
+                         {'http://www.smbc-comics.com':True})
 
     # Saturday Morning Breakfast Cereal: User agent is a list of valid strings
     def test_smbc_comic3(self):
-        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', ['Mozilla/5.0', 'Python-urllib/3.5']),{'http://www.smbc-comics.com':True})
+        self.assertEqual(Robot_Functions_v1.get_page_disposition('http://www.smbc-comics.com/comic/2011-07-23', ['Mozilla/5.0', 'Python-urllib/3.5']),
+                         {'http://www.smbc-comics.com':True})
 
     # XKCD: Standard, normal URL that can't be used to download the robots.txt file
     #       xkcd.com/433/ is valid and will show you a website but...
@@ -260,78 +266,16 @@ class GetPageDisposition(unittest.TestCase):
 
 ########################## WRITE MORE TESTS FOR AWKWARD ZOMBIE FROM OTHER USER AGENTS ######################################
 
-class GetRootURL(unittest.TestCase):
 
-    def test_URL_not_a_string(self):
-        try:
-            Robot_Functions_v1.get_root_URL(69)
-        except TypeError as err:
-            self.assertEqual(err.args[0], 'URL is not a string')
-        except Exception as err:
-            print(repr(err))
-            self.fail('Raised the wrong exception')
-
-    def test_normal_URL1(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/?gws_rd=ssl'), 'https://www.google.com')
-
-    def test_normal_URL2(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.tutorialspoint.com/python/string_find.htm'), 'https://www.tutorialspoint.com')
-
-    def test_normal_URL3(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('http://stackoverflow.com/questions/674764/examples-for-string-find-in-python'), 'http://stackoverflow.com')
-
-    def test_normal_URL4(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('https://docs.python.org/2/library/string.html'), 'https://docs.python.org')
-
-    def test_normal_URL5(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/?gws_rd=ssl#q=weird+website+links'), 'https://www.google.com')
-
-    def test_normal_URL6(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('awkwardzombie.com/index.php?page=0&comic=122616'), 'awkwardzombie.com')
-
-    def test_normal_URL7(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('www.smbc-comics.com/comic/2007-11-09'), 'www.smbc-comics.com')
-
-    def test_normal_URL8(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('https://www.google.com/#q=who+owns+.com+tld'), 'https://www.google.com')
-
-    # This test is very important as it validates the requirement to remove any subdirectories before locating the end (see: TLD) of hte base URL
-    def test_normal_URL8(self):
-        self.assertEqual(Robot_Functions_v1.get_root_URL('http://www.blogsearchengine.org/search.html?cx=partner-pub-9634067433254658%3A5laonibews6&cof=FORID%3A10&ie=ISO-8859-1&q=who+owns+the+.com+tld&sa.x=0&sa.y=0'), 'http://www.blogsearchengine.org')
-
-    def test_str_not_a_URL1(self):
-        try:
-            Robot_Functions_v1.get_root_URL('http : / / www . google . com')
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'URL is not a URL')
-        except Exception as err:
-            print(repr(err))
-            self.fail('Raised the wrong exception')
-
-    # This test is valid merely because get_root_URL() does not include any country-unique TLDs (e.g., .cz, .ru)
-    def test_str_not_a_URL2(self):
-        try:
-            Robot_Functions_v1.get_root_URL('http://www.praguemorning.cz/google-czech-republic/')
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'URL is not a URL')
-        except Exception as err:
-            print(repr(err))
-            self.fail('Raised the wrong exception')
 
 
 if __name__ == '__main__':
-    unittest.main()
+
+    # Run all the tests!
+    unittest.main(verbosity=2, exit=False)
+
+## GetPageDisposition
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetPageDisposition)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+
     print('Done testing')
-
-
-
-#class TestSomeException( unittest.TestCase ):
-#    def testRaiseWithArgs( self ):
-#        try:
-#            ... Something that raises the exception ...
-#            self.fail( "Didn't raise the exception" )
-#        except UnrecognizedAirportError, e:
-#            self.assertEquals( "func", e.args[0] )
-#            self.assertEquals( "arg1", e.args[1] )
-#        except Exception, e:
-#            self.fail( "Raised the wrong exception" )
