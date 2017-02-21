@@ -5,11 +5,23 @@ from Scraper_Functions import is_URL_abs            # is_URL_abs(baseURL, target
 from Scraper_Functions import make_rel_URL_abs      # make_rel_URL_abs(baseURL, targetURL)
 from Scraper_Functions import is_URL_valid          # is_URL_valid(URL)
 from Scraper_Functions import get_root_URL          # get_root_URL(URL)
+from Scraper_Functions import get_URL_parent_path   # get_URL_parent_path(URL)
 
 import unittest
 import os
 import re
 
+
+class GetURLParentPath(unittest.TestCase):
+    # Test 1 - Invalid Input - TypeError('URL is not a string')
+    def test01_InvalidInput01(self):
+        try:
+            result = get_URL_parent_path('https://github.com/hark130/Harklebot')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is not a string')
+            
+            
+            # result = get_URL_parent_path('https://github.com/hark130/Harklebot')
 
 class GetRootURL(unittest.TestCase):
 
