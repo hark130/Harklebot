@@ -43,6 +43,7 @@
 #           make_rel_URL_abs() functionality
 #           Incorporated is_URL_valid() into Template
 #           Adding fidelity to the sys.path append to find the "Modules" folder
+#           Start at 'Latest' functionality
 #################################################################################
 
 
@@ -89,6 +90,10 @@ targetComicURL = '___UPDATE___' # Original source
 imageSearchPhrase = ['___UPDATE___', '___UPDATE___', '___UPDATE___'] # <=--------------------------=UPDATE=--------------------------=>
 # Find the beginning of the image reference
 imageBeginPhrase = '___UPDATE___' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+### LATEST URL SETUP ###
+# Fine the 'name' of the 'latest comic' navigation button
+latestSearchPhrase = '___UPDATE___' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
 
 ### PREV URL SETUP ###
 # Find the 'name' of the obligatory 'Previous Comic' navigation button
@@ -146,6 +151,7 @@ else:
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 firstURL = ''               # Holds 'first' URL and determines when to stop scraping
+latestURL = ''              # Holds 'lastest' URL in case root webpage doesn't default to the 'lastest' comic (see: OotS)
 # No longer needs fullURLIndicatorList... functionality extricated into is_URL_abs()
 #fullURLIndicatorList = [rootURL, baseURL, 'www.', 'http:']
 numExistingSkips = 0        # Variable to store the number of files already found
@@ -236,8 +242,34 @@ while True:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
         pass
 
+#    print("\nFetching Latest URL:") # DEBUGGING
+    # 4. FIND THE LATEST URL
+    # Sites like Order of the Stick (OotS) do not default to their latest comic... they link to it
+    # Don't do this if:
+    #       latestSearchPhrase is not configured
+    #       The target URL doesn't match the base (see: root) URL (an indication the script wanted to skip ahead)
+    #       latestURL has already been assigned (it's already been found)
+    if latestSearchPhrase.__len__() > 0 and targetComicURL != baseURL and latestURL.__len__() == 0:
+        try:
+            latestURL = find_a_URL(comicContentDecoded, latestSearchPhrase, 'href="', '"')
+        except Exception as err:
+            print("Error encountered with find_a_URL('latest')!") # DEBUGGING
+            print(repr(err))
+        else:
+            if latestURL.__len__() > 0:
+                try:
+                    latestURL = make_rel_URL_abs(baseURL, firstURL)
+            except Exception as err:
+                print("Error encountered with make_rel_URL_abs('latest')!") # DEBUGGING
+                print(repr(err))
+#                sys.exit() # Harsh... Not a big deal if you can't find 'latest' because this might be it
+            else:
+                print("Latest URL:\t{}".format(latestURL)) # DEBUGGING 
+                currentURL = latestURL
+                continue # Go back to the top of the while loop
 
-#    print("\nFetching First URL:")
+            
+#    print("\nFetching First URL:") # DEBUGGING
     # 4. FIND THE FIRST URL
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
