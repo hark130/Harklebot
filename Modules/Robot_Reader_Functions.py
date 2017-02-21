@@ -17,8 +17,8 @@ Returns (examples):
         {'www.fullURL.com/comic':True, 'www.fullURL.com':False}            (White List)
         {'www.fullURL.com/forums':False, 'www.fullURL.com':True}           (Black List)
         {'www.fullURL.com/comic':True, 'www.fullURL.com/private/':False}   (Grey List)
-        {'www.fullURL.com':False}                                           (Bad Robot List)
-        {'www.fullURL.com':True}                                            (Good Robot List)     
+        {'www.fullURL.com':False}                                          (Bad Robot List)
+        {'www.fullURL.com':True}                                           (Good Robot List)     
 Exceptions:
         TypeError('URL is not a string')
         TypeError('User Agent is not a string or a list')
