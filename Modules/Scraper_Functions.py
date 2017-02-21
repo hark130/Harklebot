@@ -15,11 +15,9 @@
 #           make_rel_URL_abs(baseURL, targetURL)
 #           is_URL_abs(baseURL, targetURL)
 #   MOVING: URL functions from Robot Reader to Scraper Functions
-#################################################################################
-#################################################################################
-# Version 1.3
 #   ADDING: New functionality to find_the_date() to include YYYY.MM.DD (see: Cyanide & Happiness)
 #           is_URL_valid()... basic functionality
+#   ADDING: get_URL_parent_path(URL)
 #################################################################################
 
 
@@ -28,6 +26,54 @@ import time
 import re
 #import htmlentitydefs
 import collections
+from urllib.parse import urlparse
+from urllib.parse import urlunparse
+
+
+'''
+    Purpose: Determine the parent path of a URL
+    Input:
+        URL - string representation of a URL
+    Output:
+        String representation of the parent path URL on success
+        https://github.com/hark130/Harklebot becomes
+        https://github.com/hark130
+    Exceptions:
+        TypeError('URL is not a string')
+        ValueError('URL is empty')
+        ValueError('URL is not a URL')
+'''
+def get_URL_parent_path(URL):
+    retVal = ''
+    
+    # 1. INPUT VALIDATION
+    if isinstance(URL, str) is False:
+        raise TypeError('URL is not a string')
+    elif URL.__len__() == 0:
+        raise ValueError('URL is empty')
+    elif is_URL_valid(URL) is False:
+        raise ValueError('URL is not a URL')
+            
+    # 2. MODIFY URL
+    ## 2.1. Parse the URL
+    originalList = list(urlparse(URL))
+    
+    ## 2.2. Extract the parsed path
+    rawPath = originalList[2]
+    
+    ## 2.3. Split the parse path
+    rawPathList = rawPath.split('/')
+    
+    ## 2.4. Slice of the end
+    rawPathList = rawPathList[:rawPathList.__len__() - 1:]
+    
+    ## 2.5. Reassemble the path
+    originalList[2] = '/'.join(rawPathList)
+    
+    ## 2.6. Reassemble the URL with the modified path
+    retVal = urlunparse(originalList)
+    
+    return retVal
 
 
 '''
