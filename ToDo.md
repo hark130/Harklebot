@@ -10,6 +10,7 @@
         glue them together?
         [ ] New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
     [/] Template_Scraper.py
+        [ ] ROBOTS.TXT!
         [X] Implement is_URL_valid()
         [ ] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
         [ ] Auto-determine USER_AGENT by
@@ -30,7 +31,6 @@
             [X] Sometimes there's redundancy between nav-back and base URL.
                 [X] Utilize base URL for relative URL assignment?
                 [X] .find() functionality to find an overlap match? (e.g., www.blah.com/comic/ & /comic/imgs/2016/01/...)
-        [ ] ROBOTS.TXT!
         [ ] (Expanded) List of acceptable image file extensions
         [/] XKCD
             [X] Template adaption needed a little mangling since //imgs.xkcd.com doesn't meet the full URL requirement
@@ -56,7 +56,8 @@
     [ ] **Finish testing parse_robots_txt()**
 
 # Backlog #
-    [ ] **Write Robot Reader functions to parse boolean dictionary returned by get_page_disposition()**
+    [ ] Refactor necessary Scraper Functions to utilize urlparse functionality (e.g., get root, valid URL)
+    [X] **Write Robot Reader functions to parse boolean dictionary returned by get_page_disposition()**
     [ ] Write Cyanide and Happiness Scraper
     [ ] Write Accursed Dragon Scraper
     [ ] Transition 'template_scraper.py' into an object oriented solution (see: Scraper Class)
