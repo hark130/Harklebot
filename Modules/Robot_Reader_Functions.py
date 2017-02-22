@@ -25,7 +25,11 @@ from Scraper_Functions import get_URL_parent_path
         ValueError('URL is not a URL')
 '''
 def robots_may_I(page_disposition, URL):
-    retVal = True
+    retVal = True           # Default response is True
+    currentURL = ''         # Current URL being evaluated
+    rootURL = ''            # Root URL of "URL"
+    tempURL = ''            # Holds return value of get_URL_parent_path() to check against currentURL
+    foundAnAnswer = False   # Boolean used to determine whether a match was found or not
     
     # 1. INPUT VALIDATION
     ## 1.1. Page Disposition
@@ -51,15 +55,48 @@ def robots_may_I(page_disposition, URL):
     ### 1.2.3. Verify URL is valid
     elif is_URL_valid(URL) is False:
         raise ValueError('URL is not a URL')
-    else:
-        trimmedURL = trim_a_URL(URL)
-        rootURL = get_root_URL(URL)
+
+    ## 1.3. Verify dictionary
+    ### LOOK FOR ROOT URL IN DICTIONARY? ###
         
         
+    # 2. FIND AN ANSWER
+    ## 2.1. Prepare for path search
+    currentURL = trim_a_URL(URL)
+    rootURL = get_root_URL(currentURL)
     
-    
-    
-    
+    ## 2.2. Conduct search
+    while True:
+#    while currentURL != rootURL and tempURL != currentURL: # Wouldn't work because it would never check for the rootURL
+        ### 2.2.1. The URL is in the dictionary
+        if currentURL in page_disposition.keys() is True:
+            try:
+                retVal = page_disposition[currentURL]
+            except KeyError as err:
+                print("Key Error for {} in...\n{}".format(currentURL, page_disposition)) # DEBUGGING
+                print(repr(err))
+                sys.exit() # Harsh... but this should never happen because the key was already verified to be present
+            else:
+                print("Found a match:\t{} is {}".format(currentURL, retVal)) # DEBUGGING
+                break # Found a match.  Stop looking.
+        ### 2.2.2. The URL is not in the dictionary
+        else:
+            #### 2.2.2.1. Verify we haven't hit the rootURL
+            if currentURL == rootURL:
+                break # This is the end
+            #### 2.2.2.2. Get the parent path
+            tempURL = get_URL_parent_path(currentURL)
+            #### 2.2.2.3. Redundant formatting check for rootURL
+            if tempURL == currentURL:
+                print("get_URL_parent_path({}) returned {} but it passed the rootURL ({}) check somehow.".format(currentURL, tempURL, rootURL))
+                break # This is the end
+            else:
+                currentURL = tempURL
+                
+    ## 2.3. Verify answer
+    if foundAnAnswer is False:
+        print("Did not find an answer for {} in {}".format(URL, page_disposition)) # DEBUGGING
+        pass    
     
     return retVal
 
