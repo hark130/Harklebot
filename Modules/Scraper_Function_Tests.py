@@ -13,16 +13,128 @@ import re
 
 
 class GetURLParentPath(unittest.TestCase):
+    
     # Test 1 - Invalid Input - TypeError('URL is not a string')
     def test01_InvalidInput01(self):
         try:
-            result = get_URL_parent_path('https://github.com/hark130/Harklebot')
-        except ValueError as err:
+            result = get_URL_parent_path(['this', 'is', 'not', 'a', 'string'])
+        except TypeError as err:
             self.assertEqual(err.args[0], 'URL is not a string')
-            
-            
-            # result = get_URL_parent_path('https://github.com/hark130/Harklebot')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
 
+    # Test 2 - Invalid Input - ValueError('URL is empty')
+    def test02_InvalidInput02(self):
+        try:
+            result = get_URL_parent_path('')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')      
+            
+    # Test 3 - Invalid Input - ValueError('URL is not a URL')
+    def test03_InvalidInput03(self):
+        try:
+            result = get_URL_parent_path('this is DEFINITELY not a valid URL!')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is not a URL')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')     
+
+    # Test 4 - Invalid Input - ValueError('URL is not a URL')
+    def test04_InvalidInput04(self):
+        try:
+            result = get_URL_parent_path('http://api.google.com/q?exp=a|b')
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'URL is not a URL')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')           
+
+    # Test 5 - Valid Input - Normal
+    def test05_ValidInput01(self):
+        try:
+            result = get_URL_parent_path('https://github.com/hark130/Harklebot')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'https://github.com/hark130')     
+            
+    # Test 6 - Valid Input - Actual page
+    def test06_ValidInput02(self):
+        try:
+            result = get_URL_parent_path('http://cdn2.cad-comic.com/comics/sillies-20170203-8a3f1.gif')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://cdn2.cad-comic.com')     
+            
+    # Test 7 - Valid Input - Actual page
+    def test07_ValidInput03(self):
+        try:
+            result = get_URL_parent_path('https://imgs.xkcd.com/comics/mission_to_culture.png')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'https://imgs.xkcd.com')     
+            
+    # Test 8 - Valid Input - Actual page
+    def test08_ValidInput04(self):
+        try:
+            result = get_URL_parent_path('https://github.com/hark130/Harklebot/blob/master/Modules/Robot_Reader_Function_Tests.py')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'https://github.com/hark130/Harklebot/blob/master')     
+
+    # Test 9 - Valid Input - Base URL of an actual page
+    def test09_ValidInput05(self):
+        try:
+            result = get_URL_parent_path('http://www.cnn.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://www.cnn.com')   
+
+    # Test 10 - Valid Input - Base URL of an actual page
+    def test10_ValidInput06(self):
+        try:
+            result = get_URL_parent_path('http://www.cnn.com/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'http://www.cnn.com')   
+
+    # Test 11 - Valid Input - Base URL of an actual page
+    def test11_ValidInput07(self):
+        try:
+            result = get_URL_parent_path('www.cnn.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'www.cnn.com')   
+
+    # Test 12 - Valid Input - Base URL of an actual page
+    def test12_ValidInput08(self):
+        try:
+            result = get_URL_parent_path('www.cnn.com/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(result == 'www.cnn.com')   
+            
+            
 class GetRootURL(unittest.TestCase):
 
     def test01_URL_not_a_string(self):
@@ -1499,7 +1611,11 @@ if __name__ == '__main__':
 
     # Run all the tests!
     unittest.main(verbosity=2, exit=False)
-    
+
+## GetURLParentPath
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetURLParentPath)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+
 ## GetRootURL
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetRootURL)
 #    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
