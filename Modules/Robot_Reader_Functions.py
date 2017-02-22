@@ -27,6 +27,39 @@ from Scraper_Functions import get_URL_parent_path
 def robots_may_I(page_disposition, URL):
     retVal = True
     
+    # 1. INPUT VALIDATION
+    ## 1.1. Page Disposition
+    ### 1.1.1. Verify it's a dictionary
+    if isinstance(page_disposition, dict) is False:
+        raise TypeError('Page disposition is not a dictionary')
+    ### 1.1.2. Verify it has content
+    elif page_disposition.keys().__len__() == 0:
+        raise ValueError('Page disposition is empty')
+    ### 1.1.3. Verify it contains boolean keys
+    else:
+        for value in page_disposition.values():
+            if isinstance(value, bool) is False:
+                raise ValueError('Page disposition contains a non-boolean value')
+                
+    ## 1.2. URL
+    ### 1.2.1. Verify URL is a string
+    if isinstance(URL, str) is False:
+        raise TypeError('URL is not a string')
+    ### 1.2.2. Verify URL is not blank
+    elif URL.__len__() == 0:
+        raise ValueError('URL is empty')
+    ### 1.2.3. Verify URL is valid
+    elif is_URL_valid(URL) is False:
+        raise ValueError('URL is not a URL')
+    else:
+        trimmedURL = trim_a_URL(URL)
+        rootURL = get_root_URL(URL)
+        
+        
+    
+    
+    
+    
     
     return retVal
 
