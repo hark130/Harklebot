@@ -3,6 +3,875 @@ from Robot_Reader_Functions import get_page_disposition     # get_page_dispositi
 from Robot_Reader_Functions import robots_may_I             # robots_may_I(page_disposition, URL)
 
 
+# This class tests combined functionality from get_page_disposition() and robots_may_I()
+# This class will not concern itself with testing input validation because each function has already been tested
+# This class will attempt to find errors/loop holes/oversights in the combination of the two functions
+class PageDispositionCombinedTest(unittest.TestCase):
+    
+    # Test 1 - http://www.smbc-comics.com/robots.txt
+    # Robots.txt is blank
+    def test01_SMBC01(self):
+        # Setup the test variables
+        baseURL = 'http://www.smbc-comics.com'
+        userAgent = ['Harklebot', 'Python-urllib/3.5']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # A
+        try:
+            result = robots_may_I(page_disposition, 'http://www.smbc-comics.com/comic/non-judgmental-parenting')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)      
+            
+        # B
+        try:
+            result = robots_may_I(page_disposition, 'http://www.smbc-comics.com/comic/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)   
+            
+        # C
+        try:
+            result = robots_may_I(page_disposition, 'http://www.smbc-comics.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)   
+            
+    # Test 2 - https://www.xkcd.com/robots.txt
+    # Robots.txt:
+    #   User-agent: *
+    #   Disallow: /personal/
+    def test02_XKCD01(self):
+        # Setup the test variables
+        baseURL = 'https://www.xkcd.com'
+        userAgent = ['Harklebot', 'Python-urllib/3.5']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'https://www.xkcd.com/655/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'https://www.xkcd.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'https://imgs.xkcd.com/comics/climbing.png')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'https://www.xkcd.com/personal/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+    # Test 3 - https://www.cad-comic.com/robots.txt
+    # Robots.txt:
+    #   User-agent: *
+    #   Disallow: /
+    def test03_CAD01(self):
+        # Setup the test variables
+        baseURL = 'https://www.cad-comic.com/'
+        userAgent = ['Harklebot', 'Python-urllib/3.5', 'Maklebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'https://www.cad-comic.com/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'https://www.cad-comic.com/sillies/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'http://www.cad-forums.com/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'https://ctrl-alt-del.myshopify.com/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+
+        # Site E
+        try:
+            result = robots_may_I(page_disposition, 'https://www.cad-comic.com/sillies/20100604')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+    # Test 4 - https://www.penny-arcade.com/robots.txt
+    # Robots.txt:
+    #   User-agent: *
+    #   Disallow: /feed/
+    #   Disallow: /feed/podcasts-*
+    #   Disallow: /feed/show-*
+    #   Allow: /feed/podcasts
+    #   Allow: /feed/show
+    def test04_PA01(self):
+        # Setup the test variables
+        baseURL = 'https://www.penny-arcade.com'
+        userAgent = ['Harklebot', 'Python-urllib/3.5', 'Maklebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com/feed/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com/feed/podcasts/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com/feed/show/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+
+        # Site E
+        try:
+            result = robots_may_I(page_disposition, 'http://www.penny-arcade.com/news/post/2017/02/22/update-on-that-stolen-ps4-in-new-zealand')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site F
+        try:
+            result = robots_may_I(page_disposition, 'http://www.penny-arcade.com/patv/show/dlc-podcast-show')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site G
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com/feed/podcasts-are-fun')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site H
+        try:
+            result = robots_may_I(page_disposition, 'https://www.penny-arcade.com/feed/show-me-the-code')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+    # Test 5 - http://www.awkwardzombie.com/robots.txt - ['Harklebot', 'Python-urllib/3.5']
+    # Robots.txt:
+    #   User-agent: *
+    #   Crawl-Delay: 30
+    #   Disallow: /aggregator/
+    #   Disallow: /tracker/
+    #   Disallow: /archive/
+    #   Disallow: /archive/*/
+    #   Disallow: /event/
+    #   Disallow: /event/*/
+    #   Disallow: /comment/reply/
+    #   Disallow: /node/add/
+    #   Disallow: /user/
+    #   Disallow: /files/
+    #   Disallow: /popular/
+    #   Disallow: /popular/*/
+    #   Disallow: /xtracker/
+    #   Disallow: /search/
+    #   Disallow: /book/print/
+    #   Disallow: /forward/
+    #   Disallow: /taxonomy/
+    #   Disallow: /node/*/print/
+    #   Disallow: /node/print/
+    #   Disallow: /node/
+    #   Disallow: /blog/
+    #   Disallow: /archive/
+    #   Disallow: /print/
+    #   Disallow: /taxonomy/
+    def test05_AZ01(self):
+        # Setup the test variables
+        baseURL = 'http://www.awkwardzombie.com'
+        userAgent = ['Harklebot', 'Python-urllib/3.5']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/aggregator/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/jedi/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+
+        # Site E
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/extinction/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site F
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/comment/reply/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site G
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/add/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site H
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/mechanics/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/to/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site J
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/forum/index.php')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site K
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/index.php?page=0&comic=013017')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site L
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/tracker/jacker/)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+                                  
+        # Site M
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+                                  
+        # Site N
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/I/made/up/this/path.html)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+    # Test 6 - http://www.awkwardzombie.com/robots.txt - ['Googlebot']
+    # Robots.txt:
+    #   User-agent: Googlebot
+    #   Crawl-Delay: 30
+    #   Disallow: /aggregator/
+    #   Disallow: /tracker/
+    #   Disallow: /archive/
+    #   Disallow: /archive/*/
+    #   Disallow: /event/
+    #   Disallow: /event/*/
+    #   Disallow: /comment/reply/
+    #   Disallow: /node/add/
+    #   Disallow: /user/
+    #   Disallow: /files/
+    #   Disallow: /popular/
+    #   Disallow: /popular/*/
+    #   Disallow: /xtracker/
+    #   Disallow: /search/
+    #   Disallow: /book/print/
+    #   Disallow: /forward/
+    #   Disallow: /taxonomy/
+    #   Disallow: /node/*/print/
+    #   Disallow: /node/print/
+    #   Disallow: /node/
+    #   Disallow: /blog/
+    #   Disallow: /archive/
+    #   Disallow: /print/
+    #   Disallow: /taxonomy/
+    def test06_AZ02(self):
+        # Setup the test variables
+        baseURL = 'http://www.awkwardzombie.com'
+        userAgent = ['Googlebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/aggregator/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/jedi/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+
+        # Site E
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/extinction/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site F
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/comment/reply/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site G
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/add/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site H
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/mechanics/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/to/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site J
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/forum/index.php')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site K
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/index.php?page=0&comic=013017')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+        # Site L
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/tracker/jacker/)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+                                  
+        # Site M
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+                                  
+        # Site N
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/I/made/up/this/path.html)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertTrue(result)  
+            
+    # Test 7 - http://www.awkwardzombie.com/robots.txt - ['BotALot']
+    # Robots.txt:
+    #   User-agent: BotALot
+    #   Disallow: /
+    def test07_AZ03(self):
+        # Setup the test variables
+        baseURL = 'http://www.awkwardzombie.com'
+        userAgent = ['BotALot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Site A
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/aggregator/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)      
+            
+        # Site B
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site C
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/archive/jedi/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)    
+            
+        # Site D
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+
+        # Site E
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/event/extinction/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site F
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/comment/reply/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site G
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/add/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site H
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)   
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/popular/mechanics/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site I
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/node/to/print/')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site J
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/forum/index.php')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site K
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/index.php?page=0&comic=013017')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site L
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/tracker/jacker/)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+            
+        # Site M
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+                                  
+        # Site N
+        try:
+            result = robots_may_I(page_disposition, 'http://www.awkwardzombie.com/I/made/up/this/path.html)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, bool))
+            self.assertFalse(result)  
+
+
 class RobotsMayI(unittest.TestCase):
     
     # Test 1 - Invalid Input - TypeError('Page disposition is not a dictionary')
@@ -80,7 +949,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
             
     # Test 8 - Valid Input (Manufactured)
     def test08_ValidInput02(self):
@@ -97,7 +966,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 9 - Valid Input (Manufactured)
     def test09_ValidInput03(self):
@@ -114,7 +983,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
             
     # Test 10 - Valid Input (Manufactured)
     def test10_ValidInput04(self):
@@ -131,7 +1000,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 11 - Valid Input (Manufactured)
     def test11_ValidInput05(self):
@@ -148,7 +1017,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 12 - Valid Input (Manufactured)
     def test12_ValidInput06(self):
@@ -165,7 +1034,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
         
     # Test 13 - Valid Input (Manufactured)
     def test13_ValidInput07(self):
@@ -182,7 +1051,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
             
     # Test 14 - Valid Input (Manufactured)
     def test14_ValidInput08(self):
@@ -199,7 +1068,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 15 - Valid Input (Manufactured)
     def test15_ValidInput09(self):
@@ -216,7 +1085,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
             
     # Test 16 - Valid Input (Manufactured)
     def test16_ValidInput10(self):
@@ -233,7 +1102,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 17 - Valid Input (Manufactured)
     def test17_ValidInput11(self):
@@ -250,7 +1119,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, False)
+            self.assertEqual(result, False)
             
     # Test 18 - Valid Input (Manufactured)
     def test18_ValidInput12(self):
@@ -267,7 +1136,7 @@ class RobotsMayI(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            assertEqual(result, True)
+            self.assertEqual(result, True)
 
 
 class GetPageDisposition(unittest.TestCase):
