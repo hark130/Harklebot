@@ -5,30 +5,55 @@ import urllib.error
 import re
 from Scraper_Functions import trim_a_URL
 from Scraper_Functions import get_root_URL
+from Scraper_Functions import get_URL_parent_path
 
 
 '''
-Purpose: Open a site's robot.txt file, parse it, and return a dictionary of URL:bool
-Input:
+    Purpose: Read the parsed results of a page's robots.txt file and determine if a particular URL is permitted or not
+    Input:
+        page_disposition - A dictionary of URL 'answers' returned by get_page_disposition
+        URL - The URL the user agent is asking to access
+    Output:
+        True if robots.txt permits
+        False if robots.txt forbids
+    Exceptions:
+        TypeError('Page disposition is not a dictionary')
+        ValueError('Page disposition is empty')
+        ValueError('Page disposition contains a non-boolean value')
+        TypeError('URL is not a string')
+        ValueError('URL is empty')
+        ValueError('URL is not a URL')
+'''
+def robots_may_I(page_disposition, URL):
+    retVal = True
+    
+    
+    return retVal
+
+
+'''
+    Purpose: Open a site's robots.txt file, parse it, and return a dictionary of URL:bool
+    Input:
         baseURL - website to find a robots.txt file
         *userAgent - string or list of strings to utilize when parsing,
             the first of which will be used to download the robots.txt file
-Returns (examples):
+    Returns (examples):
         {'www.fullURL.com/comic':True, 'www.fullURL.com':False}            (White List)
         {'www.fullURL.com/forums':False, 'www.fullURL.com':True}           (Black List)
         {'www.fullURL.com/comic':True, 'www.fullURL.com/private/':False}   (Grey List)
         {'www.fullURL.com':False}                                          (Bad Robot List)
         {'www.fullURL.com':True}                                           (Good Robot List)     
-Exceptions:
+    Exceptions:
         TypeError('URL is not a string')
         TypeError('User Agent is not a string or a list')
         TypeError('Found a User Agent that is not string:\t{}'.format(agent))
-NOTE:   
+    NOTE:   
+        This function merely prepares everything prior to dictionary creation
         Calls parse_robots_txt() to actually create the dictionary
         All trailing slashes (/) are removed (e.g., 'www.fullURL.com/comic' becomes 'www.fullURL.com/comic/'
 '''
 def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
-    
+
     retVal = {}
     robotsFile = ''
 
@@ -95,24 +120,24 @@ def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
 
 
 '''
-Purpose: Parse a site's robot.txt file and return a dictionary of URL:bool
-Input:
+    Purpose: Parse a site's robot.txt file and return a dictionary of URL:bool
+    Input:
         baseURL - website to find a robots.txt file
         robotsFile - raw robots.txt content as a string
         *userAgent - string or list of strings to utilize when parsing,
             the first of which will be used to download the robots.txt file
-Returns (examples):
+    Returns (examples):
         {'www.fullURL.com/comic/':True, 'www.fullURL.com':False}            (White List)
         {'www.fullURL.com/forums/':False, 'www.fullURL.com':True}           (Black List)
         {'www.fullURL.com/comic/':True, 'www.fullURL.com/private/':False}   (Grey List)
         {'www.fullURL.com':False}                                           (Bad Robot List)
         {'www.fullURL.com':True}                                            (Good Robot List)     
-Exceptions:
+    Exceptions:
         TypeError('Robots file is not a string')
         TypeError('Base URL is not a string')
         TypeError('User Agent is not a string or a list')
         TypeError('Found a User Agent that is not string:\t{}'.format(agent))
-TO DO:
+    TO DO:
         Entries such as Awkward Zombie's 'Disallow: /node/*/print/' are not properly handled since
             all wildcards are removed.  Consider reintegrating wildcards into the algorithm. In
             the meantime, entries such as '/node/*/print/' are added as '/node/'
@@ -221,4 +246,5 @@ def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
                 ### 2.5.2. It doesn't exist, so add it
                 retVal.update({addThis:instructionAction})
 
-    return retVal 
+    return retVal
+
