@@ -10,3 +10,7 @@
 # Sublime?
 *.TMP
 
+# Backup Scrapers
+*.bak
+
+
