@@ -225,7 +225,7 @@ while True:
         # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
         if obeyTheRobots is True and crawlDelay > 0:
             # https://youtu.be/Udj-o2m39NA
-            print("Sleeping {} seconds before requesting the page".format(crawlDelay))
+            print("Sleeping {} seconds before requesting the next page".format(crawlDelay))
             time.sleep(crawlDelay)
 
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
@@ -275,6 +275,8 @@ while True:
         sys.exit()
     else:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        # Sometimes, the name and/or date is in the URL (see: OotS)
+        comicContentDecoded = currentURL + '\n' + comicContentDecoded # Prepend the HTML with the URL
         pass
 
 #    print("\nFetching Latest URL:") # DEBUGGING
@@ -319,7 +321,7 @@ while True:
 
     ## 4.2. Validate findings
     ### 4.2.1. firstURL empty and this is the first stop
-    if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
+    if firstURL.__len__() == 0 and (currentURL == targetComicURL or currentURL == latestURL): # Only check on first run
         #### 4.2.1.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
         if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
             print("First URL search criteria not configured.") # DEBUGGING  
@@ -327,7 +329,7 @@ while True:
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
     ### 4.2.2. Found firstURL on the first stop
-    elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
+    elif firstURL.__len__() > 0 and (currentURL == targetComicURL or currentURL == latestURL): # Found it first time
         #### 4.2.2.1. Ensure the firstURL is an absolute URL
         try:
             firstURL = make_rel_URL_abs(baseURL, firstURL)

@@ -86,44 +86,41 @@ from Robot_Reader_Functions import robots_may_I
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
 ################################################
 ### URL SETUP ###
-webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
-baseURL = 'http://www.xkcd.com/' # <=--------------------------=UPDATE=--------------------------=>
+webComicName = 'Ctrl-Alt-Del_Sillies' # <=--------------------------=UPDATE=--------------------------=>
+baseURL = 'http://www.cad-comic.com/sillies/' # <=--------------------------=UPDATE=--------------------------=>
 targetComicURL = baseURL # Original source
-#targetComicURL = 'http://www.xkcd.com/2/' # Start here instead
+#targetComicURL = baseURL # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
-imageSearchPhrase = ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '] # <=--------------------------=UPDATE=--------------------------=>
+imageSearchPhrase = ['cdn2.cad-comic.com/comics/'] # <=--------------------------=UPDATE=--------------------------=>
 # Find the beginning of the image reference
 imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
 ### LATEST URL SETUP ###
 # Fine the 'name' of the 'latest comic' navigation button
-latestSearchPhrase = '' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+latestSearchPhrase = 'nav-last' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
 
 ### PREV URL SETUP ###
 # Find the 'name' of the obligatory 'Previous Comic' navigation button
-prevSearchPhrase = 'prev' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+prevSearchPhrase = 'nav-back' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
 
 ### FIRST URL SETUP ###
 # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
 # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
-# The following phrase is a bit of hard-coding since XKCD html doesn't have a 'phrase' for the 'First Comic' nav button
-# <li><a href="/1/">|&lt;</a></li>
-firstSearchPhrase = '/1/' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+firstSearchPhrase = 'nav-first' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
 
 ### DATE PARSING SETUP ###
 # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
-# XKCD doesn't have page dates... really
-skipDateIfNotFound = True # False for most pages <=--------------------------=UPDATE=--------------------------=>
+skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
 # Find the date from a list of strings to match in the page's HTML
 dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
 
 ### NAME PARSING SETUP ###
 # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
-nameSearchPhrase = ['Permanent link to this comic: http://xkcd.com/','Permanent link to this comic: https://xkcd.com/'] # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = 'alt="" title="' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
 # Delimit the end of the image title with this string
-nameEnding = '/<br />' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+nameEnding = '"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
 ################################################
 # Modify these variables based on HTML details #
 ################################################
@@ -228,7 +225,7 @@ while True:
         # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
         if obeyTheRobots is True and crawlDelay > 0:
             # https://youtu.be/Udj-o2m39NA
-            print("Sleeping {} seconds before requesting the page".format(crawlDelay))
+            print("Sleeping {} seconds before requesting the next page".format(crawlDelay))
             time.sleep(crawlDelay)
 
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
@@ -278,6 +275,8 @@ while True:
         sys.exit()
     else:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        # Sometimes, the name and/or date is in the URL (see: OotS)
+        comicContentDecoded = currentURL + '\n' + comicContentDecoded # Prepend the HTML with the URL
         pass
 
 #    print("\nFetching Latest URL:") # DEBUGGING
@@ -322,7 +321,7 @@ while True:
 
     ## 4.2. Validate findings
     ### 4.2.1. firstURL empty and this is the first stop
-    if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
+    if firstURL.__len__() == 0 and (currentURL == targetComicURL or currentURL == latestURL): # Only check on first run
         #### 4.2.1.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
         if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
             print("First URL search criteria not configured.") # DEBUGGING  
@@ -330,7 +329,7 @@ while True:
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
     ### 4.2.2. Found firstURL on the first stop
-    elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
+    elif firstURL.__len__() > 0 and (currentURL == targetComicURL or currentURL == latestURL): # Found it first time
         #### 4.2.2.1. Ensure the firstURL is an absolute URL
         try:
             firstURL = make_rel_URL_abs(baseURL, firstURL)

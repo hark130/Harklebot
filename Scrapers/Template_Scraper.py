@@ -275,6 +275,8 @@ while True:
         sys.exit()
     else:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        # Sometimes, the name and/or date is in the URL (see: OotS)
+        comicContentDecoded = currentURL + '\n' + comicContentDecoded # Prepend the HTML with the URL
         pass
 
 #    print("\nFetching Latest URL:") # DEBUGGING

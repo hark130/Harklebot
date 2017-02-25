@@ -137,8 +137,7 @@ MAX_404_SKIPS = 10          # Max number of missing images to skip over before s
 MAX_FILENAME_LEN = 254      # Normal OS have it at 255.  Sub one for nul char(?)... just in case.
 random.seed()
 validFileTypeList = ['.png', '.jpg', '.gif']
-# Ctrl-Alt-Del doesn't want to play nice
-obeyTheRobots = False       # Indicates whether or not the scraper will adhere to the 'recommendations' of the robots.txt file
+obeyTheRobots = True        # Indicates whether or not the scraper will adhere to the 'recommendations' of the robots.txt file
 ########################
 # Script constants #####
 ########################
@@ -276,6 +275,8 @@ while True:
         sys.exit()
     else:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        # Sometimes, the name and/or date is in the URL (see: OotS)
+        comicContentDecoded = currentURL + '\n' + comicContentDecoded # Prepend the HTML with the URL
         pass
 
 #    print("\nFetching Latest URL:") # DEBUGGING
@@ -320,7 +321,7 @@ while True:
 
     ## 4.2. Validate findings
     ### 4.2.1. firstURL empty and this is the first stop
-    if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
+    if firstURL.__len__() == 0 and (currentURL == targetComicURL or currentURL == latestURL): # Only check on first run
         #### 4.2.1.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
         if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
             print("First URL search criteria not configured.") # DEBUGGING  
@@ -328,7 +329,7 @@ while True:
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
     ### 4.2.2. Found firstURL on the first stop
-    elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
+    elif firstURL.__len__() > 0 and (currentURL == targetComicURL or currentURL == latestURL): # Found it first time
         #### 4.2.2.1. Ensure the firstURL is an absolute URL
         try:
             firstURL = make_rel_URL_abs(baseURL, firstURL)
