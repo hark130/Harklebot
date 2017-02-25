@@ -19,6 +19,10 @@
 #           is_URL_valid()... basic functionality
 #   ADDING: get_URL_parent_path(URL)
 #################################################################################
+#################################################################################
+# Version 1.3
+#   ADDING: Image name sizing capability for 'counted' names (see: Cyanide & Happines, XKCD)
+#################################################################################
 
 
 import os

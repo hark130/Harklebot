@@ -12,6 +12,128 @@ import os
 import re
 
 
+# This class will test the new get_image_filename() functionality to auto-size number-only filenames
+# This does not include dates
+class SizeNumericImageNames(unittest.TestCase):
+
+    # Test 1 - Normal Input - No numerics
+    def test01_ValidInput_NoNumerics01(self):
+        # Test Variables
+        testHTMLFile = '3-BC_HTML.txt'
+
+        ################################################
+        # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
+        ################################################
+        ### URL SETUP ###
+        webComicName = 'Business_Cat' # <=--------------------------=UPDATE=--------------------------=>
+        baseURL = 'http://www.businesscat.happyjar.com/' # <=--------------------------=UPDATE=--------------------------=>
+        targetComicURL = baseURL # Original source
+        #targetComicURL = 'http://www.businesscat.happyjar.com/comic/coffee/' # Start here instead
+
+        ### IMAGE URL SETUP ###
+        # Find the appropriate HTML line from a list of strings
+        imageSearchPhrase = ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'] # <=--------------------------=UPDATE=--------------------------=>
+        # Find the beginning of the image reference
+        imageBeginPhrase = '<img src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+        ### LATEST URL SETUP ###
+        # Fine the 'name' of the 'latest comic' navigation button
+        latestSearchPhrase = 'navi-last-in' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
+        ### PREV URL SETUP ###
+        # Find the 'name' of the obligatory 'Previous Comic' navigation button
+        prevSearchPhrase = 'navi-prev-in' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+
+        ### FIRST URL SETUP ###
+        # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
+        # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
+        firstSearchPhrase = 'navi-first-in' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+
+        ### DATE PARSING SETUP ###
+        # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
+        skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
+        # Find the date from a list of strings to match in the page's HTML
+        dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+
+        ### NAME PARSING SETUP ###
+        # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
+        nameSearchPhrase = 'title="' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+        # Delimit the end of the image title with this string
+        nameEnding = '"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+        ################################################
+        # Modify these variables based on HTML details #
+        ################################################
+
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
+                testHTML = testFile.read()
+            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(result, '20161202_Order')
+
+    # Test 2 - Normal Input - No numerics
+    def test02_ValidInput_Numerics01(self):
+        # Test Variables
+        testHTMLFile = '19-xkcd_0455_HTML.txt'
+
+        ################################################
+        # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
+        ################################################
+        ### URL SETUP ###
+        webComicName = 'XKCD' # <=--------------------------=UPDATE=--------------------------=>
+        baseURL = 'http://www.xkcd.com/' # <=--------------------------=UPDATE=--------------------------=>
+        targetComicURL = baseURL # Original source
+        #targetComicURL = 'http://www.xkcd.com/2/' # Start here instead
+
+        ### IMAGE URL SETUP ###
+        # Find the appropriate HTML line from a list of strings
+        imageSearchPhrase = ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '] # <=--------------------------=UPDATE=--------------------------=>
+        # Find the beginning of the image reference
+        imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+        ### LATEST URL SETUP ###
+        # Fine the 'name' of the 'latest comic' navigation button
+        latestSearchPhrase = '' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
+        ### PREV URL SETUP ###
+        # Find the 'name' of the obligatory 'Previous Comic' navigation button
+        prevSearchPhrase = 'prev' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+
+        ### FIRST URL SETUP ###
+        # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
+        # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
+        firstSearchPhrase = '/1/' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+
+        ### DATE PARSING SETUP ###
+        # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
+        skipDateIfNotFound = True # False for most pages <=--------------------------=UPDATE=--------------------------=>
+        # Find the date from a list of strings to match in the page's HTML
+        dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+
+        ### NAME PARSING SETUP ###
+        # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
+        nameSearchPhrase = ['Permanent link to this comic: http://xkcd.com/','Permanent link to this comic: https://xkcd.com/'] # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+        # Delimit the end of the image title with this string
+        nameEnding = '/<br />' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+        ################################################
+        # Modify these variables based on HTML details #
+        ################################################
+
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
+                testHTML = testFile.read()
+            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(result, '0455')
+######################################## START WORKING HERE ############################
+
+
 class GetURLParentPath(unittest.TestCase):
     
     # Test 1 - Invalid Input - TypeError('URL is not a string')
@@ -401,6 +523,7 @@ class IsURLValid(unittest.TestCase):
     #   Reader.  Hopefully this is just an oversight that will be corrected in a future update.
     #
     # https://perishablepress.com/stop-using-unsafe-characters-in-urls/
+
                         
 class MakeRelURLAbs(unittest.TestCase):
     
@@ -604,6 +727,7 @@ class MakeRelURLAbs(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(result == 'https://www.grumpyc.at/is/grumpy/sometimes.html')
+
 
 class IsURLAbs(unittest.TestCase):
 
@@ -983,6 +1107,7 @@ class IsURLAbs(unittest.TestCase):
         else:
             self.assertFalse(result)  
 
+
 class FindURL(unittest.TestCase):
 
     def test01_htmlString_TypeError(self):
@@ -1194,6 +1319,7 @@ class FindURL(unittest.TestCase):
             self.assertTrue(testResult.find('imgs.xkcd.com/comics/apollo_speeches.png') >= 0)
         except Exception as err:
             print(repr(err))
+
 
 class GetImageFilename(unittest.TestCase):
 
@@ -1472,6 +1598,7 @@ class GetImageFilename(unittest.TestCase):
         else:
             self.assertEqual(testResult, '00000000')
 
+
 class GetTheDate(unittest.TestCase):
     
     # Test 1 - TypeError('pageHTML is not a string or list')
@@ -1607,10 +1734,15 @@ class GetTheDate(unittest.TestCase):
         else:
             self.assertTrue(result == '20141202')
 
+
 if __name__ == '__main__':
 
     # Run all the tests!
-    unittest.main(verbosity=2, exit=False)
+    #unittest.main(verbosity=2, exit=False)
+
+# SizeNumericImageNames
+    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(SizeNumericImageNames)
+    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
 
 ## GetURLParentPath
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetURLParentPath)
