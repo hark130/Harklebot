@@ -199,13 +199,19 @@ else:
 # READ ROBOTS.TXT
 try:
     page_disposition = get_page_disposition(baseURL, USER_AGENT)
+except HTTPError as err:
+    if err.code == 404:
+        print("{} does not appear to have a robots.txt file.".format(baseURL))
+        page_disposition = {'/':True} # Allow everything
+    else:
+        raise(err)
 except Exception as err:
     print("Error with get_page_disposition({}, {})".format(baseURL, USER_AGENT))
     print(repr(err))
 else:
     if 'Crawl-delay:' in page_disposition.keys():
         if isinstance(page_disposition['Crawl-delay:'], int) is True:
-            crawlDelay = page_disposition['Crawl-delay:']    
+            crawlDelay = page_disposition['Crawl-delay:']   
 
 # COMMENCE SCRAPING
 while True:
