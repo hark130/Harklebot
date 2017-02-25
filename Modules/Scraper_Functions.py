@@ -63,16 +63,24 @@ def get_URL_parent_path(URL):
     
     ## 2.3. Split the parse path
     rawPathList = rawPath.split('/')
+
+    if rawPathList.__len__() > 1:    
+        ## 2.4. Slice of the end
+        rawPathList = rawPathList[:rawPathList.__len__() - 1:]
     
-    ## 2.4. Slice of the end
-    rawPathList = rawPathList[:rawPathList.__len__() - 1:]
+        ## 2.5. Reassemble the path
+        originalList[2] = '/'.join(rawPathList)
+
+        ## 2.6. Drop parameters, queries, and fragments
+        originalList[3] = ''
+        originalList[4] = ''
+        originalList[5] = ''
     
-    ## 2.5. Reassemble the path
-    originalList[2] = '/'.join(rawPathList)
-    
-    ## 2.6. Reassemble the URL with the modified path
-    retVal = urlunparse(originalList)
-    
+        ## 2.7. Reassemble the URL with the modified path
+        retVal = urlunparse(originalList)
+    else:
+        retVal = URL
+
     return retVal
 
 

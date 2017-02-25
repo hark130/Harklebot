@@ -6,6 +6,7 @@ import re
 from Scraper_Functions import trim_a_URL
 from Scraper_Functions import get_root_URL
 from Scraper_Functions import get_URL_parent_path
+from Scraper_Functions import is_URL_valid
 
 
 '''
@@ -69,7 +70,9 @@ def robots_may_I(page_disposition, URL):
     while True:
 #    while currentURL != rootURL and tempURL != currentURL: # Wouldn't work because it would never check for the rootURL
         ### 2.2.1. The URL is in the dictionary
-        if currentURL in page_disposition.keys() is True:
+#        print("\n\nKeys:\t{}\n\n".format(page_disposition.keys())) # DEBUGGING
+#        print("{} in {}:\t{}".format(currentURL, page_disposition.keys(), currentURL in page_disposition.keys()))
+        if currentURL in page_disposition.keys():
             try:
                 retVal = page_disposition[currentURL]
             except KeyError as err:
@@ -77,7 +80,8 @@ def robots_may_I(page_disposition, URL):
                 print(repr(err))
                 sys.exit() # Harsh... but this should never happen because the key was already verified to be present
             else:
-                print("Found a match:\t{} is {}".format(currentURL, retVal)) # DEBUGGING
+#                print("Found a match:\t{} is {}".format(currentURL, retVal)) # DEBUGGING
+                foundAnAnswer = True
                 break # Found a match.  Stop looking.
         ### 2.2.2. The URL is not in the dictionary
         else:
@@ -95,7 +99,7 @@ def robots_may_I(page_disposition, URL):
                 
     ## 2.3. Verify answer
     if foundAnAnswer is False:
-        print("Did not find an answer for {} in {}".format(URL, page_disposition)) # DEBUGGING
+#        print("Did not find an answer for {} in {}".format(URL, page_disposition)) # DEBUGGING
         pass    
     
     return retVal
@@ -260,16 +264,23 @@ def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
         entry = entry.replace(' ','')
 ############################## REVERSE FIND ON ENTRY AND AGENT STILL INCLUDES GARBAGE (e.g., User-agent:) IN ENTRY AND WON'T REVERSE FIND
         if entry.find('User-agent:') >= 0:
+            # Trim off User-agent:
+#            entry = entry[entry.find('User-agent:') + 'User-agent:'.__len__()::]
+
             # Toggle readInstructions when another User-agent entry is found
             if readInstructions is True:
                 readInstructions = False
             for agent in userAgent:
                 if readInstructions is True:
                     break
-                if entry.find(agent) >= 0 or agent.find(entry) >= 0:
-                    readInstructions = True # Next entries will be read as Allows and Disallows
-#                    print("Agent {} found in:\t{}".format(agent, entry)) # DEBUGGING
-                    continue
+                if entry.find(agent) >= 0: # or agent.find(entry) >= 0:
+                    # Look for false hits like agent == Googlebot in entry == User Agent: Googlebot-Image
+                    ## Trim the entry and check the length
+                    entry = entry[entry.find(agent)::]
+                    if entry.__len__() == agent.__len__():
+                        readInstructions = True # Next entries will be read as Allows and Disallows
+    #                    print("Agent {} found in:\t{}".format(agent, entry)) # DEBUGGING
+                        continue
 
         ## 2.4. Read instructions
         elif readInstructions is True and (entry.find('Disallow:') >= 0 or entry.find('Allow:') >= 0):
