@@ -18,8 +18,8 @@
     * In Progress:
         [/] Order of the Stick (see: Giant in the Playground)
         [/] Awkward Zombie
+        [/] Cyanide and Happiness
     * On Deck:
-        [ ] Cyanide and Happiness
         [ ] Accursed Dragon
     
 ## Modules: ##
