@@ -3,6 +3,375 @@ from Robot_Reader_Functions import get_page_disposition     # get_page_dispositi
 from Robot_Reader_Functions import robots_may_I             # robots_may_I(page_disposition, URL)
 
 
+# This class specifically tests Robot Reader's ability to respond to Crawl-Delays
+class CrawlDelayCombinedTest(unittest.TestCase):
+
+    # Test 1 - http://www.managementcenter.org/robots.txt
+    # Variable Crawl Delays
+    # User-agent: *
+    # Disallow: /wp-admin/
+    # Crawl-delay: 30
+    # User-agent: Googlebot
+    # Crawl-delay: 10
+    # User-agent: Googlebot-Mobile
+    # Crawl-delay: 20
+    # User-agent: AdsBot-Google-Mobile
+    # Crawl-delay: 20
+    # User-agent: TweetmemeBot
+    # Crawl-delay: 120
+    # User-agent: PaperLiBot
+    # Crawl-delay: 60
+    # User-agent: TinEye-bot
+    # Crawl-delay: 500
+    # User-agent: grapeshot
+    # Crawl-delay: 30
+    #def test01_MMC01(self):
+    #    # Setup the test variables
+    #    baseURL = 'http://www.managementcenter.org'
+    #    userAgent = ['Harklebot', 'Python-urllib']
+        
+    #    # Call get_page_disposition()
+    #    try:
+    #        page_disposition = get_page_disposition(baseURL, userAgent)
+    #    except Exception as err:
+    #        print(repr(err))
+    #        self.fail('Raised an exception')
+    #    else:
+    #        self.assertTrue(isinstance(page_disposition, dict))
+    #        self.assertTrue(page_disposition.__len__() > 0)
+            
+    #    # A
+    #    try:
+    #        result = robots_may_I(page_disposition, 'Crawl-Delay:')
+    #    except Exception as err:
+    #        print(repr(err))
+    #        self.fail('Raised an exception')
+    #    else:
+    #        self.assertTrue(isinstance(result, int))
+    #        self.assertEqual(result, 30)      
+
+    # Test 2 - http://www.nasdaq.com/robots.txt
+    # Variable Crawl Delays
+    #User-agent: *
+    #Crawl-delay: 30
+    #Disallow: /*.ashx$
+    #Disallow: /personal-finance/bankrate-cc-results.aspx
+    #Disallow: /personal-finance/bankrate-cd-results.aspx
+    #Disallow: /personal-finance/bankrate-auto-results.aspx
+    #Disallow: /personal-finance/bankrate-mma-results.aspx
+    #Disallow: /personal-finance/bankrate-mortgage-results.aspx
+    #User-agent: grapeshot
+    #User-agent: Pipl
+    #Disallow: /
+    #User-agent: mediapartners-google
+    #Crawl-delay: 0
+    #User-agent: googlebot
+    #Crawl-delay: 0
+    #User-agent: googlebot-news
+    #Crawl-delay: 0
+    def test02_Nasdaq01(self):
+        # Setup the test variables
+        baseURL = 'http://www.nasdaq.com'
+        userAgent = ['Harklebot', 'Python-urllib']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 30)      
+
+    # Test 3 - http://www.nasdaq.com/robots.txt
+    # Variable Crawl Delays
+    #User-agent: *
+    #Crawl-delay: 30
+    #Disallow: /*.ashx$
+    #Disallow: /personal-finance/bankrate-cc-results.aspx
+    #Disallow: /personal-finance/bankrate-cd-results.aspx
+    #Disallow: /personal-finance/bankrate-auto-results.aspx
+    #Disallow: /personal-finance/bankrate-mma-results.aspx
+    #Disallow: /personal-finance/bankrate-mortgage-results.aspx
+    #User-agent: grapeshot
+    #User-agent: Pipl
+    #Disallow: /
+    #User-agent: mediapartners-google
+    #Crawl-delay: 0
+    #User-agent: googlebot
+    #Crawl-delay: 0
+    #User-agent: googlebot-news
+    #Crawl-delay: 0
+    def test03_Nasdaq02(self):
+        # Setup the test variables
+        baseURL = 'http://www.nasdaq.com'
+        userAgent = ['mediapartners-google']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 0)      
+
+    # Test 4 - http://www.nasdaq.com/robots.txt
+    # Variable Crawl Delays
+    #User-agent: *
+    #Crawl-delay: 30
+    #Disallow: /*.ashx$
+    #Disallow: /personal-finance/bankrate-cc-results.aspx
+    #Disallow: /personal-finance/bankrate-cd-results.aspx
+    #Disallow: /personal-finance/bankrate-auto-results.aspx
+    #Disallow: /personal-finance/bankrate-mma-results.aspx
+    #Disallow: /personal-finance/bankrate-mortgage-results.aspx
+    #User-agent: grapeshot
+    #User-agent: Pipl
+    #Disallow: /
+    #User-agent: mediapartners-google
+    #Crawl-delay: 0
+    #User-agent: googlebot
+    #Crawl-delay: 0
+    #User-agent: googlebot-news
+    #Crawl-delay: 0
+    def test04_Nasdaq03(self):
+        # Setup the test variables
+        baseURL = 'http://www.nasdaq.com'
+        userAgent = ['Harklebot', 'googlebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 0)      
+
+    # Test 5 - https://www.pluralsight.com/robots.txt
+    # Variable Crawl Delays
+    #User-agent: Yandex
+    #Disallow: /
+    #Crawl-delay: 300
+    #User-Agent: rogerbot
+    #Disallow: /
+    #Crawl-delay: 300
+    #user-agent: AhrefsBot
+    #disallow: /
+    def test05_PS01(self):
+        # Setup the test variables
+        baseURL = 'https://www.pluralsight.com'
+        userAgent = ['Harklebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertFalse('Crawl-delay:' in page_disposition.keys())
+
+    # Test 6 - https://www.pluralsight.com/robots.txt
+    # Variable Crawl Delays
+    #User-agent: Yandex
+    #Disallow: /
+    #Crawl-delay: 300
+    #User-Agent: rogerbot
+    #Disallow: /
+    #Crawl-delay: 300
+    #user-agent: AhrefsBot
+    #disallow: /
+    def test06_PS02(self):
+        # Setup the test variables
+        baseURL = 'https://www.pluralsight.com'
+        userAgent = ['Harklebot', 'Yandex']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 300)      
+
+    # Test 7 - http://www.crownaudio.com/robots.txt
+    # Fractional Crawl Delays
+    #User-agent: *
+    #Sitemap: http://www.crownaudio.com/sitemap.xml
+    #Crawl-delay: 4.5
+    ## Yandex tries to pull support page as a jpeg for some reason
+    #User-agent: Yandex
+    #Disallow: /en-US/support.jpg
+    #Disallow: /en/support.jpg
+    ## Majestic12 bot hammers the site with DoS-style traffic
+    #User-agent: MJ12bot
+    #Disallow: /
+    def test07_CA01(self):
+        # Setup the test variables
+        baseURL = 'http://www.crownaudio.com'
+        userAgent = ['Harklebot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 5)      
+
+    # Test 8 - http://www.crownaudio.com/robots.txt
+    # Fractional Crawl Delays
+    #User-agent: *
+    #Sitemap: http://www.crownaudio.com/sitemap.xml
+    #Crawl-delay: 4.5
+    ## Yandex tries to pull support page as a jpeg for some reason
+    #User-agent: Yandex
+    #Disallow: /en-US/support.jpg
+    #Disallow: /en/support.jpg
+    ## Majestic12 bot hammers the site with DoS-style traffic
+    #User-agent: MJ12bot
+    #Disallow: /
+    def test08_CA02(self):
+        # Setup the test variables
+        baseURL = 'http://www.crownaudio.com'
+        userAgent = ['MJ12bot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 5)      
+
+    # Test 9 - http://www.crownaudio.com/robots.txt
+    # Fractional Crawl Delays
+    #User-agent: *
+    #Sitemap: http://www.crownaudio.com/sitemap.xml
+    #Crawl-delay: 4.5
+    ## Yandex tries to pull support page as a jpeg for some reason
+    #User-agent: Yandex
+    #Disallow: /en-US/support.jpg
+    #Disallow: /en/support.jpg
+    ## Majestic12 bot hammers the site with DoS-style traffic
+    #User-agent: MJ12bot
+    #Disallow: /
+    def test09_CA02(self):
+        # Setup the test variables
+        baseURL = 'http://www.crownaudio.com'
+        userAgent = ['MJ12bot']
+        
+        # Call get_page_disposition()
+        try:
+            page_disposition = get_page_disposition(baseURL, userAgent)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(page_disposition, dict))
+            self.assertTrue(page_disposition.__len__() > 0)
+            
+        # Check Crawl Delay
+        self.assertTrue('Crawl-delay:' in page_disposition.keys())
+
+        try:
+            result = page_disposition['Crawl-delay:']
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(result, int))
+            self.assertEqual(result, 5)      
+        
+        
+
 # This class tests combined functionality from get_page_disposition() and robots_may_I()
 # This class will not concern itself with testing input validation because each function has already been tested
 # This class will attempt to find errors/loop holes/oversights in the combination of the two functions
@@ -1412,6 +1781,10 @@ if __name__ == '__main__':
 
     # Run all the tests!
     unittest.main(verbosity=2, exit=False)
+
+## CrawlDelayCombinedTest
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(CrawlDelayCombinedTest)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
 
 ## RobotsMayI
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(RobotsMayI)

@@ -42,10 +42,16 @@ def robots_may_I(page_disposition, URL):
         raise ValueError('Page disposition is empty')
     ### 1.1.3. Verify it contains boolean keys
     else:
-        for value in page_disposition.values():
-            if isinstance(value, bool) is False:
-                raise ValueError('Page disposition contains a non-boolean value')
-                
+        # Used to check for non-boolean values
+        #for value in page_disposition.values():
+        #    if isinstance(value, bool) is False:
+        #        raise ValueError('Page disposition contains a non-boolean value')
+        # Since including Crawl Delays, boolean verification has to account for their presence
+        for key in page_disposition.keys():
+            if key != 'Crawl-delay:':
+                if isinstance(page_disposition[key], bool) is False:
+                    raise ValueError('Page disposition contains a non-boolean value')
+
     ## 1.2. URL
     ### 1.2.1. Verify URL is a string
     if isinstance(URL, str) is False:
@@ -274,6 +280,11 @@ def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
                 if readInstructions is True:
                     break
                 if entry.find(agent) >= 0: # or agent.find(entry) >= 0:
+                    # Look for false hits like agent == * in entry == WordPress*
+                    if (entry.__len__() - 'User-agent:'.__len__() - agent.__len__()) > 0:
+                        # Partial hit so keep looking
+                        continue
+
                     # Look for false hits like agent == Googlebot in entry == User Agent: Googlebot-Image
                     ## Trim the entry and check the length
                     entry = entry[entry.find(agent)::]
@@ -282,6 +293,26 @@ def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
     #                    print("Agent {} found in:\t{}".format(agent, entry)) # DEBUGGING
                         continue
 
+        ## 2.4. Check for Crawl Delay
+        elif readInstructions is True and entry.lower().find('crawl-delay:') >= 0:
+            # Make entry lower case
+            entry = entry.lower()
+
+            if entry.__len__() > (entry.find('crawl-delay:') + 'crawl-delay:'.__len__()):
+                entry = entry[entry.find('crawl-delay:') + 'crawl-delay:'.__len__()::]
+                try:
+                    crawlDelay = int(float(entry))
+                    # Round up floats
+                    if crawlDelay < float(entry):
+                        crawlDelay += 1
+                except Exception as err:
+                    print(repr(err))
+                else:
+                    if 'Crawl-delay:' in retVal.keys():
+                        if retVal['Crawl-delay:'] > crawlDelay:
+                            retVal['Crawl-delay:'] = crawlDelay
+                    else:
+                        retVal.update({'Crawl-delay:':crawlDelay})
         ## 2.4. Read instructions
         elif readInstructions is True and (entry.find('Disallow:') >= 0 or entry.find('Allow:') >= 0):
             ### 2.4.1. Determine instruction
