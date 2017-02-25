@@ -58,6 +58,7 @@ from urllib.request import urlretrieve
 from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
+from urllib.error import HTTPError
 
 ################
 # LOAD MODULES #
