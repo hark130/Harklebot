@@ -296,7 +296,7 @@ while True:
         else:
             if latestURL.__len__() > 0:
                 try:
-                    latestURL = make_rel_URL_abs(baseURL, firstURL)
+                    latestURL = make_rel_URL_abs(baseURL, latestURL)
                 except Exception as err:
                     print("Error encountered with make_rel_URL_abs('latest')!") # DEBUGGING
                     print(repr(err))
