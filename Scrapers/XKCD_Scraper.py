@@ -290,6 +290,8 @@ while True:
     if latestSearchPhrase.__len__() > 0 and targetComicURL != baseURL and latestURL.__len__() == 0:
         try:
             latestURL = find_a_URL(comicContentDecoded, latestSearchPhrase, 'href="', '"')
+
+            latestURL = latestURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
         except Exception as err:
             print("Error encountered with find_a_URL('latest')!") # DEBUGGING
             print(repr(err))
