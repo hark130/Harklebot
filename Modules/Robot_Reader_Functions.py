@@ -85,6 +85,8 @@ def robots_may_I(page_disposition, URL):
                 print("Key Error for {} in...\n{}".format(currentURL, page_disposition)) # DEBUGGING
                 print(repr(err))
                 sys.exit() # Harsh... but this should never happen because the key was already verified to be present
+            except Exception as err:
+                raise(err)
             else:
 #                print("Found a match:\t{} is {}".format(currentURL, retVal)) # DEBUGGING
                 foundAnAnswer = True
@@ -106,7 +108,19 @@ def robots_may_I(page_disposition, URL):
     ## 2.3. Verify answer
     if foundAnAnswer is False:
 #        print("Did not find an answer for {} in {}".format(URL, page_disposition)) # DEBUGGING
-        pass    
+        # If all else fails, look for '/'
+        if '/' in page_disposition.keys():
+            try:
+                retVal = page_disposition['/']
+            except KeyError as err:
+                print("Key Error for {} in...\n{}".format('/', page_disposition)) # DEBUGGING
+                print(repr(err))
+                sys.exit() # Harsh... but this should never happen because the key was already verified to be present
+            except Exception as err:
+                raise(err)
+            else:
+#                print("Found a match:\t{} is {}".format(currentURL, retVal)) # DEBUGGING
+                foundAnAnswer = True # Found a match.
     
     return retVal
 
@@ -132,7 +146,7 @@ def robots_may_I(page_disposition, URL):
         Calls parse_robots_txt() to actually create the dictionary
         All trailing slashes (/) are removed (e.g., 'www.fullURL.com/comic' becomes 'www.fullURL.com/comic/'
 '''
-def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
+def get_page_disposition(baseURL, userAgent=['Python-urllib', 'Python-urllib/3.5']):
 
     retVal = {}
     robotsFile = ''
@@ -183,9 +197,10 @@ def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
         robotRequest = Request(robotURL, headers={'User-Agent': userAgent[0]})
         with urlopen(robotRequest) as siteRobotFile:
             robotsFile = siteRobotFile.read().decode('UTF-8', 'ignore')
-    except urllib.error.URLError as error:
-        print("\nCannot open robots.txt URL:\t{}".format(robotURL))
-        print("ERROR:\t{} - {}".format(type(error),error))
+    except urllib.error.URLError as err:
+#        print("\nCannot open robots.txt URL:\t{}".format(robotURL))
+#        print("ERROR:\t{} - {}".format(type(err),err))
+        raise(err)
 #        sys.exit()
     else:
 #        print("\nOpened robots.txt from {}!".format(robotURL)) # DEBUGGING
@@ -222,7 +237,7 @@ def get_page_disposition(baseURL, userAgent=['Python-urllib/3.5']):
             all wildcards are removed.  Consider reintegrating wildcards into the algorithm. In
             the meantime, entries such as '/node/*/print/' are added as '/node/'
 '''
-def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
+def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib', 'Python-urllib/3.5']):
 
     retVal = {}
     
@@ -329,7 +344,11 @@ def parse_robots_txt(baseURL, robotsFile, userAgent=['Python-urllib/3.5']):
 
             #### '/'
             if addThis == '/':
-                addThis = baseURL
+                # baseURL wasn't properly blocking server hosts on the sites in question
+                # http://www.cad-comic.com/robots.txt simply says go away but...
+                # ...http://cdn2.cad-comic.com/comics/sillies-20170203-8a3f1.gif was saying 'Come hither'
+#                addThis = baseURL
+                addThis = '/'
             #### '' no entry (e.g., Disallow: )
             elif addThis.__len__() == 0:
                 instructionAction = not instructionAction # toggle the boolean value

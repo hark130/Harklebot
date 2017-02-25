@@ -45,6 +45,12 @@
 #           Adding fidelity to the sys.path append to find the "Modules" folder
 #           Start at 'Latest' functionality
 #################################################################################
+#################################################################################
+# Version 1.3
+#   ADDING: get_page_disposition() functionality
+#   ADDING: robots_may_I() functionality
+#   ADDING: Crawl-delay considerations
+#################################################################################
 
 
 from urllib.request import urlopen
@@ -69,12 +75,12 @@ else:
 ################
 ################
 
-#from Scraper_Functions import find_the_date 
-#from Scraper_Functions import trim_the_name 
+from Scraper_Functions import is_URL_valid
 from Scraper_Functions import find_a_URL 
 from Scraper_Functions import get_image_filename
-#from Robot_Reader_Functions import get_root_URL
 from Scraper_Functions import make_rel_URL_abs
+from Robot_Reader_Functions import get_page_disposition
+from Robot_Reader_Functions import robots_may_I
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -122,6 +128,7 @@ nameEnding = '___UPDATE___' # Probably '"' <=--------------------------=UPDATE=-
 ########################
 ### STATIC VARIABLES ###
 ########################
+#USER_AGENT = 'Harklebot'   # We're almost ready to reveal ourselves to the Interwebs!
 USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 #USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 MAX_SLEEP = 30              # SECONDS
@@ -130,6 +137,7 @@ MAX_404_SKIPS = 10          # Max number of missing images to skip over before s
 MAX_FILENAME_LEN = 254      # Normal OS have it at 255.  Sub one for nul char(?)... just in case.
 random.seed()
 validFileTypeList = ['.png', '.jpg', '.gif']
+obeyTheRobots = True        # Indicates whether or not the scraper will adhere to the 'recommendations' of the robots.txt file
 ########################
 # Script constants #####
 ########################
@@ -157,6 +165,8 @@ latestURL = ''              # Holds 'lastest' URL in case root webpage doesn't d
 numExistingSkips = 0        # Variable to store the number of files already found
 num404Skips = 0             # Variable to store the number of missing webpages
 skipping = True             # Boolean variable used to determine when to 'fast forward' past image URLs that have already been downloaded
+page_disposition = {baseURL:True} # Dictionary that holds the results of parsing a site's robots.txt file
+crawlDelay = 0              # Variable to store a site's desired crawl speed based on the robots.txt file
 #########################
 # Run time update #######
 #########################
@@ -186,6 +196,17 @@ else:
     print("Creating save directory at:\t{}".format(SAVE_PATH))
     os.mkdir(SAVE_PATH) 
 
+# READ ROBOTS.TXT
+try:
+    page_disposition = get_page_disposition(baseURL, USER_AGENT)
+except Exception as err:
+    print("Error with get_page_disposition({}, {})".format(baseURL, USER_AGENT))
+    print(repr(err))
+else:
+    if 'Crawl-delay:' in page_disposition.keys():
+        if isinstance(page_disposition['Crawl-delay:'], int) is True:
+            crawlDelay = page_disposition['Crawl-delay:']    
+
 # COMMENCE SCRAPING
 while True:
 #while comic.getcode() == 200:
@@ -201,6 +222,12 @@ while True:
 
     ## 1.2. Open the URL
     try:
+        # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
+        if obeyTheRobots is True and crawlDelay > 0:
+            # https://youtu.be/Udj-o2m39NA
+            print("Sleeping {} seconds before requesting the next page".format(crawlDelay))
+            time.sleep(crawlDelay)
+
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
         comic = urlopen(comicRequest)
     except urllib.error.URLError as error:
@@ -210,7 +237,15 @@ while True:
     else:
         print("\nOpened URL:\t{}".format(currentURL)) # DEBUGGING
         if skipping == False:
+            # Randomize a value between 0 and MAX_SLEEP
             sleepyTime = random.randrange(0, MAX_SLEEP)
+
+            # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
+            if obeyTheRobots is True:
+                # If so, add the Crawl-delay value from the robots.txt file to the randomized sleep time
+                sleepyTime = sleepyTime + crawlDelay
+
+            # https://youtu.be/Udj-o2m39NA
             print("Sleeping {} seconds before download".format(sleepyTime))
             time.sleep(sleepyTime)
 
@@ -259,14 +294,14 @@ while True:
             if latestURL.__len__() > 0:
                 try:
                     latestURL = make_rel_URL_abs(baseURL, firstURL)
-            except Exception as err:
-                print("Error encountered with make_rel_URL_abs('latest')!") # DEBUGGING
-                print(repr(err))
-#                sys.exit() # Harsh... Not a big deal if you can't find 'latest' because this might be it
-            else:
-                print("Latest URL:\t{}".format(latestURL)) # DEBUGGING 
-                currentURL = latestURL
-                continue # Go back to the top of the while loop
+                except Exception as err:
+                    print("Error encountered with make_rel_URL_abs('latest')!") # DEBUGGING
+                    print(repr(err))
+    #                sys.exit() # Harsh... Not a big deal if you can't find 'latest' because this might be it
+                else:
+                    print("Latest URL:\t{}".format(latestURL)) # DEBUGGING 
+                    currentURL = latestURL
+                    continue # Go back to the top of the while loop
 
             
 #    print("\nFetching First URL:") # DEBUGGING
@@ -384,37 +419,50 @@ while True:
 
     # 9. DOWNLOAD THE FILE
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
-        ## 9.1. Verify the file doesn't exist
+        ## 9.1. Verify the file doesn't exist so we're downloading it
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
-            ## 9.1.1. Try to download it
-            try:
-                # Utilizing a request-->urlopen-->write() in an attempt to...
-                # ...continue dodging websites that block webscrapers.
-                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
-                with urlopen(comicRequest) as comic:
-                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
-                        outFile.write(comic.read())
+            ### 9.1.2. Check the robots.txt for permission, if applicable
+            if obeyTheRobots is False or robots_may_I(page_disposition, imageURL) is True:
+                #### 9.1.2.1. Try to download it
+                try:
+                    # Utilizing a request-->urlopen-->write() in an attempt to...
+                    # ...continue dodging websites that block webscrapers.
+                    comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                    with urlopen(comicRequest) as comic:
+                        with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                            outFile.write(comic.read())
 
-            except urllib.error.HTTPError as error:
-                print("Image failed to download:\t{}".format(imageURL))
+                except urllib.error.HTTPError as error:
+                    print("Image failed to download:\t{}".format(imageURL))
 
-                ## 9.1.2. Handle 404 errors
-                if error.code == 404:
-                    num404Skips += 1
-                ## 9.1.3. Abort on non 404 errors
-                else:
-                    print("ERROR:\t{} - {}".format(type(error),error))
+                    #### 9.1.2.2. Handle 404 errors
+                    if error.code == 404:
+                        num404Skips += 1
+                    #### 9.1.2.3. Abort on non 404 errors
+                    else:
+                        print("ERROR:\t{} - {}".format(type(error),error))
+                        sys.exit()
+
+                except Exception as error:
+                    print("Image failed to download:\t{}".format(imageURL))
+                    print(repr(error))
                     sys.exit()
 
-            except Exception as error:
-                print("Image failed to download:\t{}".format(imageURL))
-                print(repr(error))
-                sys.exit()
-
-            ## 9.1.2. Success   
+                #### 9.1.2.4. Success   
+                else:
+                    print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
+                    skipping = False
+            ### 9.1.3. Robots.txt forbids it
             else:
-                print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
-                skipping = False
+                print("The site forbids our access to URL:\t{}".format(imageURL))
+                numExistingSkips += 1
+                skipping = True
+
+                ### 9.1.4. Some sites couple a Crawl-delay with a Disallow: /
+                if crawlDelay > 0:
+                    # https://youtu.be/Udj-o2m39NA
+                    print("Sleeping {} seconds before moving on".format(crawlDelay))
+                    time.sleep(crawlDelay)
         ## 9.2. The file exists so we're moving on
         else:
             print("Filename {} already exists.".format(incomingFilename)) # DEBUGGING

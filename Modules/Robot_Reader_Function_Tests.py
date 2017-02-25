@@ -1,5 +1,6 @@
 import unittest
-from Robot_Reader_Functions import get_page_disposition     # get_page_disposition(baseURL, userAgent=['Python-urllib/3.5'])
+from urllib.error import HTTPError
+from Robot_Reader_Functions import get_page_disposition     # get_page_disposition(baseURL, userAgent=['Python-urllib', 'Python-urllib/3.5'])
 from Robot_Reader_Functions import robots_may_I             # robots_may_I(page_disposition, URL)
 
 
@@ -369,8 +370,7 @@ class CrawlDelayCombinedTest(unittest.TestCase):
         else:
             self.assertTrue(isinstance(result, int))
             self.assertEqual(result, 5)      
-        
-        
+             
 
 # This class tests combined functionality from get_page_disposition() and robots_may_I()
 # This class will not concern itself with testing input validation because each function has already been tested
@@ -530,7 +530,7 @@ class PageDispositionCombinedTest(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(isinstance(result, bool))
-            self.assertTrue(result)    
+            self.assertFalse(result)    
             
         # Site D
         try:
@@ -540,7 +540,7 @@ class PageDispositionCombinedTest(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(isinstance(result, bool))
-            self.assertTrue(result)  
+            self.assertFalse(result)  
 
         # Site E
         try:
@@ -1538,19 +1538,34 @@ class GetPageDisposition(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     # Ctrl-Alt-Del: Standard, well-formed input
-    def test04_cac_comic1(self):
-        self.assertEqual(get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0']),
-                         {'http://www.cad-comic.com':False})
+    def test04_cad_comic1(self):
+        try:
+            page_disposition = get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0'])
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(page_disposition, {'/':False})
 
     # Ctrl-Alt-Del: User agent is string, not a list of strings (still valid, merely misformed)
-    def test05_cac_comic2(self):
-        self.assertEqual(get_page_disposition('http://www.cad-comic.com', 'Mozilla/5.0'),
-                         {'http://www.cad-comic.com':False})
+    def test05_cad_comic2(self):
+        try:
+            page_disposition = get_page_disposition('http://www.cad-comic.com', 'Mozilla/5.0')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(page_disposition, {'/':False})
 
     # Ctrl-Alt-Del: User agent is a list of valid strings
-    def test06_cac_comic3(self):
-        self.assertEqual(get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0', 'Python-urllib/3.5']),
-                         {'http://www.cad-comic.com':False})
+    def test06_cad_comic3(self):
+        try:
+            page_disposition = get_page_disposition('http://www.cad-comic.com', ['Mozilla/5.0', 'Python-urllib/3.5'])
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(page_disposition, {'/':False})
 
     # Saturday Morning Breakfast Cereal: Standard, well-formed input
     def test07_smbc_comic1(self):
@@ -1768,13 +1783,57 @@ class GetPageDisposition(unittest.TestCase):
     # Awkward Zombie: Standard, well-formed input with a Python user agent
     def test23_az_comic3(self):
         # Python's user agent will fail on the urlopen since awkward zombie blocks all contact from Python, image download or otherwises
-#        results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616', ['Mozilla/6.9','Python-urllib/3.5'])
-        results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616', ['Mozilla/6.9','Python-urllib'])
-        self.assertEqual(results['http://awkwardzombie.com'], False) 
+        try:
+            results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616')
+        except HTTPError as err:
+#            print(repr(err)) # DEBUGGING
+            self.assertEqual(err.code, 403) # Awkward Zombie Disallows Python-urllib User Agents
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.fail('Should have raised an HTTPError 403 exception')
 
-########################## WRITE MORE TESTS FOR AWKWARD ZOMBIE FROM OTHER USER AGENTS ######################################
+    # Awkward Zombie: Standard, well-formed input with a Mozilla and a Python user agent
+    def test24_az_comic4(self):
+        # Python's user agent will fail on the urlopen since awkward zombie blocks all contact from Python, image download or otherwises
+        try:
+            results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616', ['Mozilla/6.9','Python-urllib'])
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue('/' in results.keys())
+            self.assertEqual(results['/'], False) 
 
+    # Awkward Zombie: Standard, well-formed input with a modern Mozilla user agent
+    def test25_az_comic5(self):
+        # Python's user agent will fail on the urlopen since awkward zombie blocks all contact from Python, image download or otherwises
+        try:
+            results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616', ['Mozilla/6.9'])
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertFalse('/' in results.keys())
+            self.assertTrue('Crawl-delay:' in results.keys())
+            self.assertTrue(isinstance(results['Crawl-delay:'], int)) 
+            self.assertEqual(results['Crawl-delay:'], 30) 
 
+    # Awkward Zombie: Standard, well-formed input with an old(?) Mozilla user agent
+    def test26_az_comic6(self):
+        # Python's user agent will fail on the urlopen since awkward zombie blocks all contact from Python, image download or otherwises
+        try:
+            results = get_page_disposition('http://awkwardzombie.com/index.php?page=0&comic=092616', ['mozilla'])
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue('/' in results.keys())
+            self.assertEqual(results['/'], False)
+            self.assertTrue('Crawl-delay:' in results.keys())
+            self.assertTrue(isinstance(results['Crawl-delay:'], int)) 
+            self.assertEqual(results['Crawl-delay:'], 30) 
 
 
 if __name__ == '__main__':
