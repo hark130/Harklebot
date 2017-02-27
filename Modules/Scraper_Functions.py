@@ -351,6 +351,8 @@ def make_rel_URL_abs(baseURL, targetURL):
     NOTE:
         This functions return value does not constitute a stand-alone filename.
             It will not include a file extension or an appropriate prepended phrase.
+        If a <name> is all digits and less than 1000, it will be prepended with zeroes (0) to a minimum length
+            of four decimal places.  (e.g., 999 becomes 0999, 31337 stays 31337, 42 becomes 0042)
 '''
 def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDate=False):
     
@@ -444,45 +446,44 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEndin
                 break # Found a name.  Stop looking.
             for phrase in nameSearchList:
                 if entry.find(phrase) >= 0:
-                    # 4.1. Slice the entry
+                    ## 4.1. Slice the entry
                     imageName = entry[entry.find(phrase) + phrase.__len__():]
                     imageName = imageName[:imageName.find(nameEnding)]
 
-                    # 4.2. Trim unwanted characters
+                    ## 4.2. Trim unwanted characters
 #                    imageName = trim_the_name(imageName) # Save this until *AFTER* finding the original case-sensitive entry
                     
-                    # 4.3. Verify work
+                    ## 4.3. Verify work
                     if imageName.__len__() > 0:
                         break # Found a name.  Stop looking.
 
-        ## 5. PUT IT ALL TOGETHER
-        #retVal = imageDate
-
-        #if imageName.__len__() > 0:
-        #    retVal = retVal + '_' + imageName    
-
-        # 5. Return original case-sensitive entry
-        ## 5.1. Find original case-sensitive entry
+                    
+        # 5. PUT IT ALL TOGETHER
+        ## 5.1. Return original case-sensitive entry
+        ### 5.1.1. Find original case-sensitive entry
         if imageName.__len__() > 0:
             temp = htmlString[htmlString.lower().find(imageName):]
             temp = temp[:imageName.__len__()]
             imageName = temp
-            # 5.2. Trim unwanted characters
+            ### 5.1.2. Trim unwanted characters
             imageName = trim_the_name(imageName)
             
-        ## 5.2. Put it all together
-        ### 5.2.1. Image date Found
+        ## 5.2. Dynamically size number-only image names
+        if imageName.isdigit() is True:
+            while imageName.__len__() < 4:
+                imageName = '0' + imageName 
+            
+        ## 5.3. Put it all together
+        ### 5.3.1. Image date Found
         if imageDate.__len__() == 8 and imageDate != '00000000':
             retVal = imageDate
-            ### 5.2.1. ...and image name found
+            ### 5.3.1. ...and image name found
             if imageName.__len__() > 0:
                 retVal = retVal + '_' + imageName    
-        ### 5.2.2 Image date NOT found
+        ### 5.3.2 Image date NOT found
         elif skipDate is True and imageName.__len__() > 0:
-            ### 5.2.2. ...and image name found
+            ### 5.3.2. ...and image name found
             retVal = imageName
-
-
 
     return retVal
 
