@@ -74,7 +74,7 @@ class SizeNumericImageNames(unittest.TestCase):
         else:
             self.assertEqual(result, '20161202_Order')
 
-    # Test 2 - Normal Input - No numerics
+    # Test 2 - Normal Input - XKCD Numerics
     def test02_ValidInput_Numerics01(self):
         # Test Variables
         testHTMLFile = '19-xkcd_0455_HTML.txt'
@@ -131,9 +131,184 @@ class SizeNumericImageNames(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertEqual(result, '0455')
-######################################## START WORKING HERE ############################
 
+    # Test 3 - Normal Input - Cyanide & Happiness numerics
+    def test03_ValidInput_Numerics02(self):
+        # Test Variables
+        testHTMLFile = '20-CaH_0123_HTML.txt'
 
+        ################################################
+        # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
+        ################################################
+        ### URL SETUP ###
+        webComicName = 'Cyanide_and_Happiness' # <=--------------------------=UPDATE=--------------------------=>
+        baseURL = 'http://explosm.net/' # <=--------------------------=UPDATE=--------------------------=>
+        targetComicURL = baseURL # Original source
+        #targetComicURL = 'http://explosm.net/comics/4321' # Start here instead
+
+        ### IMAGE URL SETUP ###
+        # Find the appropriate HTML line from a list of strings
+        imageSearchPhrase = ['files.explosm.net/comics/'] # <=--------------------------=UPDATE=--------------------------=>
+        # Find the beginning of the image reference
+        imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+        ### LATEST URL SETUP ###
+        # Fine the 'name' of the 'latest comic' navigation button
+        latestSearchPhrase = 'Latest comic' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
+        ### PREV URL SETUP ###
+        # Find the 'name' of the obligatory 'Previous Comic' navigation button
+        prevSearchPhrase = 'previous-comic' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+
+        ### FIRST URL SETUP ###
+        # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
+        # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
+        firstSearchPhrase = 'Oldest comic' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+
+        ### DATE PARSING SETUP ###
+        # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
+        skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
+        # Find the date from a list of strings to match in the page's HTML
+        dateSearchPhrase = ['zeta small-bottom-margin past-week-comic-title'] # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+
+        ### NAME PARSING SETUP ###
+        # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
+        nameSearchPhrase = 'value="http://explosm.net/comics/' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+        # Delimit the end of the image title with this string
+        nameEnding = '/"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+        # Cyanide & Happiness NOTE: Strips from 17 Feb 2017 do not appear to be titled in an easily parsable way.
+        ################################################
+        # Modify these variables based on HTML details #
+        ################################################
+
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
+                testHTML = testFile.read()
+            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(result, '20050409-0123')
+
+    # Test 4 - Normal Input - Cyanide & Happiness numerics
+    def test04_ValidInput_Numerics03(self):
+        # Test Variables
+        testHTMLFile = '18-CaH_dot_date_HTML.txt'
+
+        ################################################
+        # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
+        ################################################
+        ### URL SETUP ###
+        webComicName = 'Cyanide_and_Happiness' # <=--------------------------=UPDATE=--------------------------=>
+        baseURL = 'http://explosm.net/' # <=--------------------------=UPDATE=--------------------------=>
+        targetComicURL = baseURL # Original source
+        #targetComicURL = 'http://explosm.net/comics/4321' # Start here instead
+
+        ### IMAGE URL SETUP ###
+        # Find the appropriate HTML line from a list of strings
+        imageSearchPhrase = ['files.explosm.net/comics/'] # <=--------------------------=UPDATE=--------------------------=>
+        # Find the beginning of the image reference
+        imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+        ### LATEST URL SETUP ###
+        # Fine the 'name' of the 'latest comic' navigation button
+        latestSearchPhrase = 'Latest comic' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
+        ### PREV URL SETUP ###
+        # Find the 'name' of the obligatory 'Previous Comic' navigation button
+        prevSearchPhrase = 'previous-comic' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+
+        ### FIRST URL SETUP ###
+        # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
+        # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
+        firstSearchPhrase = 'Oldest comic' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+
+        ### DATE PARSING SETUP ###
+        # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
+        skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
+        # Find the date from a list of strings to match in the page's HTML
+        dateSearchPhrase = ['zeta small-bottom-margin past-week-comic-title'] # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+
+        ### NAME PARSING SETUP ###
+        # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
+        nameSearchPhrase = 'value="http://explosm.net/comics/' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+        # Delimit the end of the image title with this string
+        nameEnding = '/"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+        # Cyanide & Happiness NOTE: Strips from 17 Feb 2017 do not appear to be titled in an easily parsable way.
+        ################################################
+        # Modify these variables based on HTML details #
+        ################################################
+
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
+                testHTML = testFile.read()
+            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(result, '20141202-3761')
+
+    # Test 5 - Normal Input - Cyanide & Happiness numerics
+    def test05_ValidInput_Numerics04(self):
+        # Test Variables
+        testHTMLFile = '21-CaH_0039_HTML.txt'
+
+        ################################################
+        # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
+        ################################################
+        ### URL SETUP ###
+        webComicName = 'Cyanide_and_Happiness' # <=--------------------------=UPDATE=--------------------------=>
+        baseURL = 'http://explosm.net/' # <=--------------------------=UPDATE=--------------------------=>
+        targetComicURL = baseURL # Original source
+        #targetComicURL = 'http://explosm.net/comics/4321' # Start here instead
+
+        ### IMAGE URL SETUP ###
+        # Find the appropriate HTML line from a list of strings
+        imageSearchPhrase = ['files.explosm.net/comics/'] # <=--------------------------=UPDATE=--------------------------=>
+        # Find the beginning of the image reference
+        imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
+
+        ### LATEST URL SETUP ###
+        # Fine the 'name' of the 'latest comic' navigation button
+        latestSearchPhrase = 'Latest comic' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
+        ### PREV URL SETUP ###
+        # Find the 'name' of the obligatory 'Previous Comic' navigation button
+        prevSearchPhrase = 'previous-comic' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
+
+        ### FIRST URL SETUP ###
+        # Find the 'name' of the (mostly) obligatory 'First Comic' navigation button
+        # Set this to an empty string if the webcomic page does not provide for a 'First' navigation button
+        firstSearchPhrase = 'Oldest comic' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
+
+        ### DATE PARSING SETUP ###
+        # This boolean determines the nature of the date search:  False == mandatory date, True == optional date
+        skipDateIfNotFound = False # False for most pages <=--------------------------=UPDATE=--------------------------=>
+        # Find the date from a list of strings to match in the page's HTML
+        dateSearchPhrase = ['zeta small-bottom-margin past-week-comic-title'] # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
+
+        ### NAME PARSING SETUP ###
+        # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
+        nameSearchPhrase = 'value="http://explosm.net/comics/' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+        # Delimit the end of the image title with this string
+        nameEnding = '/"' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+        # Cyanide & Happiness NOTE: Strips from 17 Feb 2017 do not appear to be titled in an easily parsable way.
+        ################################################
+        # Modify these variables based on HTML details #
+        ################################################
+
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
+                testHTML = testFile.read()
+            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertEqual(result, '20050127-0039')
+            
 class GetURLParentPath(unittest.TestCase):
     
     # Test 1 - Invalid Input - TypeError('URL is not a string')
