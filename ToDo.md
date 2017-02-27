@@ -1,4 +1,4 @@
-# SPRINT #
+# CURRENT SPRINT #
 # Version 1-4 (Refinement) On Deck
     [ ] get_image_filename() [Version 1-3?]
         [ ] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
@@ -10,8 +10,9 @@
     [ ] Verify the XKCD Scraper
         [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
         [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
-        
-# Backlog #
+
+
+# BACKLOG #
 # New Functionality #
     [/] Template_Scraper.py
         [ ] Modify code to check for 'first' file after hitting max skips.  Continue(?) if not there. 
@@ -39,6 +40,8 @@
     [ ] Verify get_the_filename()/get_the_date()
         [ ] False positives on filename dates (see: http://www.xkcd.com/1779/... reading 20170120 just from 2017?!
 
+
+# PREVIOUS SPRINTs #
 # Version 1-2 Completed
     [X] Template_Scraper.py
         [X] Validate each reused variable after code is refactored in Version 1-2
