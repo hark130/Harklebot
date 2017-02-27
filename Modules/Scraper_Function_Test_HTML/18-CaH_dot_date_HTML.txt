@@ -1,3 +1,4 @@
+http://explosm.net/comics/3761/
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
@@ -247,7 +248,7 @@ document.write('<iframe src="https://5603651.fls.doubleclick.net/activityi;src=5
 <form id="email_signup_2" class="explosm_newsletter_form klaviyo_standard_embed_ngddiB" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" target="_blank" novalidate="novalidate">
 <input type="hidden" name="g" value="ngddiB">
 <div class="klaviyo_field_group">
-<label for="k_id_email">Sign up to get the C&amp;H latest on store sales, new releases and more …</label>
+<label for="k_id_email">Sign up to get the C&amp;H latest on store sales, new releases and more Â…</label>
 <input type="email" name="email" id="k_id_email" value="" placeholder="Enter your email address"/>
 </div>
 <div class="klaviyo_messages">
@@ -335,7 +336,7 @@ document.write('<iframe src="https://5603651.fls.doubleclick.net/activityi;src=5
 <h5>Newsletter Sign Up</h5> <form id="email_signup_1" class="explosm_newsletter_form klaviyo_standard_embed_rCJz9X" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" target="_blank" novalidate="novalidate">
 <input type="hidden" name="g" value="rCJz9X">
 <div class="klaviyo_field_group">
-<label for="k_id_email">Sign up to get the latest news, updates, and more …</label>
+<label for="k_id_email">Sign up to get the latest news, updates, and more Â…</label>
 <input type="email" name="email" id="k_id_email" value="" placeholder="Enter your email address"/>
 </div>
 <div class="klaviyo_messages">
@@ -353,7 +354,7 @@ document.write('<iframe src="https://5603651.fls.doubleclick.net/activityi;src=5
 </div>
 <div id="legal-footer">
 <div class="row">
-<div class="small-12 medium-12 large-12 columns"><small>All content is Copyright &copy; 2000–2017 of Explosm, LLC.</small></div>
+<div class="small-12 medium-12 large-12 columns"><small>All content is Copyright &copy; 2000Â–2017 of Explosm, LLC.</small></div>
 </div>
 </div>
 <aside class="right-off-canvas-menu">
