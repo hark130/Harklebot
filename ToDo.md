@@ -1,5 +1,5 @@
 # CURRENT SPRINT #
-# Version 1-4 (Refinement) On Deck
+# Version 1-4 (Refinement) In Progress
     [ ] Transfer all scrapers to Version 1-3
     [ ] get_image_filename() [Version 1-3?]
         [ ] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
@@ -59,7 +59,7 @@
             [X] In the history of their site, absolute URLs become relative
             [X] Include something to dynamically determine what type of URL it's reading
 
-# Version 1-3 (Robot Reader) In Progress 
+# Version 1-3 (Robot Reader) Completed 
     [X] Template_Scraper.py
         [X] ROBOTS.TXT!
         [X] Implement is_URL_valid()
