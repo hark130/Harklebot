@@ -1,5 +1,6 @@
 # CURRENT SPRINT #
 # Version 1-4 (Refinement) On Deck
+    [ ] Transfer all scrapers to Version 1-3
     [ ] get_image_filename() [Version 1-3?]
         [ ] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
         [ ] Build a get_image_name function since there's already a get_image_date function and have get_image_filename()
@@ -85,5 +86,5 @@
         [X] Temp fix... .replace('//', 'http://')
         [X] Also had to manually size the 'name' (see: Comic #) to ensure width, but there may be no fix for that
     [X] New everything.lower() then cleanup_filename function can't go back and find the original case-sensitive version in the html string.  Consider storing the original html string version prior to cleanup_filename function call (see: PVP - 20151231_Christmas-Special-2015-Part-19)
-    [/] Write Cyanide and Happiness Scraper
-    [ ] Write unittests for get_root_URL() in Robot_Reader_Function_Tests.py
+    [X] Write Cyanide and Happiness Scraper
+    [X] Write unittests for get_root_URL() in Robot_Reader_Function_Tests.py
