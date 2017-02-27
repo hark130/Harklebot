@@ -189,7 +189,7 @@ class SizeNumericImageNames(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            self.assertEqual(result, '20050409-0123')
+            self.assertEqual(result, '20050409_0123')
 
     # Test 4 - Normal Input - Cyanide & Happiness numerics
     def test04_ValidInput_Numerics03(self):
@@ -248,7 +248,7 @@ class SizeNumericImageNames(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            self.assertEqual(result, '20141202-3761')
+            self.assertEqual(result, '20141202_3761')
 
     # Test 5 - Normal Input - Cyanide & Happiness numerics
     def test05_ValidInput_Numerics04(self):
@@ -307,7 +307,7 @@ class SizeNumericImageNames(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            self.assertEqual(result, '20050127-0039')
+            self.assertEqual(result, '20050127_0039')
             
 class GetURLParentPath(unittest.TestCase):
     

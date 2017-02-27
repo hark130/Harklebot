@@ -678,7 +678,8 @@ def trim_the_name(potentialName):
         # CATCH ALL
         retVal = re.sub('[^A-Za-z0-9-_]+', '', retVal) # Catch all
         # Small quirk
-        retVal = retVal.replace('39', "'")
+        if retVal.find('39') > 0:
+            retVal = retVal.replace('39', "'")
         # CLEAN UP
         while retVal.find('__') >= 0:
             retVal = retVal.replace('__','_')
