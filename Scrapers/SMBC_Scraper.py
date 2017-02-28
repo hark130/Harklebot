@@ -41,6 +41,15 @@
 #               baseURL (CAD-Sillies was breaking)
 #   ADDED:  is_URL_abs() functionality
 #           make_rel_URL_abs() functionality
+#           Incorporated is_URL_valid() into Template
+#           Adding fidelity to the sys.path append to find the "Modules" folder
+#           Start at 'Latest' functionality
+#################################################################################
+#################################################################################
+# Version 1.3
+#   ADDING: get_page_disposition() functionality
+#   ADDING: robots_may_I() functionality
+#   ADDING: Crawl-delay considerations
 #################################################################################
 
 
@@ -49,14 +58,30 @@ from urllib.request import urlretrieve
 from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
+from urllib.error import HTTPError
+
+################
+# LOAD MODULES #
+################
 # Hacky (?) method to keep modules separate from scraper code
-sys.path.append(os.path.join(os.path.dirname(os.getcwd()), 'Modules'))
-#from Scraper_Functions import find_the_date 
-#from Scraper_Functions import trim_the_name 
+## Verify path exists before adding it to sys.path
+modulesPath = os.path.join(os.path.dirname(os.getcwd()), 'Modules')
+if os.path.isdir(modulesPath) is True:
+    print("Modules found at:\t{}".format(modulesPath)) # DEBUGGING
+    sys.path.append(modulesPath)
+else:
+    print("Modules path not found") # DEBUGGING
+    pass
+################
+################
+################
+
+from Scraper_Functions import is_URL_valid
 from Scraper_Functions import find_a_URL 
 from Scraper_Functions import get_image_filename
-#from Robot_Reader_Functions import get_root_URL
 from Scraper_Functions import make_rel_URL_abs
+from Robot_Reader_Functions import get_page_disposition
+from Robot_Reader_Functions import robots_may_I
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -73,6 +98,10 @@ imageSearchPhrase = ['www.smbc-comics.com/comics/'] # <=------------------------
 # Find the beginning of the image reference
 imageBeginPhrase = 'src="' # Probably 'src="' <=--------------------------=UPDATE=--------------------------=> 
 
+### LATEST URL SETUP ###
+# Fine the 'name' of the 'latest comic' navigation button
+latestSearchPhrase = 'last' # Probably 'Last' <=--------------------------=UPDATE=--------------------------=>
+
 ### PREV URL SETUP ###
 # Find the 'name' of the obligatory 'Previous Comic' navigation button
 prevSearchPhrase = 'prev' # Probably 'Prev' <=--------------------------=UPDATE=--------------------------=>
@@ -83,9 +112,8 @@ prevSearchPhrase = 'prev' # Probably 'Prev' <=--------------------------=UPDATE=
 firstSearchPhrase = 'first' # Probably 'First' <=--------------------------=UPDATE=--------------------------=>
 
 ### DATE PARSING SETUP ###
-# This boolean determines the nature of the date search:  False == mandatory, True == optional
+# This boolean determines the nature of the date search:  False == mandatory date, True == optional date
 skipDateIfNotFound = True # False for most pages <=--------------------------=UPDATE=--------------------------=>
-# There are some pages on SMBC that just don't have an appropriate date in the image URL src
 # Find the date from a list of strings to match in the page's HTML
 dateSearchPhrase = imageSearchPhrase # Commonly == imageSearchPhrase <=--------------------------=UPDATE=--------------------------=>
 
@@ -101,6 +129,7 @@ nameEnding = '</title>' # Probably '"' <=--------------------------=UPDATE=-----
 ########################
 ### STATIC VARIABLES ###
 ########################
+#USER_AGENT = 'Harklebot'   # We're almost ready to reveal ourselves to the Interwebs!
 USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 #USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0' # http://www.whoishostingthis.com/tools/user-agent/
 MAX_SLEEP = 30              # SECONDS
@@ -109,6 +138,7 @@ MAX_404_SKIPS = 10          # Max number of missing images to skip over before s
 MAX_FILENAME_LEN = 254      # Normal OS have it at 255.  Sub one for nul char(?)... just in case.
 random.seed()
 validFileTypeList = ['.png', '.jpg', '.gif']
+obeyTheRobots = True        # Indicates whether or not the scraper will adhere to the 'recommendations' of the robots.txt file
 ########################
 # Script constants #####
 ########################
@@ -130,11 +160,14 @@ else:
 defaultFilename = webComicName + '_Webcomic_' 
 currentURL = targetComicURL
 firstURL = ''               # Holds 'first' URL and determines when to stop scraping
+latestURL = ''              # Holds 'lastest' URL in case root webpage doesn't default to the 'lastest' comic (see: OotS)
 # No longer needs fullURLIndicatorList... functionality extricated into is_URL_abs()
 #fullURLIndicatorList = [rootURL, baseURL, 'www.', 'http:']
 numExistingSkips = 0        # Variable to store the number of files already found
 num404Skips = 0             # Variable to store the number of missing webpages
 skipping = True             # Boolean variable used to determine when to 'fast forward' past image URLs that have already been downloaded
+page_disposition = {baseURL:True} # Dictionary that holds the results of parsing a site's robots.txt file
+crawlDelay = 0              # Variable to store a site's desired crawl speed based on the robots.txt file
 #########################
 # Run time update #######
 #########################
@@ -164,11 +197,44 @@ else:
     print("Creating save directory at:\t{}".format(SAVE_PATH))
     os.mkdir(SAVE_PATH) 
 
+# READ ROBOTS.TXT
+try:
+    page_disposition = get_page_disposition(baseURL, USER_AGENT)
+except HTTPError as err:
+    if err.code == 404:
+        print("{} does not appear to have a robots.txt file.".format(baseURL))
+        page_disposition = {'/':True} # Allow everything
+    else:
+        raise(err)
+except Exception as err:
+    print("Error with get_page_disposition({}, {})".format(baseURL, USER_AGENT))
+    print(repr(err))
+else:
+    if 'Crawl-delay:' in page_disposition.keys():
+        if isinstance(page_disposition['Crawl-delay:'], int) is True:
+            crawlDelay = page_disposition['Crawl-delay:']   
+
 # COMMENCE SCRAPING
 while True:
 #while comic.getcode() == 200:
     # 1. OPEN THE WEB PAGE
+    ## 1.1. Verify URL is valid
     try:
+        if is_URL_valid(currentURL) is False:
+            print("Invalid URL:\t{}".format(currentURL)) # DEBUGGING
+            sys.exit()
+    except Exception as err:
+        print(repr(err))
+        sys.exit()
+
+    ## 1.2. Open the URL
+    try:
+        # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
+        if obeyTheRobots is True and crawlDelay > 0:
+            # https://youtu.be/Udj-o2m39NA
+            print("Sleeping {} seconds before requesting the next page".format(crawlDelay))
+            time.sleep(crawlDelay)
+
         comicRequest = Request(currentURL, headers={'User-Agent': USER_AGENT})
         comic = urlopen(comicRequest)
     except urllib.error.URLError as error:
@@ -178,9 +244,18 @@ while True:
     else:
         print("\nOpened URL:\t{}".format(currentURL)) # DEBUGGING
         if skipping == False:
+            # Randomize a value between 0 and MAX_SLEEP
             sleepyTime = random.randrange(0, MAX_SLEEP)
+
+            # Will we follow the recommendations of the robots.txt file with regards to Crawl-delay?
+            if obeyTheRobots is True:
+                # If so, add the Crawl-delay value from the robots.txt file to the randomized sleep time
+                sleepyTime = sleepyTime + crawlDelay
+
+            # https://youtu.be/Udj-o2m39NA
             print("Sleeping {} seconds before download".format(sleepyTime))
             time.sleep(sleepyTime)
+
 
     # 2. DETERMINE CHARSET OF PAGE
 #    print("\ncomic Charset:")
@@ -194,6 +269,7 @@ while True:
         comicCharset = comicCharset.replace(' ','')
 #    print("Charset:\t{}".format(comicCharset)) # DEBUGGING
 
+
     # 3. TRANSLATE PAGE
     comicContent = comic.read()
 
@@ -206,9 +282,40 @@ while True:
         sys.exit()
     else:
 #        comicHTML = comicContentDecoded.split('\n') # No longer necessary in Version 1-2
+        # Sometimes, the name and/or date is in the URL (see: OotS)
+        comicContentDecoded = currentURL + '\n' + comicContentDecoded # Prepend the HTML with the URL
         pass
 
-#    print("\nFetching First URL:")
+#    print("\nFetching Latest URL:") # DEBUGGING
+    # 4. FIND THE LATEST URL
+    # Sites like Order of the Stick (OotS) do not default to their latest comic... they link to it
+    # Don't do this if:
+    #       latestSearchPhrase is not configured
+    #       The target URL doesn't match the base (see: root) URL (an indication the script wanted to skip ahead)
+    #       latestURL has already been assigned (it's already been found)
+    if latestSearchPhrase.__len__() > 0 and targetComicURL != baseURL and latestURL.__len__() == 0:
+        try:
+            latestURL = find_a_URL(comicContentDecoded, latestSearchPhrase, 'href="', '"')
+
+            latestURL = latestURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
+        except Exception as err:
+            print("Error encountered with find_a_URL('latest')!") # DEBUGGING
+            print(repr(err))
+        else:
+            if latestURL.__len__() > 0:
+                try:
+                    latestURL = make_rel_URL_abs(baseURL, latestURL)
+                except Exception as err:
+                    print("Error encountered with make_rel_URL_abs('latest')!") # DEBUGGING
+                    print(repr(err))
+    #                sys.exit() # Harsh... Not a big deal if you can't find 'latest' because this might be it
+                else:
+                    print("Latest URL:\t{}".format(latestURL)) # DEBUGGING 
+                    currentURL = latestURL
+                    continue # Go back to the top of the while loop
+
+            
+#    print("\nFetching First URL:") # DEBUGGING
     # 4. FIND THE FIRST URL
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
@@ -220,15 +327,17 @@ while True:
         firstURL = firstURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
     ## 4.2. Validate findings
-    if firstURL.__len__() == 0 and currentURL == targetComicURL: # Only check on first run
-        ### 4.2.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
+    ### 4.2.1. firstURL empty and this is the first stop
+    if firstURL.__len__() == 0 and (currentURL == targetComicURL or currentURL == latestURL): # Only check on first run
+        #### 4.2.1.1. Check for search criteria... Sometimes, there's no "First URL" to find... Only print on first run
         if firstSearchPhrase.__len__() == 0: # and firstURL.__len__() == 0:
             print("First URL search criteria not configured.") # DEBUGGING  
-        ### 4.2.2. If there's a search criteria configured but we didn't find a firstURL, something went wrong(?)
+        #### 4.2.2.1. If there's a search criteria configured but we didn't find a firstURL, something went wrong(?)
         else:
             print("First URL Not found with search criteria:\t{}".format(firstSearchPhrase)) # DEBUGGING  
-    elif firstURL.__len__() > 0 and currentURL == targetComicURL: # Found it first time
-        # Ensure the firstURL is an absolute URL
+    ### 4.2.2. Found firstURL on the first stop
+    elif firstURL.__len__() > 0 and (currentURL == targetComicURL or currentURL == latestURL): # Found it first time
+        #### 4.2.2.1. Ensure the firstURL is an absolute URL
         try:
             firstURL = make_rel_URL_abs(baseURL, firstURL)
         except Exception as err:
@@ -238,20 +347,30 @@ while True:
         else:
             print("First URL:\t{}".format(firstURL)) # DEBUGGING    
 
+        #### 4.2.2.2. Ensure the firstURL is valid
+        try:
+            if is_URL_valid(firstURL) is False:
+                print("Invalid URL:\t{}".format(firstURL)) # DEBUGGING
+#                sys.exit() # Not necessary to abort if firstURL is not found
+        except Exception as err:
+            print(repr(err))
+            sys.exit()
 
-#    print("\nFetching Image URL:")
+
     # 5. FIND THE IMAGE .GIF
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
+#    print("\nFetching Image URL:")
     imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)               
+
 
     # 6. CHANGE RELATIVE URLS TO ABSOLUTE URLS
     if imageURL.__len__() > 0:
-        # Clean up any URLs that begin with '//' because Request() doesn't like them
+        ## 6.1. Clean up any URLs that begin with '//' because Request() doesn't like them
         if imageURL.find('//') == 0:
             imageURL = 'http:' + imageURL
             
-        # Ensure the imageURL is an absolute URL
+        ## 6.2. Ensure the imageURL is an absolute URL
         try:
             imageURL = make_rel_URL_abs(baseURL, imageURL)
         except Exception as err:
@@ -261,17 +380,15 @@ while True:
         else:
 #            print("Image URL:\t{}".format(imageURL)) # DEBUGGING
             pass
-            
-# Old method prior to make_rel_URL_abs()
-#        tempPrefix = rootURL # Default stance
 
-#        for indicator in fullURLIndicatorList:
-#            if imageURL.find(indicator) >= 0:
-#                tempPrefix = ''
-#                break
-#        imageURL = tempPrefix + imageURL
-#        print("Image URL:\t{}".format(imageURL)) # DEBUGGING
-#        pass
+        ## 6.3. Ensure URL is valid
+        try:
+            if is_URL_valid(imageURL) is False:
+                print("Invalid URL:\t{}".format(imageURL)) # DEBUGGING
+                sys.exit()
+        except Exception as err:
+            print(repr(err))
+            sys.exit()
     else:
         print("Did not find an image URL!")
         sys.exit()
@@ -313,37 +430,50 @@ while True:
 
     # 9. DOWNLOAD THE FILE
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
-        ## 9.1. Verify the file doesn't exist
+        ## 9.1. Verify the file doesn't exist so we're downloading it
         if os.path.exists(os.path.join(SAVE_PATH, incomingFilename)) == False:
-            ## 9.1.1. Try to download it
-            try:
-                # Utilizing a request-->urlopen-->write() in an attempt to...
-                # ...continue dodging websites that block webscrapers.
-                comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
-                with urlopen(comicRequest) as comic:
-                    with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
-                        outFile.write(comic.read())
+            ### 9.1.2. Check the robots.txt for permission, if applicable
+            if obeyTheRobots is False or robots_may_I(page_disposition, imageURL) is True:
+                #### 9.1.2.1. Try to download it
+                try:
+                    # Utilizing a request-->urlopen-->write() in an attempt to...
+                    # ...continue dodging websites that block webscrapers.
+                    comicRequest = Request(imageURL, headers={'User-Agent': USER_AGENT})
+                    with urlopen(comicRequest) as comic:
+                        with open(os.path.join(SAVE_PATH, incomingFilename), 'wb') as outFile:
+                            outFile.write(comic.read())
 
-            except urllib.error.HTTPError as error:
-                print("Image failed to download:\t{}".format(imageURL))
+                except urllib.error.HTTPError as error:
+                    print("Image failed to download:\t{}".format(imageURL))
 
-                ## 9.1.2. Handle 404 errors
-                if error.code == 404:
-                    num404Skips += 1
-                ## 9.1.3. Abort on non 404 errors
-                else:
-                    print("ERROR:\t{} - {}".format(type(error),error))
+                    #### 9.1.2.2. Handle 404 errors
+                    if error.code == 404:
+                        num404Skips += 1
+                    #### 9.1.2.3. Abort on non 404 errors
+                    else:
+                        print("ERROR:\t{} - {}".format(type(error),error))
+                        sys.exit()
+
+                except Exception as error:
+                    print("Image failed to download:\t{}".format(imageURL))
+                    print(repr(error))
                     sys.exit()
 
-            except Exception as error:
-                print("Image failed to download:\t{}".format(imageURL))
-                print(repr(error))
-                sys.exit()
-
-            ## 9.1.2. Success   
+                #### 9.1.2.4. Success   
+                else:
+                    print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
+                    skipping = False
+            ### 9.1.3. Robots.txt forbids it
             else:
-                print("Image URL download successful:\t{}".format(incomingFilename)) # DEBUGGING
-                skipping = False
+                print("The site forbids our access to URL:\t{}".format(imageURL))
+                numExistingSkips += 1
+                skipping = True
+
+                ### 9.1.4. Some sites couple a Crawl-delay with a Disallow: /
+                if crawlDelay > 0:
+                    # https://youtu.be/Udj-o2m39NA
+                    print("Sleeping {} seconds before moving on".format(crawlDelay))
+                    time.sleep(crawlDelay)
         ## 9.2. The file exists so we're moving on
         else:
             print("Filename {} already exists.".format(incomingFilename)) # DEBUGGING
@@ -384,9 +514,9 @@ while True:
 
     prevURL = prevURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
-    ## 11.2. Change relative URLs to absolute URLs
+    ## 11.2. Validate the previous URL
     if prevURL.__len__() > 0:
-        # Ensure the prevURL is an absolute URL
+        ### 11.2.1. Change relative URLs to absolute URLs
         try:
             prevURL = make_rel_URL_abs(baseURL, prevURL)
         except Exception as err:
@@ -395,18 +525,12 @@ while True:
             sys.exit() # Harsh... consider running find_a_URL() again
         else:
 #            print("Prev URL:\t{}".format(prevURL)) # DEBUGGING
-            currentURL = prevURL       
-            
-# Old method prior to make_rel_URL_abs()
-#        tempPrefix = rootURL # Default stance
+            currentURL = prevURL 
+            # No need to validate this URL because it's validated at the top of the while loop
+    else:
+        print("\nMissing Previous URL.  We must be at the first page.\nCurrent URL:\t{}\n".format(currentURL))
+        break
 
-#        for indicator in fullURLIndicatorList:
-#            if prevURL.find(indicator) >= 0:
-#                tempPrefix = ''
-#                break
-#        print("Prev URL:\t{}".format(prevURL)) # DEBUGGING                
-#        currentURL = tempPrefix + prevURL
-#        pass
 
     # 12. RESET TEMP VARIABLES TO AVOID DUPE DOWNLOADS AND OTHER ERRORS
     incomingFilename = ''       # Local filename to save the incoming image download
