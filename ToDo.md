@@ -1,6 +1,6 @@
 # CURRENT SPRINT #
 # Version 1-4 (Refinement) In Progress
-    [ ] Transfer all scrapers to Version 1-3
+    [X] Transfer all scrapers to Version 1-3
     [ ] get_image_filename() [Version 1-3?]
         [ ] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
         [ ] Build a get_image_name function since there's already a get_image_date function and have get_image_filename()
