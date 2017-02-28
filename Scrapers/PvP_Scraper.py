@@ -90,7 +90,7 @@ from Robot_Reader_Functions import robots_may_I
 webComicName = 'PvP' # <=--------------------------=UPDATE=--------------------------=>
 baseURL = 'http://pvponline.com/comic' # <=--------------------------=UPDATE=--------------------------=>
 targetComicURL = baseURL # Original source
-#targetComicURL = baseURL # Start here instead
+#targetComicURL = 'http://pvponline.com/comic/2016-07-25' # Start here instead
 
 ### IMAGE URL SETUP ###
 # Find the appropriate HTML line from a list of strings
@@ -293,7 +293,7 @@ while True:
     #       latestSearchPhrase is not configured
     #       The target URL doesn't match the base (see: root) URL (an indication the script wanted to skip ahead)
     #       latestURL has already been assigned (it's already been found)
-    if latestSearchPhrase.__len__() > 0 and targetComicURL != baseURL and latestURL.__len__() == 0:
+    if latestSearchPhrase.__len__() > 0 and targetComicURL == baseURL and latestURL.__len__() == 0:
         try:
             latestURL = find_a_URL(comicContentDecoded, latestSearchPhrase, 'href="', '"')
 
