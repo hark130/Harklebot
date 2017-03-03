@@ -1,3 +1,4 @@
+from Scraper_Functions import find_the_name         # find_the_name(html, nameSearchPairs, caseSensitive = False)
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import find_a_URL            # find_a_URL(htmlString, searchStart, searchStop)
 from Scraper_Functions import get_image_filename    # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
@@ -11,6 +12,314 @@ import unittest
 import os
 import re
 
+'''
+        TypeError('html is not a list or string')
+        ValueError('html is empty')
+        TypeError('nameSearchPairs is not a dictionary')
+        TypeError('nameSearchPairs contains a non-string')
+        ValueError('nameSearchPairs contains an empty string')
+        ValueError('nameSearchPairs is empty')
+        TypeError('caseSensitive is not a boolean')
+'''
+# This class will test the newly extracted functionality named find_the_name() under its own strenght
+# find_the_name(html, nameSearchPairs, caseSensitive = False)
+class FindTheName(unittest.TestCase):
+    
+    # Test 1 - TypeError('html is not a list or string')
+    def test01_HTML_InvalidInput01(self):
+        # Test Variables
+        testHtml = {'This is':'wrong'}
+        testSearch = {'THIS ':' SPARTA'}
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'html is not a list or string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 2 - TypeError('html is not a list or string')
+    def test02_HTML_InvalidInput02(self):
+        # Test Variables
+        testHtml = 31337 / 1337
+        testSearch = {'Not ':' chance'}
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'html is not a list or string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 3 - ValueError('html is empty')
+    def test03_HTML_InvalidInput03(self):
+        # Test Variables
+        testHtml = ''
+        testSearch = {'Not ':' chance'}
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'html is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 4 - TypeError('html is empty')
+    def test04_HTML_InvalidInput04(self):
+        # Test Variables
+        testHtml = []
+        testSearch = {'Not ':' chance'}
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'html is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 5 - TypeError('nameSearchPairs is not a dictionary')
+    def test05_NameSearchPairs_InvalidInput01(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = 'Not a chance'
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs is not a dictionary')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 6 - TypeError('nameSearchPairs is not a dictionary')
+    def test06_NameSearchPairs_InvalidInput02(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = True
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs is not a dictionary')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 7 - TypeError('nameSearchPairs contains a non-string')
+    def test07_NameSearchPairs_InvalidInput03(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Yes':'No','Maybe':'So','ERROR -->':['This','will','not','work']}
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 8 - TypeError('nameSearchPairs contains a non-string')
+    def test08_NameSearchPairs_InvalidInput04(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Yes':'No',{'Super':'Meta'}:'<-- ERROR!','Maybe':'So'}
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+
+    # Test 9 - ValueError('nameSearchPairs contains an empty string')
+    def test09_NameSearchPairs_InvalidInput05(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Yes':'No','':'<-- ERROR!','Maybe':'So'}
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains an empty string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 10 - ValueError('nameSearchPairs contains an empty string')
+    def test10_NameSearchPairs_InvalidInput06(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Yes':'No','Maybe':'So','ERROR -->':''}
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except TypeError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 11 - ValueError('nameSearchPairs is empty')
+    def test11_NameSearchPairs_InvalidInput07(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {}
+        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 12 - ValueError('nameSearchPairs is empty')
+    def test12_NameSearchPairs_InvalidInput08(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {}
+#        testCaseSensitive = False        
+        
+        try:
+            result = find_the_name(testHtml, testSearch)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs is empty')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 13 - TypeError('caseSensitive is not a boolean')
+    def test13_CaseSensitive_InvalidInput01(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testCaseSensitive = testHTML        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 14 - TypeError('caseSensitive is not a boolean')
+    def test14_CaseSensitive_InvalidInput02(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testCaseSensitive = testSearch        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 15 - TypeError('caseSensitive is not a boolean')
+    def test15_CaseSensitive_InvalidInput03(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testCaseSensitive = 'True'        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # Test 16 - TypeError('caseSensitive is not a boolean')
+    def test16_CaseSensitive_InvalidInput04(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testCaseSensitive = int(1)        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+    # CASE SENSITIVE
+    #   Strings
+    #       1 search, 0 needles
+    #       1 search, 1 needle
+    #       1 search, 2 needles
+    #       2 search, 0 neeldes
+    #       2 search, 2 needles
+    #       2 search, 2 needles (multiples)
+    #       3 search, 0 needles
+    #       3 search, 1 needle
+    #       3 search, 1 needle (multiples)
+    # CASE INSENSITIVE
+    #   Strings
+    #       1 search, 0 needles
+    #       1 search, 1 needle
+    #       1 search, 2 needles
+    #       2 search, 0 neeldes
+    #       2 search, 2 needles
+    #       2 search, 2 needles (multiples)
+    #       3 search, 0 needles
+    #       3 search, 1 needle
+    #       3 search, 1 needle (multiples)
+            
 
 # This class will test the new get_image_filename() functionality to auto-size number-only filenames
 # This does not include dates
