@@ -25,7 +25,9 @@
 #################################################################################
 #################################################################################
 # Version 1.4
-#   REFACTOR:   Extricating code into a get_image_name function that takes a dictionary
+#   MOVING:     Extricating code into a find_the_name function that takes a dictionary
+#   MODIFYING:  get_image_filename calls find_the_name instead of doing the work
+#   MODIFYING:  Template_Scraper should construct a dictionary to pass to get_image_filename
 #################################################################################
 
 
@@ -59,7 +61,7 @@ from urllib.parse import urlunparse
         This function will not include the search criteria in the return value
         Treat all strings as lower case if caseSensitive is False
 '''
-def get_image_filename(html, nameSearchPairs, caseSensitive = False):
+def get_image_name(html, nameSearchPairs, caseSensitive = False):
     retVal = ''
     htmlList = []
     
@@ -117,13 +119,13 @@ def get_image_filename(html, nameSearchPairs, caseSensitive = False):
             ## 2.3. Found the key (in the necessary case)
             if casedEntry.find(key) < casedEntry.find(value) and casedEntry.find(key) >= 0:
                 ## 2.4. Return the original case entry
-                ############################# CONTINUE HERE #######################
-                ### ENSURE CASE SENSITIVE SEARCH MATCHES ORIGINAL HTML
+                ### 2.4.1. Find the starting position
                 start = casedEntry.find(key) + key.__len__()
-                stop = 
-                retVal = entry[casedEntry.find(key) + key.__len__()::]
-                retVal = retVal[:casedEntry.find(value):]
-
+                ### 2.4.2. Find the stop position
+                stop = casedEntry.find(value)
+                ### 2.4.3. Use those indices to slice the phrase out of the original string
+                retVal = entry[start:stop:]
+                
                 if retVal.__len__() > 0:
                     break # Found it.  Stop looking.
 
