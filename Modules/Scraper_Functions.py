@@ -23,6 +23,10 @@
 # Version 1.3
 #   ADDING: Image name sizing capability for 'counted' names (see: Cyanide & Happines, XKCD)
 #################################################################################
+#################################################################################
+# Version 1.4
+#   REFACTOR:   Extricating code into a get_image_name function that takes a dictionary
+#################################################################################
 
 
 import os
@@ -32,6 +36,99 @@ import re
 import collections
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
+
+
+'''
+    Purpose: Determine an image name given paired search criteria and raw HTML
+    Input:
+        html - a string of raw HTML code or a list of HTML code entries
+        nameSearchPairs - a dictionary of paired start and stop string delimiters necessary to find the name
+        caseSensitive - a boolean representing the case sensitivity of the search (False == case insensitive)
+    Output:
+        A string representing the first found name on success
+        An empty string if nothing was found
+    Exceptions:
+        TypeError('html is not a list or string')
+        ValueError('html is empty')
+        TypeError('nameSearchPairs is not a dictionary')
+        TypeError('nameSearchPairs contains a non-string')
+        ValueError('nameSearchPairs contains an empty string')
+        ValueError('nameSearchPairs is empty')
+        TypeError('caseSensitive is not a boolean')
+    NOTES:
+        This function will not include the search criteria in the return value
+        Treat all strings as lower case if caseSensitive is False
+'''
+def get_image_filename(html, nameSearchPairs, caseSensitive = False):
+    retVal = ''
+    htmlList = []
+    
+    # 1. INPUT VALIDATION
+    ## 1.1. html
+    ### 1.1.1. html Type
+    if isinstance(html, list) is True:
+        htmlList = html
+    elif isinstance(html, str) is False:
+        raise TypeError('html is not a list or string')
+    else:
+        htmlList = re.split('\n|</a>|</div>', html)
+        
+    ### 1.1.2. html Values    
+    if htmlList.__len__() == 0:
+        ValueError('html is empty')
+        
+    ## 1.2. nameSearchPairs
+    ### 1.2.1. Container
+    if isinstance(nameSearchPairs, dict) is False:
+        raise TypeError('nameSearchPairs is not a dictionary')
+    elif nameSearchPairs.__len__() == 0:
+        raise ValueError('nameSearchPairs is empty') 
+    
+    ### 1.2.2. Contents
+    for key, value in nameSearchPairs:
+        #### 1.2.2.1. Type
+        if isinstance(key, str) is False or isinstance(value, str) is False:
+            TypeError('nameSearchPairs contains a non-string')
+        #### 1.2.2.2. Content Content
+        elif key.__len__() == 0 or value.__len__() == 0:
+            ValueError('nameSearchPairs contains an empty string')
+    
+    ## 1.3. caseSensitive
+    if isinstance(caseSensitive, bool) is False:
+        raise TypeError('caseSensitive is not a boolean')
+            
+    # 2. FIND THAT NEEDLE
+    ## 2.1. Search for each dictionary entry individually
+    for key, value in nameSearchPairs.items():
+        if retVal.__len__() > 0:
+            break # Found it.  Stop looking.
+        # 2.1.1. Make the search criteria lower case as appropriate
+        if caseSensitive is False:
+            key = key.lower()
+            value = value.lower()
+            
+        ## 2.2. Search each entry in the html
+        for entry in htmlList:
+            # 2.2.1. Make the haystack lower case as appropriate
+            if caseSensitive is False:
+                casedEntry = entry.lower()
+            else:
+                casedEntry = entry
+            ## 2.3. Found the key (in the necessary case)
+            if casedEntry.find(key) < casedEntry.find(value) and casedEntry.find(key) >= 0:
+                ## 2.4. Return the original case entry
+                ############################# CONTINUE HERE #######################
+                ### ENSURE CASE SENSITIVE SEARCH MATCHES ORIGINAL HTML
+                start = casedEntry.find(key) + key.__len__()
+                stop = 
+                retVal = entry[casedEntry.find(key) + key.__len__()::]
+                retVal = retVal[:casedEntry.find(value):]
+
+                if retVal.__len__() > 0:
+                    break # Found it.  Stop looking.
+
+    # 3. DONE
+    return retVal
 
 
 '''
