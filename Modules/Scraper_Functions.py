@@ -61,7 +61,7 @@ from urllib.parse import urlunparse
         This function will not include the search criteria in the return value
         Treat all strings as lower case if caseSensitive is False
 '''
-def get_image_name(html, nameSearchPairs, caseSensitive = False):
+def find_the_name(html, nameSearchPairs, caseSensitive = False):
     retVal = ''
     htmlList = []
     
