@@ -1,3 +1,4 @@
+http://www.businesscat.happyjar.com/comic/order/
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -361,7 +362,7 @@ img.emoji {
 				<p>Put me down for ten crates.<br />
 &#8211;<br />
 <em style="font-size:12px;"><b>This comic brought to you courtesy of my amazing <a href="http://www.patreon.com/tomfonder" target="_blank">patrons</a>. Special thanks to:</b><br />
-Karen Carpenter, Gary Cooper, Daniel Cunningham, Czar De Jesus, Colin Dellow, Julia G, Giz, Reece Hall, Yuliya Levina, Jonna M‰rij‰rvi, CotÈ Nicholas, Scott, Janet Seitz, Ross Taylor</em></p>
+Karen Carpenter, Gary Cooper, Daniel Cunningham, Czar De Jesus, Colin Dellow, Julia G, Giz, Reece Hall, Yuliya Levina, Jonna M√§rij√§rvi, Cot√© Nicholas, Scott, Janet Seitz, Ross Taylor</em></p>
 	</div>
 	<div class="footer">
 		<a href=""><div class="comments">
