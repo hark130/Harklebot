@@ -300,16 +300,16 @@ class FindTheName(unittest.TestCase):
     # Test 17 - 1 Search, 0 Needles
     def test17_ValidInput_Fabricated01(self):
         # Test Variables
-        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n
-            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n
-            <BODY BGCOLOR="#ffffff">\n
-            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n
-            <H3>By Ogden Nash</H3>\n
-            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n
-            Belinda lived in a little white house, <BR>\n
-            With a little black kitten and a little gray mouse, <BR>\n
-            And a little yellow dog and a little red wagon, <BR>\n
-            And a realio, trulio, little pet dragon. <BR>\n
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
         testSearch = {'Do you ':' HTML?!'}
 
@@ -349,16 +349,16 @@ class FindTheName(unittest.TestCase):
     # Test 18 - 1 Search, 1 Needle, Proper Case
     def test18_ValidInput_Fabricated02(self):
         # Test Variables
-        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n
-            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n
-            <BODY BGCOLOR="#ffffff">\n
-            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n
-            <H3>By Ogden Nash</H3>\n
-            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n
-            Belinda lived in a little white house, <BR>\n
-            With a little black kitten and a little gray mouse, <BR>\n
-            And a little yellow dog and a little red wagon, <BR>\n
-            And a realio, trulio, little pet dragon. <BR>\n
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
         testSearch = {'<TITLE>':'</TITLE>'}
 
@@ -401,16 +401,16 @@ class FindTheName(unittest.TestCase):
     # Test 19 - 1 Search, 1 Needle, Improper Case
     def test19_ValidInput_Fabricated03(self):
         # Test Variables
-        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n
-            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n
-            <BODY BGCOLOR="#ffffff">\n
-            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n
-            <H3>By Ogden Nash</H3>\n
-            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n
-            Belinda lived in a little white house, <BR>\n
-            With a little black kitten and a little gray mouse, <BR>\n
-            And a little yellow dog and a little red wagon, <BR>\n
-            And a realio, trulio, little pet dragon. <BR>\n
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
         testSearch = {'<TiTlE>':'</tItLe>'}
 
@@ -452,16 +452,16 @@ class FindTheName(unittest.TestCase):
     # Test 20 - 1 Search, 2 Needles, Specifically Proper Case
     def test20_ValidInput_Fabricated04(self):
         # Test Variables
-        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n
-            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n
-            <BODY BGCOLOR="#ffffff">\n
-            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n
-            <H3>By Ogden Nash</H3>\n
-            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n
-            Belinda lived in a little white house, <BR>\n
-            With a little black kitten and a little gray mouse, <BR>\n
-            And a little yellow dog and a little red wagon, <BR>\n
-            And a realio, trulio, little pet dragon. <BR>\n
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
         testSearch = {'THE TALE OF':'THE DRAGON'}
 
@@ -504,18 +504,67 @@ class FindTheName(unittest.TestCase):
     # Test 21 - 2 Search, 0 Needles, Specifically Proper Case
     def test21_ValidInput_Fabricated05(self):
         # Test Variables
-        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n
-            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n
-            <BODY BGCOLOR="#ffffff">\n
-            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n
-            <H3>By Ogden Nash</H3>\n
-            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n
-            Belinda lived in a little white house, <BR>\n
-            With a little black kitten and a little gray mouse, <BR>\n
-            And a little yellow dog and a little red wagon, <BR>\n
-            And a realio, trulio, little pet dragon. <BR>\n
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'poems':'keith','trulio':'realio'} ################### CONTINUE HERE
+        testSearch = {'poems':'keith','trulio':'realio'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() == 0)
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() == 0)
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() == 0)
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+            
+    # Test 22 - 2 Search, 2 Needles
+    def test22_ValidInput_Fabricated06(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'Little ':' Kitten','Copyright ':' and'}
 
         # Case Sensitive
         try:
@@ -526,7 +575,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseSensitiveResult, str))
             self.assertTrue(caseSensitiveResult.__len__() > 0)
-            self.assertTrue(caseSensitiveResult == ' CUSTARD ')
+            self.assertTrue(caseSensitiveResult == 'Linell Nash Smith')
             
         # Case Insensitive
         try:
@@ -537,7 +586,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
             self.assertTrue(caseInsensitiveResult.__len__() > 0)
-            self.assertTrue(caseInsensitiveResult == ' Custard ')
+            self.assertTrue(caseInsensitiveResult == 'black')
             
         # Default Case Sensitivity
         try:
@@ -548,34 +597,422 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
             self.assertTrue(caseDefaultResult.__len__() > 0)
-            self.assertTrue(caseDefaultResult == ' Custard ')
+            self.assertTrue(caseDefaultResult == 'black')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+        
+    # Test 23 - 2 Search, 2 Needles (multiples)
+    def test23_ValidInput_Fabricated08(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'color="':'">','And':','}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == ' a little yellow dog and a little red wagon')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == '#ffffff')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == '#ffffff')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+        
+    # Test 24 - 3 search, 0 needles
+    def test24_ValidInput_Fabricated09(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'404':'Not Found','Error':'Will Robinson',"I'm sorry Dave":"I'm afraid I can't do that"}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() == 0)
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() == 0)
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() == 0)
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+        
+    # Test 25 - 3 search, 1 needle
+    def test25_ValidInput_Fabricated10(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'Do unto me now':' has been done','Even the sun':' to tell me otherwise','with a':'MOUSE'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() == 0)
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == ' little black kitten and a little gray ')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == ' little black kitten and a little gray ')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
             
+    # Test 26 - 3 search, 1 needle (multiples)
+    def test26_ValidInput_Fabricated11(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == 'L')
             
-    # CASE SENSITIVE
-    #   Strings
-    #       1 search, 0 needles # Done
-    #       1 search, 1 needle  # Done
-    #       1 search, 2 needles # Done
-    #       2 search, 0 needles
-    #       2 search, 2 needles
-    #       2 search, 2 needles (multiples)
-    #       3 search, 0 needles
-    #       3 search, 1 needle
-    #       3 search, 1 needle (multiples)
-    # CASE INSENSITIVE
-    #   Strings
-    #       1 search, 0 needles
-    #       1 search, 1 needle
-    #       1 search, 2 needles
-    #       2 search, 0 neeldes
-    #       2 search, 2 needles
-    #       2 search, 2 needles (multiples)
-    #       3 search, 0 needles
-    #       3 search, 1 needle
-    #       3 search, 1 needle (multiples)
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == 'rvard.')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == 'rvard.')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+        
+    # Test 27 - 4 search, 1 needle (multiples)
+    def test27_ValidInput_Odd01(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {' ':' ','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == 'Nash:')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == 'Nash:')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == 'Nash:')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+            
+    # Test 28 - 4 search, 1 needle (multiples)
+    def test28_ValidInput_Odd02(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'\n':'\n','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+        
+    # Test 29 - 4 search, 1 needle (multiples)
+    def test29_ValidInput_Odd03(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'//':'/','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == 'www.eecs.harvard.edu')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == 'www.eecs.harvard.edu')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == 'www.eecs.harvard.edu')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+            
+    # Test 30 - 4 search, 1 needle (multiples)
+    def test30_ValidInput_Odd04(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        testSearch = {'And a little yellow dog ':'and a little red wagon,','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, True)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() == 0)
+            self.assertTrue(caseSensitiveResult == '')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, False)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() == 0)
+            self.assertTrue(caseInsensitiveResult == '')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch)
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised an exception')
+        else:
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() == 0)
+            self.assertTrue(caseDefaultResult == '')
+            
+        # Default Case Validation
+        self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
             
 
 # This class will test the new get_image_filename() functionality to auto-size number-only filenames
