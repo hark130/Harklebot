@@ -1,10 +1,11 @@
 # CURRENT SPRINT #
 # Version 1-4 (Refinement) In Progress
     [X] Transfer all scrapers to Version 1-3
-    [ ] get_image_filename()
-        [ ] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
-        [ ] Build a get_image_name function since there's already a get_image_date function and have get_image_filename()
+    [X] get_image_filename()
+        [X] Consider changing list of nameSearch and string nameEnding to a dictionary combinations
+        [X] Build a get_image_name function since there's already a get_image_date function and have get_image_filename()
         glue them together?
+        [/] Modify Template Scraper to include this new functionality
     [ ] Refactor necessary Scraper Functions to utilize urlparse functionality (e.g., get root, valid URL)
     [ ] Write Accursed Dragon Scraper
     [ ] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
@@ -37,6 +38,7 @@
         [ ] Add fidelity to verify allowed characters are utilized properly (see: ftp://username:password@domain)
         [ ] Add some manner of sub-search which validates HTML codes from the .findall(URL) results
     [ ] Modify find_the_name() to support matching key and values (see: {'A':'A'}) in lieu of raising ValueError
+    [ ] find_the_name() has is already written to perform case sensitive searches but that functionality hasn't yet been incorporated into get_image_filename() much less the Template Scraper.  Default setting of case INsensitive is currently used by default but there is currently no way to modify this behavior that's been 'baked in' to the Template Scraper or get_image_filename().  This may matter to someone, one day.
 # Bugs #
     [ ] Write check for forbidden filename characters into trim_the_name() (Scraper Functions)
     [ ] Verify get_the_filename()/get_the_date()
