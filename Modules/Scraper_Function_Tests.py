@@ -2653,8 +2653,12 @@ class FindURL(unittest.TestCase):
 class GetImageFilename(unittest.TestCase):
 
     def test01_htmlString_TypeError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename(3.14, 'search for this date', ['name', 'other names'], 'ending', True)
+            get_image_filename(3.14, 'search for this date', nameCriteria, True)
         except TypeError as err:
             self.assertEqual(err.args[0], 'htmlString is not a string')
         except Exception as err:
@@ -2662,8 +2666,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test02_htmlString_TypeError2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename(["don't", "put", "HTML", "code", "in", "a", "list"], ['search for this date', 'or this date'], ['name', 'other names'], 'ending')
+            get_image_filename(["don't", "put", "HTML", "code", "in", "a", "list"], ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'htmlString is not a string')
         except Exception as err:
@@ -2671,8 +2679,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test03_htmlString_ValueError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('', 'search for this date', ['name', 'other names'], 'ending')
+            get_image_filename('', 'search for this date', nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'htmlString is empty')
         except Exception as err:
@@ -2680,8 +2692,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test04_dateSearchPhrase_TypeError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 1/10/2017, ['name', 'other names'], 'ending', False)
+            get_image_filename('<a> href="here is some HTML code" </a>', 1/10/2017, nameCriteria, False)
         except TypeError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase is not a string or a list')
         except Exception as err:
@@ -2689,8 +2705,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test05_dateSearchPhrase_TypeError2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', 20170110], ['name', 'other names'], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', 20170110], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
         except Exception as err:
@@ -2698,8 +2718,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test06_dateSearchPhrase_TypeError3(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', {"Not":"Possible"}], ['name', 'other names'], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', {"Not":"Possible"}], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
         except Exception as err:
@@ -2707,8 +2731,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test07_dateSearchPhrase_ValueError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', '', ['name', 'other names'], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', '', nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase is empty')
         except Exception as err:
@@ -2716,8 +2744,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test08_dateSearchPhrase_ValueError2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', [], ['name', 'other names'], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', [], nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase is empty')
         except Exception as err:
@@ -2725,8 +2757,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test09_dateSearchPhrase_ValueError3(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', ''], ['name', 'other names'], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', ''], nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'dateSearchPhrase contains an empty string')
         except Exception as err:
@@ -2734,8 +2770,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test10_nameSearchPhrase_TypeError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria[31337] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], 31337, 'ending', True)
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria, True)
         except TypeError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase is not a string or a list')
         except Exception as err:
@@ -2743,8 +2782,13 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test11_nameSearchPhrase_TypeError2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        nameCriteria[('Not a', 'string')] = 'fail'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', ['not', 'a', 'string']], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
         except Exception as err:
@@ -2752,8 +2796,13 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test12_nameSearchPhrase_TypeError3(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        nameCriteria[('not','good')] = 'failure'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', {'not':'good'}], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
         except Exception as err:
@@ -2761,8 +2810,10 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test13_nameSearchPhrase_ValueError1(self):
+        nameCriteria = {'':'ending'}
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', '', 'ending', False)
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, False)
         except ValueError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
         except Exception as err:
@@ -2770,8 +2821,10 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test14_nameSearchPhrase_ValueError2(self):
+        nameCriteria = {'beginning':''}
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'I can haz date?', [], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', 'I can haz date?', nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
         except Exception as err:
@@ -2779,8 +2832,13 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test15_nameSearchPhrase_ValueError3(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        nameCriteria[''] = 'ending'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other names', ''], 'ending')
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'nameSearchPhrase contains an empty string')
         except Exception as err:
@@ -2788,8 +2846,12 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test16_nameEnding_TypeError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 0
+        nameCriteria['other names'] = 1
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], ['name', 'other name'], 0)
+            get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
             self.assertEqual(err.args[0], 'nameEnding is not a string')
         except Exception as err:
@@ -2797,8 +2859,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test17_nameEnding_ValueError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = ''
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', '')
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria)
         except ValueError as err:
             self.assertEqual(err.args[0], 'nameEnding is empty')
         except Exception as err:
@@ -2806,8 +2871,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test18_skipDate_TypeError1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'The End'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'I mean, I guess')
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, 'I mean, I guess')
         except TypeError as err:
             self.assertEqual(err.args[0], 'skipDate is not a bool')
         except Exception as err:
@@ -2815,8 +2883,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test19_skipDate_TypeError2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'The End'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'True')
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, 'True')
         except TypeError as err:
             self.assertEqual(err.args[0], 'skipDate is not a bool')
         except Exception as err:
@@ -2824,8 +2895,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test20_skipDate_TypeError3(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'The End'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', 'False')
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, 'False')
         except TypeError as err:
             self.assertEqual(err.args[0], 'skipDate is not a bool')
         except Exception as err:
@@ -2833,8 +2907,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test21_skipDate_TypeError4(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'The End'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', [True])
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, [True])
         except TypeError as err:
             self.assertEqual(err.args[0], 'skipDate is not a bool')
         except Exception as err:
@@ -2842,8 +2919,11 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test22_skipDate_TypeError5(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'The End'
+        
         try:
-            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', 'name', 'The End', [False])
+            get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, [False])
         except TypeError as err:
             self.assertEqual(err.args[0], 'skipDate is not a bool')
         except Exception as err:
@@ -2851,6 +2931,10 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test23_PVP_HTML_image_search1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
@@ -2860,6 +2944,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20160726_2016-07-26')
 
     def test24_PVP_HTML_image_search2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '11-PvP_slash_date_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
@@ -2871,6 +2959,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19')
 
     def test25_Business_Cat_HTML_image_search1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], 'title="', '"')
@@ -2883,6 +2975,10 @@ class GetImageFilename(unittest.TestCase):
             
 
     def test26_SMBC_HTML_image_search1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '5-SMBC_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], '<title>Saturday Morning Breakfast Cereal - ', '</title>')
@@ -2893,6 +2989,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20161227_Wanna-Evolve')
 
     def test27_SMBC_HTML_image_search2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '6-SMBC_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['<title>Saturday Morning Breakfast Cereal - '], '</title>')
@@ -2903,6 +3003,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20161226_Political-Philosophy')
 
     def test28_Penny_Arcade_HTML_image_search1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ['input type="hidden" name="attributes[comic_title]" value="'], 'alt="', '"')
@@ -2913,6 +3017,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20100712_Our-Partial-Future')
 
     def test29_XKCD_HTML_image_search1(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', True)
@@ -2922,6 +3030,10 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '1484')
 
     def test30_XKCD_HTML_image_search2(self):
+        nameCriteria = OrderedDict()
+        nameCriteria['name'] = 'ending'
+        nameCriteria['other names'] = 'ending'
+        
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
                 testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', False)
