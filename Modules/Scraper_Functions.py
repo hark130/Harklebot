@@ -445,15 +445,13 @@ def make_rel_URL_abs(baseURL, targetURL):
             TypeError('htmlString is not a string')
             TypeError('dateSearchPhrase is not a string or a list')
             TypeError('dateSearchPhrase contains a non string')
-            TypeError('nameSearchPhrase is not a string or a list')
-            TypeError('nameSearchPhrase contains a non string')
-            TypeError('nameEnding is not a string')
+            TypeError('nameSearchPairs is not a dictionary')
+            TypeError('nameSearchPairs contains a non-string')
             ValueError('htmlString is empty')
             ValueError('dateSearchPhrase is empty')
             ValueError('dateSearchPhrase contains an empty string')
-            ValueError('nameSearchPhrase is empty')
-            ValueError('nameSearchPhrase contains an empty string')
-            ValueError('nameEnding is empty')
+            ValueError('nameSearchPairs is empty')
+            ValueError('nameSearchPairs contains an empty string')
     NOTE:
         This functions return value does not constitute a stand-alone filename.
             It will not include a file extension or an appropriate prepended phrase.
