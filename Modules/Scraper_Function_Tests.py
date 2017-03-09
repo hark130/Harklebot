@@ -1,7 +1,7 @@
 from Scraper_Functions import find_the_name         # find_the_name(html, nameSearchPairs, caseSensitive = False)
 from Scraper_Functions import find_the_date 
 from Scraper_Functions import find_a_URL            # find_a_URL(htmlString, searchStart, searchStop)
-from Scraper_Functions import get_image_filename    # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding)
+from Scraper_Functions import get_image_filename    # get_image_filename(htmlString, [dateSearchPhrase], {nameSearchPairs}, skipDate = False)
 from Scraper_Functions import is_URL_abs            # is_URL_abs(baseURL, targetURL)
 from Scraper_Functions import make_rel_URL_abs      # make_rel_URL_abs(baseURL, targetURL)
 from Scraper_Functions import is_URL_valid          # is_URL_valid(URL)
@@ -847,7 +847,7 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-       
+
         testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
         testSearch['n '] = ': '
         testSearch['THE TAIL OF '] = ' THE DRAGON'
@@ -1207,11 +1207,12 @@ class SizeNumericImageNames(unittest.TestCase):
         ################################################
         # Modify these variables based on HTML details #
         ################################################
+        nameCriteria = OrderedDict({nameSearchPhrase:nameEnding})
 
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
                 testHTML = testFile.read()
-            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+            result = get_image_filename(testHTML, dateSearchPhrase, nameCriteria, skipDateIfNotFound)
         except Exception as err:
             print(repr(err))
             self.fail('Raised an exception')
@@ -1267,11 +1268,14 @@ class SizeNumericImageNames(unittest.TestCase):
         ################################################
         # Modify these variables based on HTML details #
         ################################################
+        nameCriteria = OrderedDict()
+        nameCriteria['Permanent link to this comic: http://xkcd.com/'] = '/<br />'
+        nameCriteria['Permanent link to this comic: https://xkcd.com/'] = '/<br />'
 
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
                 testHTML = testFile.read()
-            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+            result = get_image_filename(testHTML, dateSearchPhrase, nameCriteria, skipDateIfNotFound)
         except Exception as err:
             print(repr(err))
             self.fail('Raised an exception')
@@ -1326,11 +1330,12 @@ class SizeNumericImageNames(unittest.TestCase):
         ################################################
         # Modify these variables based on HTML details #
         ################################################
+        nameCriteria = OrderedDict({nameSearchPhrase:nameEnding})
 
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
                 testHTML = testFile.read()
-            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+            result = get_image_filename(testHTML, dateSearchPhrase, nameCriteria, skipDateIfNotFound)
         except Exception as err:
             print(repr(err))
             self.fail('Raised an exception')
@@ -1385,11 +1390,12 @@ class SizeNumericImageNames(unittest.TestCase):
         ################################################
         # Modify these variables based on HTML details #
         ################################################
+        nameCriteria = OrderedDict({nameSearchPhrase:nameEnding})
 
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
                 testHTML = testFile.read()
-            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+            result = get_image_filename(testHTML, dateSearchPhrase, nameCriteria, skipDateIfNotFound)
         except Exception as err:
             print(repr(err))
             self.fail('Raised an exception')
@@ -1444,11 +1450,12 @@ class SizeNumericImageNames(unittest.TestCase):
         ################################################
         # Modify these variables based on HTML details #
         ################################################
+        nameCriteria = OrderedDict({nameSearchPhrase:nameEnding})
 
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', testHTMLFile), 'r') as testFile:
                 testHTML = testFile.read()
-            result = get_image_filename(testHTML, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
+            result = get_image_filename(testHTML, dateSearchPhrase, nameCriteria, skipDateIfNotFound)
         except Exception as err:
             print(repr(err))
             self.fail('Raised an exception')
