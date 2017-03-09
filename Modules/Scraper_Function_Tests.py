@@ -1157,6 +1157,7 @@ class FindTheName(unittest.TestCase):
             
 
 # This class will test the new get_image_filename() functionality to auto-size number-only filenames
+# This class will not test the input validation of get_image_filename() because that is accomplished elsewhere
 # This does not include dates
 class SizeNumericImageNames(unittest.TestCase):
 
@@ -2650,6 +2651,18 @@ class FindURL(unittest.TestCase):
             print(repr(err))
 
 
+'''
+            TypeError('htmlString is not a string')
+            TypeError('dateSearchPhrase is not a string or a list')
+            TypeError('dateSearchPhrase contains a non-string')
+            TypeError('nameSearchPairs is not a dictionary')
+            TypeError('nameSearchPairs contains a non-string')
+            ValueError('htmlString is empty')
+            ValueError('dateSearchPhrase is empty')
+            ValueError('dateSearchPhrase contains an empty string')
+            ValueError('nameSearchPairs is empty')
+            ValueError('nameSearchPairs contains an empty string')
+'''
 class GetImageFilename(unittest.TestCase):
 
     def test01_htmlString_TypeError1(self):
@@ -2712,7 +2725,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', 20170110], nameCriteria)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
+            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non-string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2725,7 +2738,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date', {"Not":"Possible"}], nameCriteria)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non string')
+            self.assertEqual(err.args[0], 'dateSearchPhrase contains a non-string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2776,7 +2789,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria, True)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase is not a string or a list')
+            self.assertEqual(err.args[0], 'nameSearchPairs is not a dictionary')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2790,7 +2803,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2804,7 +2817,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase contains a non string')
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2826,7 +2839,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', 'I can haz date?', nameCriteria)
         except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
+            self.assertEqual(err.args[0], 'nameSearchPairs is empty')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2840,7 +2853,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase contains an empty string')
+            self.assertEqual(err.args[0], 'nameSearchPairs contains an empty string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2853,7 +2866,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria)
         except TypeError as err:
-            self.assertEqual(err.args[0], 'nameEnding is not a string')
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a non-string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2865,7 +2878,7 @@ class GetImageFilename(unittest.TestCase):
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria)
         except ValueError as err:
-            self.assertEqual(err.args[0], 'nameEnding is empty')
+            self.assertEqual(err.args[0], 'nameSearchPairs contains an empty string')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
@@ -2938,6 +2951,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', nameCriteria)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
             self.assertEqual(testResult, '20160726_2016-07-26')
 
@@ -2950,6 +2964,7 @@ class GetImageFilename(unittest.TestCase):
             # Mangled this test a bit because the found name 
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
 #            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19'.lower()) # No longer necessary?  Case issue resolved.
             self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19')
@@ -2962,6 +2977,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], nameCriteria)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
             # Added .lower() here
             self.assertEqual(testResult, '20161202_Order'.lower()) 
@@ -2976,6 +2992,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], nameCriteria)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
 #            self.assertEqual(testResult, '20161227_Wanna-Evolve'.lower()) # No longer necessary.  Case issue resolved.
             self.assertEqual(testResult, '20161227_Wanna-Evolve')
@@ -2988,6 +3005,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], nameCriteria)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
 #            self.assertEqual(testResult, '20161226_Political-Philosophy'.lower()) # No longer necessary.  Case issue resolved.
             self.assertEqual(testResult, '20161226_Political-Philosophy')
@@ -3001,6 +3019,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ['input type="hidden" name="attributes[comic_title]" value="'], nameCriteria)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
 #            self.assertEqual(testResult, '20100712_Our-Partial-Future'.lower()) # No longer necessary.  Case issue resolved.
             self.assertEqual(testResult, '20100712_Our-Partial-Future')
@@ -3013,6 +3032,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], nameCriteria, True)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
             self.assertEqual(testResult, '1484')
 
@@ -3024,6 +3044,7 @@ class GetImageFilename(unittest.TestCase):
                 testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], nameCriteria, False)
         except Exception as err:
             print(repr(err))
+            self.fail('Raised an exception')
         else:
             self.assertEqual(testResult, '00000000')
 
