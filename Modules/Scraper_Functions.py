@@ -38,13 +38,14 @@ import re
 import collections
 from urllib.parse import urlparse
 from urllib.parse import urlunparse
+from collections import OrderedDict
 
 
 '''
     Purpose: Determine an image name given paired search criteria and raw HTML
     Input:
         html - a string of raw HTML code or a list of HTML code entries
-        nameSearchPairs - a dictionary of paired start and stop string delimiters necessary to find the name
+        nameSearchPairs - a dictionary, preferably an OrderedDict, of paired start and stop string delimiters necessary to find the name
         caseSensitive - a boolean representing the case sensitivity of the search (False == case insensitive)
     Output:
         A string representing the first found name on success
@@ -56,10 +57,12 @@ from urllib.parse import urlunparse
         TypeError('nameSearchPairs contains a non-string')
         ValueError('nameSearchPairs contains an empty string')
         ValueError('nameSearchPairs is empty')
+        ValueError('nameSearchPairs contains a key and value that match')
         TypeError('caseSensitive is not a boolean')
     NOTES:
         This function will not include the search criteria in the return value
         Treat all strings as lower case if caseSensitive is False
+        OrderedDicts may be desired because they remember their order but regual dictionaries are accepted
 '''
 def find_the_name(html, nameSearchPairs, caseSensitive = False):
     retVal = ''
@@ -72,28 +75,32 @@ def find_the_name(html, nameSearchPairs, caseSensitive = False):
         htmlList = html
     elif isinstance(html, str) is False:
         raise TypeError('html is not a list or string')
+
+    ### 1.1.2. html Values    
+    if html.__len__() == 0:
+        raise ValueError('html is empty')
     else:
         htmlList = re.split('\n|</a>|</div>', html)
         
-    ### 1.1.2. html Values    
-    if htmlList.__len__() == 0:
-        ValueError('html is empty')
-        
     ## 1.2. nameSearchPairs
     ### 1.2.1. Container
-    if isinstance(nameSearchPairs, dict) is False:
+    if isinstance(nameSearchPairs, dict) is False and isinstance(nameSearchPairs, OrderedDict) is False:
         raise TypeError('nameSearchPairs is not a dictionary')
     elif nameSearchPairs.__len__() == 0:
         raise ValueError('nameSearchPairs is empty') 
     
     ### 1.2.2. Contents
-    for key, value in nameSearchPairs:
+    for key, value in nameSearchPairs.items():
         #### 1.2.2.1. Type
         if isinstance(key, str) is False or isinstance(value, str) is False:
-            TypeError('nameSearchPairs contains a non-string')
+            raise TypeError('nameSearchPairs contains a non-string')
         #### 1.2.2.2. Content Content
         elif key.__len__() == 0 or value.__len__() == 0:
-            ValueError('nameSearchPairs contains an empty string')
+            raise ValueError('nameSearchPairs contains an empty string')
+        elif key == value:
+            raise ValueError('nameSearchPairs contains a key and value that match')
+        elif key.find(value) >= 0:
+            raise ValueError('nameSearchPairs contains a key and value that match')
     
     ## 1.3. caseSensitive
     if isinstance(caseSensitive, bool) is False:

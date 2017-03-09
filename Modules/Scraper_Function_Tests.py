@@ -11,6 +11,7 @@ from Scraper_Functions import get_URL_parent_path   # get_URL_parent_path(URL)
 import unittest
 import os
 import re
+from collections import OrderedDict
 
 '''
         TypeError('html is not a list or string')
@@ -148,7 +149,7 @@ class FindTheName(unittest.TestCase):
     def test08_NameSearchPairs_InvalidInput04(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
-        testSearch = {'Yes':'No',{'Super':'Meta'}:'<-- ERROR!','Maybe':'So'}
+        testSearch = {'Yes':'No',667:'<-- ERROR!','Maybe':'So'}
         testCaseSensitive = False        
         
         try:
@@ -187,7 +188,7 @@ class FindTheName(unittest.TestCase):
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except TypeError as err:
+        except ValueError as err:
             self.assertEqual(err.args[0], 'nameSearchPairs contains an empty string')
         except Exception as err:
             print(repr(err))
@@ -233,12 +234,14 @@ class FindTheName(unittest.TestCase):
     def test13_CaseSensitive_InvalidInput01(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
-        testSearch = {'Do ':' even', 'you ':' HTML?!'}
-        testCaseSensitive = testHTML        
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Do '] = ' even'
+        testSearch['you '] = ' HTML?!'
+        testCaseSensitive = testHtml        
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
         except Exception as err:
             print(repr(err))
@@ -250,12 +253,14 @@ class FindTheName(unittest.TestCase):
     def test14_CaseSensitive_InvalidInput02(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
-        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Do '] = ' even'
+        testSearch['you '] = ' HTML?!'
         testCaseSensitive = testSearch        
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
         except Exception as err:
             print(repr(err))
@@ -267,12 +272,14 @@ class FindTheName(unittest.TestCase):
     def test15_CaseSensitive_InvalidInput03(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
-        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Do '] = ' even'
+        testSearch['you '] = ' HTML?!'
         testCaseSensitive = 'True'        
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
         except Exception as err:
             print(repr(err))
@@ -284,12 +291,14 @@ class FindTheName(unittest.TestCase):
     def test16_CaseSensitive_InvalidInput04(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
-        testSearch = {'Do ':' even', 'you ':' HTML?!'}
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Do '] = ' even'
+        testSearch['you '] = ' HTML?!'
         testCaseSensitive = int(1)        
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
+        except TypeError as err:
             self.assertEqual(err.args[0], 'caseSensitive is not a boolean')
         except Exception as err:
             print(repr(err))
@@ -515,7 +524,10 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'poems':'keith','trulio':'realio'}
+
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['poems'] = 'keith'
+        testSearch['trulio'] = 'realio'
 
         # Case Sensitive
         try:
@@ -564,7 +576,10 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'Little ':' Kitten','Copyright ':' and'}
+
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Little '] = ' Kitten'
+        testSearch['Copyright '] = ' and'
 
         # Case Sensitive
         try:
@@ -616,7 +631,10 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'color="':'">','And':','}
+
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['color="'] = '">'
+        testSearch['And'] = ','
 
         # Case Sensitive
         try:
@@ -668,6 +686,7 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
+        # Order doesn't matter here
         testSearch = {'404':'Not Found','Error':'Will Robinson',"I'm sorry Dave":"I'm afraid I can't do that"}
 
         # Case Sensitive
@@ -717,7 +736,11 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'Do unto me now':' has been done','Even the sun':' to tell me otherwise','with a':'MOUSE'}
+
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['Do unto me now'] = ' has been done'
+        testSearch['Even the sun'] = ' to tell me otherwise'
+        testSearch['with a'] = 'MOUSE'
 
         # Case Sensitive
         try:
@@ -768,7 +791,11 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+        
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E O'
+        testSearch['By Ogden'] = 'Nash.'
 
         # Case Sensitive
         try:
@@ -790,7 +817,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
             self.assertTrue(caseInsensitiveResult.__len__() > 0)
-            self.assertTrue(caseInsensitiveResult == 'rvard.')
+            self.assertTrue(caseInsensitiveResult == 'sh: The Tal')
             
         # Default Case Sensitivity
         try:
@@ -801,7 +828,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
             self.assertTrue(caseDefaultResult.__len__() > 0)
-            self.assertTrue(caseDefaultResult == 'rvard.')
+            self.assertTrue(caseDefaultResult == 'sh: The Tal')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
@@ -820,7 +847,12 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {' ':' ','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+       
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['n '] = ': '
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
 
         # Case Sensitive
         try:
@@ -831,7 +863,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseSensitiveResult, str))
             self.assertTrue(caseSensitiveResult.__len__() > 0)
-            self.assertTrue(caseSensitiveResult == 'Nash:')
+            self.assertTrue(caseSensitiveResult == 'Nash')
             
         # Case Insensitive
         try:
@@ -842,7 +874,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
             self.assertTrue(caseInsensitiveResult.__len__() > 0)
-            self.assertTrue(caseInsensitiveResult == 'Nash:')
+            self.assertTrue(caseInsensitiveResult == 'Nash')
             
         # Default Case Sensitivity
         try:
@@ -853,7 +885,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
             self.assertTrue(caseDefaultResult.__len__() > 0)
-            self.assertTrue(caseDefaultResult == 'Nash:')
+            self.assertTrue(caseDefaultResult == 'Nash')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
@@ -872,7 +904,12 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'\n':'\n','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['<H3>'] = '</H3>'
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
 
         # Case Sensitive
         try:
@@ -883,7 +920,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseSensitiveResult, str))
             self.assertTrue(caseSensitiveResult.__len__() > 0)
-            self.assertTrue(caseSensitiveResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            self.assertTrue(caseSensitiveResult == 'By Ogden Nash')
             
         # Case Insensitive
         try:
@@ -894,7 +931,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
             self.assertTrue(caseInsensitiveResult.__len__() > 0)
-            self.assertTrue(caseInsensitiveResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            self.assertTrue(caseInsensitiveResult == 'By Ogden Nash')
             
         # Default Case Sensitivity
         try:
@@ -905,7 +942,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
             self.assertTrue(caseDefaultResult.__len__() > 0)
-            self.assertTrue(caseDefaultResult == '<TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>')
+            self.assertTrue(caseDefaultResult == 'By Ogden Nash')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
@@ -924,7 +961,12 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'//':'/','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+        
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['//'] = '/~'
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
 
         # Case Sensitive
         try:
@@ -976,7 +1018,12 @@ class FindTheName(unittest.TestCase):
             And a little yellow dog and a little red wagon, <BR>\n\
             And a realio, trulio, little pet dragon. <BR>\n\
             <P>'
-        testSearch = {'And a little yellow dog ':'and a little red wagon,','THE TAIL OF ':' THE DRAGON','A':'E','By Ogden':'Nash.'}
+        
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['And a little yellow dog '] = 'and a little red wagon,'
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
 
         # Case Sensitive
         try:
@@ -997,8 +1044,8 @@ class FindTheName(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
-            self.assertTrue(caseInsensitiveResult.__len__() == 0)
-            self.assertTrue(caseInsensitiveResult == '')
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == ' littl')
             
         # Default Case Sensitivity
         try:
@@ -1008,11 +1055,105 @@ class FindTheName(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
-            self.assertTrue(caseDefaultResult.__len__() == 0)
-            self.assertTrue(caseDefaultResult == '')
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == ' littl')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
+
+    # Test 31 - ValueError('nameSearchPairs contains a key and value that match')
+    def test31_NameSearchPairs_InvalidInput09(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = {'One of these things is just like the other':'One of these things is just like the other'}
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+
+    # Test 32 - ValueError('nameSearchPairs contains a key and value that match')
+    def test32_NameSearchPairs_InvalidInput10(self):
+        # Test Variables
+        testHtml = 'Do you even HTML?!'
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['And a little yellow dog '] = 'and a little red wagon,'
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
+        testSearch['and a little'] = 'and a little'
+        testCaseSensitive = True        
+        
+        try:
+            result = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+
+    # Test 33 - ValueError('nameSearchPairs contains a key and value that match')
+    def test33_NameSearchPairs_InvalidInput11(self):
+        # Test Variables
+        testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
+            <TITLE>Ogden Nash: The Tale of Custard the Dragon</TITLE>\n\
+            <BODY BGCOLOR="#ffffff">\n\
+            <H2>THE TALE OF CUSTARD THE DRAGON</H2>\n\
+            <H3>By Ogden Nash</H3>\n\
+            <H4>Copyright Linell Nash Smith and Isabel Nash Eberstadt</H4>\n\
+            Belinda lived in a little white house, <BR>\n\
+            With a little black kitten and a little gray mouse, <BR>\n\
+            And a little yellow dog and a little red wagon, <BR>\n\
+            And a realio, trulio, little pet dragon. <BR>\n\
+            <P>'
+        
+        testSearch = OrderedDict() # Ordered Dictionaries are necessary if order is a concern
+        testSearch['//'] = '/'
+        testSearch['THE TAIL OF '] = ' THE DRAGON'
+        testSearch['A'] = 'E'
+        testSearch['By Ogden'] = 'Nash.'
+        testCaseSensitive = True
+
+        # Case Sensitive
+        try:
+            caseSensitiveResult = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+        # Case Insensitive
+        try:
+            caseInsensitiveResult = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
+            
+        # Default Case Sensitivity
+        try:
+            caseDefaultResult = find_the_name(testHtml, testSearch, testCaseSensitive)
+        except ValueError as err:
+            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        except Exception as err:
+            print(repr(err))
+            self.fail('Raised the wrong exception')
+        else:
+            self.fail('Should have raised an exception')
             
 
 # This class will test the new get_image_filename() functionality to auto-size number-only filenames
@@ -1075,7 +1216,9 @@ class SizeNumericImageNames(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-            self.assertEqual(result, '20161202_Order')
+            # Added .lower() here
+            self.assertEqual(result, '20161202_Order'.lower()) 
+            # The new practice of adding the URL to the top of the HTML resulted in a lowercase result
 
     # Test 2 - Normal Input - XKCD Numerics
     def test02_ValidInput_Numerics01(self):
@@ -1311,7 +1454,8 @@ class SizeNumericImageNames(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertEqual(result, '20050127_0039')
-            
+    
+        
 class GetURLParentPath(unittest.TestCase):
     
     # Test 1 - Invalid Input - TypeError('URL is not a string')
@@ -2726,7 +2870,10 @@ class GetImageFilename(unittest.TestCase):
         except Exception as err:
             print(repr(err))
         else:
-            self.assertEqual(testResult, '20161202_Order')
+            # Added .lower() here
+            self.assertEqual(testResult, '20161202_Order'.lower()) 
+            # The new practice of adding the URL to the top of the HTML resulted in a lowercase result
+            
 
     def test26_SMBC_HTML_image_search1(self):
         try:
@@ -2915,12 +3062,16 @@ class GetTheDate(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    # Run all the tests!
-    #unittest.main(verbosity=2, exit=False)
+#   Run all the tests!
+    unittest.main(verbosity=2, exit=False)
 
-# SizeNumericImageNames
-    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(SizeNumericImageNames)
-    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+## FindTheName
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(FindTheName)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
+
+## SizeNumericImageNames
+#    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(SizeNumericImageNames)
+#    unittest.TextTestRunner(verbosity=2).run(linkerSuite)
 
 ## GetURLParentPath
 #    linkerSuite = unittest.TestLoader().loadTestsFromTestCase(GetURLParentPath)
