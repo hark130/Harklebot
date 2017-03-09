@@ -51,6 +51,12 @@
 #   ADDING: robots_may_I() functionality
 #   ADDING: Crawl-delay considerations
 #################################################################################
+#################################################################################
+# Version 1.4
+#   MOVING:     Extricating code into a find_the_name function that takes a dictionary
+#   MODIFYING:  get_image_filename calls find_the_name instead of doing the work
+#   MODIFYING:  Template_Scraper should construct a dictionary to pass to get_image_filename
+#################################################################################
 
 
 from urllib.request import urlopen
@@ -146,6 +152,25 @@ obeyTheRobots = True        # Indicates whether or not the scraper will adhere t
 #########################
 ### DYNAMIC VARIABLES ###
 #########################
+# 0. Build the nameSearchPairs Ordered Dictionary
+nameSearchPairs = OrderedDict()
+## 0.1. Build existing variables into lists
+if isinstance(nameSearchPhrase, str) is True:
+    nameSearchPhrase = list(nameSearchPhrase)
+elif isinstance(nameSearchPhrase, list) is False:
+    raise TypeError('nameSearchPhrase is not a string or a list')
+    
+if isinstance(nameEnding, str) is True:
+    nameEnding = list(nameEnding)
+elif isinstance(nameEnding, list) is False:
+    raise TypeError('nameEnding is not a string or a list')
+
+## 0.2. Validate the numbers
+
+
+### One key per value
+
+
 # Windows 7 home path environment variable
 if 'USERPROFILE' in os.environ:
     SAVE_PATH = os.path.join(os.environ['USERPROFILE'], 'Pictures', webComicName)
