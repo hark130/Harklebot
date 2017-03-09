@@ -69,7 +69,14 @@ from urllib.error import HTTPError
 ################
 # LOAD MODULES #
 ################
-# Hacky (?) method to keep modules separate from scraper code
+from Scraper_Functions import is_URL_valid
+from Scraper_Functions import find_a_URL 
+from Scraper_Functions import get_image_filename
+from Scraper_Functions import make_rel_URL_abs
+from Robot_Reader_Functions import get_page_disposition
+from Robot_Reader_Functions import robots_may_I
+
+# Hacky (?) method to keep Harklebot modules separate from scraper code
 ## Verify path exists before adding it to sys.path
 modulesPath = os.path.join(os.path.dirname(os.getcwd()), 'Modules')
 if os.path.isdir(modulesPath) is True:
@@ -81,13 +88,6 @@ else:
 ################
 ################
 ################
-
-from Scraper_Functions import is_URL_valid
-from Scraper_Functions import find_a_URL 
-from Scraper_Functions import get_image_filename
-from Scraper_Functions import make_rel_URL_abs
-from Robot_Reader_Functions import get_page_disposition
-from Robot_Reader_Functions import robots_may_I
 
 ################################################
 # MODIFY THESE WHEN ADAPTING TO A NEW WEBCOMIC #
@@ -125,9 +125,9 @@ dateSearchPhrase = ['___UPDATE___'] # Commonly == imageSearchPhrase <=----------
 
 ### NAME PARSING SETUP ###
 # Find the title of the image by searching for the following phrase in the HTML.  Could be in an imageURL tag, webpage title, or social media 'share' link
-nameSearchPhrase = '___UPDATE___' # Probably 'alt="' <=--------------------------=UPDATE=--------------------------=>
+nameSearchPhrase = ['___UPDATE___', '___UPDATE___', '___UPDATE___'] # Probably ['alt="'] <=--------------------------=UPDATE=--------------------------=>
 # Delimit the end of the image title with this string
-nameEnding = '___UPDATE___' # Probably '"' <=--------------------------=UPDATE=--------------------------=>
+nameEnding = ['___UPDATE___', '___UPDATE___', '___UPDATE___'] # Probably ['"'] <=--------------------------=UPDATE=--------------------------=>
 ################################################
 # Modify these variables based on HTML details #
 ################################################
@@ -152,24 +152,56 @@ obeyTheRobots = True        # Indicates whether or not the scraper will adhere t
 #########################
 ### DYNAMIC VARIABLES ###
 #########################
-# 0. Build the nameSearchPairs Ordered Dictionary
+###################################################
+# 0. Build the nameSearchPairs Ordered Dictionary #
+###################################################
 nameSearchPairs = OrderedDict()
-## 0.1. Build existing variables into lists
+
+## 0.1. INPUT VALIDATION
+### 0.1.1. nameSearchPhrase --> list
 if isinstance(nameSearchPhrase, str) is True:
     nameSearchPhrase = list(nameSearchPhrase)
 elif isinstance(nameSearchPhrase, list) is False:
     raise TypeError('nameSearchPhrase is not a string or a list')
-    
+### 0.1.2. nameEnding --> list
 if isinstance(nameEnding, str) is True:
     nameEnding = list(nameEnding)
 elif isinstance(nameEnding, list) is False:
     raise TypeError('nameEnding is not a string or a list')
+### 0.1.3. Test content
+#### 0.1.3.1. Verify it isn't empty
+if nameSearchPhrase.__len__() == 0 or nameEnding.__len__() == 0:
+    raise ValueError('Name search criteria is required')
+#### 0.1.3.2. Verify nameSearchPhrase only contains strings
+for phrase in nameSearchPhrase:
+    if isinstance(phrase, str) is False:
+        raise TypeError('Name search criteria contains a non-string')
+#### 0.1.3.3. Verify nameEnding only contains strings
+for phrase in nameEnding:
+    if isinstance(phrase, str) is False:
+        raise TypeError('Name search criteria contains a non-string')
 
-## 0.2. Validate the numbers
-
-
-### One key per value
-
+## 0.2. Validate the length to build the dictionary
+if nameSearchPhrase.__len__() == nameEnding.__len__():
+    for key, value in zip(nameSearchPhrase, nameEnding):
+        nameSearchPairs[key] = value
+elif nameSearchPhrase.__len__() > 0 and nameEnding.__len__() == 1
+    for key in nameSearchPhrase:
+        nameSearchPairs[key] = nameEnding[0]
+else:
+    raise ValueError('Mismatch in number of name search criteria')
+    
+## 0.3. Check your work
+if nameSearchPairs.keys().__len__() == 0:
+    raise ValueError('Name search criteria is missing keys')
+elif nameSearchPairs.values().__len__() == 0:
+    raise ValueError('Name search criteria is missing values')
+else:
+    print('Name search criteria has been built') # DEBUGGING
+    pass
+###################################################
+# Built the nameSearchPairs Ordered Dictionary ####
+###################################################
 
 # Windows 7 home path environment variable
 if 'USERPROFILE' in os.environ:
