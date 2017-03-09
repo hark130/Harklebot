@@ -2931,26 +2931,22 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test23_PVP_HTML_image_search1(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = {'<title>PVP - ':'</title>'}
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '1-Input_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
+                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', nameCriteria)
         except Exception as err:
             print(repr(err))
         else:
             self.assertEqual(testResult, '20160726_2016-07-26')
 
     def test24_PVP_HTML_image_search2(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = OrderedDict({'<title>PVP - ':'</title>'})
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '11-PvP_slash_date_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', '<title>PVP - ', '</title>')
+                testResult = get_image_filename(testFile.read(), 's3-us-west-2.amazonaws.com/pvponlinenew/img/comic/', nameCriteria)
             # Mangled this test a bit because the found name 
         except Exception as err:
             print(repr(err))
@@ -2959,13 +2955,11 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19')
 
     def test25_Business_Cat_HTML_image_search1(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = {'title="':'"'}
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '3-BC_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], 'title="', '"')
+                testResult = get_image_filename(testFile.read(), ['<img src="http://www.businesscat.happyjar.com/wp-content/uploads/'], nameCriteria)
         except Exception as err:
             print(repr(err))
         else:
@@ -2975,13 +2969,11 @@ class GetImageFilename(unittest.TestCase):
             
 
     def test26_SMBC_HTML_image_search1(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = {'<title>Saturday Morning Breakfast Cereal - ':'</title>'}
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '5-SMBC_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], '<title>Saturday Morning Breakfast Cereal - ', '</title>')
+                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], nameCriteria)
         except Exception as err:
             print(repr(err))
         else:
@@ -2989,13 +2981,11 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20161227_Wanna-Evolve')
 
     def test27_SMBC_HTML_image_search2(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = OrderedDict({'<title>Saturday Morning Breakfast Cereal - ':'</title>'})
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '6-SMBC_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], ['<title>Saturday Morning Breakfast Cereal - '], '</title>')
+                testResult = get_image_filename(testFile.read(), ["You'll never find this in the code!", 'www.smbc-comics.com/comics/'], nameCriteria)
         except Exception as err:
             print(repr(err))
         else:
@@ -3004,12 +2994,11 @@ class GetImageFilename(unittest.TestCase):
 
     def test28_Penny_Arcade_HTML_image_search1(self):
         nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria['alt="'] = '"'
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '7-Penny_Arcade_random_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ['input type="hidden" name="attributes[comic_title]" value="'], 'alt="', '"')
+                testResult = get_image_filename(testFile.read(), ['input type="hidden" name="attributes[comic_title]" value="'], nameCriteria)
         except Exception as err:
             print(repr(err))
         else:
@@ -3017,26 +3006,22 @@ class GetImageFilename(unittest.TestCase):
             self.assertEqual(testResult, '20100712_Our-Partial-Future')
 
     def test29_XKCD_HTML_image_search1(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = {'Permanent link to this comic: http://xkcd.com/':'/<br'}
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', True)
+                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], nameCriteria, True)
         except Exception as err:
             print(repr(err))
         else:
             self.assertEqual(testResult, '1484')
 
     def test30_XKCD_HTML_image_search2(self):
-        nameCriteria = OrderedDict()
-        nameCriteria['name'] = 'ending'
-        nameCriteria['other names'] = 'ending'
+        nameCriteria = OrderedDict({'Permanent link to this comic: http://xkcd.com/':'/<br'})
         
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Modules', 'Scraper_Function_Test_HTML', '8-xkcd_random_HTML.txt'), 'r') as testFile:
-                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], 'Permanent link to this comic: http://xkcd.com/', '/<br', False)
+                testResult = get_image_filename(testFile.read(), ['imgs.xkcd.com/comics/','Image URL (for hotlinking/embedding): '], nameCriteria, False)
         except Exception as err:
             print(repr(err))
         else:
