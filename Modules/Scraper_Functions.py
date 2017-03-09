@@ -444,7 +444,7 @@ def make_rel_URL_abs(baseURL, targetURL):
     Exceptions:
             TypeError('htmlString is not a string')
             TypeError('dateSearchPhrase is not a string or a list')
-            TypeError('dateSearchPhrase contains a non string')
+            TypeError('dateSearchPhrase contains a non-string')
             TypeError('nameSearchPairs is not a dictionary')
             TypeError('nameSearchPairs contains a non-string')
             ValueError('htmlString is empty')
@@ -485,7 +485,7 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=F
     else:
         for entry in dateSearchPhrase:
             if isinstance(entry, str) is False:
-                raise TypeError('dateSearchPhrase contains a non string')
+                raise TypeError('dateSearchPhrase contains a non-string')
             elif entry.__len__() == 0:
                 raise ValueError('dateSearchPhrase contains an empty string')
             else:
