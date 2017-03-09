@@ -460,11 +460,11 @@ def make_rel_URL_abs(baseURL, targetURL):
         If a <name> is all digits and less than 1000, it will be prepended with zeroes (0) to a minimum length
             of four decimal places.  (e.g., 999 becomes 0999, 31337 stays 31337, 42 becomes 0042)
 '''
-def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDate=False):
+def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=False):
     
     retVal = '00000000'
     dateSearchList = [] # Will contain all the date phrases to search for
-    nameSearchList = [] # Will contain all the name phrases to search for
+#    nameSearchList = [] # Will contain all the name phrases to search for
     imageDate = ''
     imageName = ''
 
@@ -496,34 +496,19 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEndin
     if dateSearchList.__len__() == 0:
         raise ValueError('dateSearchPhrase is empty')
 
-    ## 1.3. nameSearchPhrase
-    if isinstance(nameSearchPhrase, list) is False:
-        if isinstance(nameSearchPhrase, str) is False:
-            raise TypeError('nameSearchPhrase is not a string or a list')
-        else:
-            if nameSearchPhrase.__len__() == 0:
-                raise ValueError('nameSearchPhrase is empty')
-            else:
-                nameSearchList = [nameSearchPhrase.lower()]
+    ## 1.3. nameSearchPairs
+    if isinstance(nameSearchPairs, dict) is False and isinstance(nameSearchPairs, OrderedDict) is False:
+        raise TypeError('nameSearchPairs is not a dictionary')
+    elif nameSearchPairs.__len__() == 0:
+        raise ValueError('nameSearchPairs is empty')
     else:
-        for entry in nameSearchPhrase:
-            if isinstance(entry, str) is False:
-                raise TypeError('nameSearchPhrase contains a non string')
+        for key, val in nameSearchPairs.items():
+            if isinstance(key, str) is False or isinstance(val, str) is False:
+                raise TypeError('nameSearchPairs contains a non-string')
             elif entry.__len__() == 0:
-                raise ValueError('nameSearchPhrase contains an empty string')
-            else:
-                nameSearchList.append(entry.lower())
+                raise ValueError('nameSearchPairs contains an empty string')
 
-    if nameSearchList.__len__() == 0:
-        raise ValueError('nameSearchPhrase is empty')
-
-    ## 1.4. nameEnding
-    if isinstance(nameEnding, str) is False:
-        raise TypeError('nameEnding is not a string')
-    elif nameEnding.__len__() == 0:
-        raise ValueError('nameEnding is empty')
-
-    ## 1.5. skipDate
+    ## 1.4. skipDate
     if isinstance(skipDate, bool) is False:
         raise TypeError('skipDate is not a bool')
 
@@ -547,49 +532,69 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPhrase, nameEndin
 
     # 4. GO NAME SEARCHING
     if (imageDate.__len__() == 8 and imageDate != '00000000') or skipDate is True:
-        for entry in htmlList:
-            if imageName.__len__() > 0:
-                break # Found a name.  Stop looking.
-            for phrase in nameSearchList:
-                if entry.find(phrase) >= 0:
-                    ## 4.1. Slice the entry
-                    imageName = entry[entry.find(phrase) + phrase.__len__():]
-                    imageName = imageName[:imageName.find(nameEnding)]
+        try:
+            imageName = get_the_name(htmlList, nameSearchPairs, False)
+        except Exception as err:
+            print(repr(err))
+            raise err
+        else:
+#            print("Found image name:\t{}".format(imageName)) # DEBUGGING
+            pass
+            
+### Old algorithm prior to Version 1-4 (see: get_the_name())
+#        for entry in htmlList:
+#            if imageName.__len__() > 0:
+#                break # Found a name.  Stop looking.
+#            for phrase in nameSearchList:
+#                if entry.find(phrase) >= 0:
+#                    ## 4.1. Slice the entry
+#                    imageName = entry[entry.find(phrase) + phrase.__len__():]
+#                    imageName = imageName[:imageName.find(nameEnding)]
 
-                    ## 4.2. Trim unwanted characters
+#                    ## 4.2. Trim unwanted characters
 #                    imageName = trim_the_name(imageName) # Save this until *AFTER* finding the original case-sensitive entry
                     
-                    ## 4.3. Verify work
-                    if imageName.__len__() > 0:
-                        break # Found a name.  Stop looking.
+#                    ## 4.3. Verify work
+#                    if imageName.__len__() > 0:
+#                        break # Found a name.  Stop looking.
 
                     
+### Finding the original case-sensitive entry is now accomplished by find_the_name()    
         # 5. PUT IT ALL TOGETHER
-        ## 5.1. Return original case-sensitive entry
-        ### 5.1.1. Find original case-sensitive entry
-        if imageName.__len__() > 0:
-            temp = htmlString[htmlString.lower().find(imageName):]
-            temp = temp[:imageName.__len__()]
-            imageName = temp
-            ### 5.1.2. Trim unwanted characters
+#        ## 5.1. Return original case-sensitive entry
+#        ### 5.1.1. Find original case-sensitive entry
+#        if imageName.__len__() > 0:
+#            temp = htmlString[htmlString.lower().find(imageName):]
+#            temp = temp[:imageName.__len__()]
+#            imageName = temp
+#            ### 5.1.2. Trim unwanted characters
+#            imageName = trim_the_name(imageName)
+
+    # 5. PUT IT ALL TOGETHER
+    if imageName.__len__() > 0:
+        ## 5.1. Trim unwanted characters
+        try:
             imageName = trim_the_name(imageName)
-            
+        except Exception as err:
+            print(repr(err))
+            raise err
+        
         ## 5.2. Dynamically size number-only image names
         if imageName.isdigit() is True:
             while imageName.__len__() < 4:
                 imageName = '0' + imageName 
             
-        ## 5.3. Put it all together
-        ### 5.3.1. Image date Found
-        if imageDate.__len__() == 8 and imageDate != '00000000':
-            retVal = imageDate
-            ### 5.3.1. ...and image name found
-            if imageName.__len__() > 0:
-                retVal = retVal + '_' + imageName    
-        ### 5.3.2 Image date NOT found
-        elif skipDate is True and imageName.__len__() > 0:
-            ### 5.3.2. ...and image name found
-            retVal = imageName
+    ## 5.3. Put it all together
+    ### 5.3.1. Image date Found
+    if imageDate.__len__() == 8 and imageDate != '00000000':
+        retVal = imageDate
+        ### 5.3.1. ...and image name found
+        if imageName.__len__() > 0:
+            retVal = retVal + '_' + imageName    
+    ### 5.3.2 Image date NOT found
+    elif skipDate is True and imageName.__len__() > 0:
+        ### 5.3.2. ...and image name found
+        retVal = imageName
 
     return retVal
 
