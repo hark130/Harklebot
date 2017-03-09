@@ -36,6 +36,7 @@
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=.
         [ ] Add fidelity to verify allowed characters are utilized properly (see: ftp://username:password@domain)
         [ ] Add some manner of sub-search which validates HTML codes from the .findall(URL) results
+    [ ] Modify find_the_name() to support matching key and values (see: {'A':'A'}) in lieu of raising ValueError
 # Bugs #
     [ ] Write check for forbidden filename characters into trim_the_name() (Scraper Functions)
     [ ] Verify get_the_filename()/get_the_date()
