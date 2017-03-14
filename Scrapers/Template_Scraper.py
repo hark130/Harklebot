@@ -379,9 +379,14 @@ while True:
 
     ## 5.1. Find the first URL if there isn't already one
     if firstURL.__len__() == 0 and firstSearchPhrase.__len__() > 0:
-        firstURL = find_a_URL(comicContentDecoded, firstSearchPhrase, 'href="', '"')
-
-        firstURL = firstURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
+        try:
+            firstURL = find_a_URL(comicContentDecoded, firstSearchPhrase, 'href="', '"')
+        except Exception as err:
+            print("Error encountered with find_a_URL()!") # DEBUGGING
+            print(repr(err))
+            sys.exit() # Harsh...
+        else:
+            firstURL = firstURL.replace('"', '') # find_a_URL() leaves the [searchEnd] on the return value
 
     ## 5.2. Validate findings
     ### 5.2.1. firstURL empty and this is the first stop
@@ -400,7 +405,7 @@ while True:
         except Exception as err:
             print("Error encountered with make_rel_URL_abs()!") # DEBUGGING
             print(repr(err))
-            sys.exit() # Harsh... consider running find_a_URL() again
+            sys.exit() # Harsh...
         else:
             print("First URL:\t{}".format(firstURL)) # DEBUGGING    
 
