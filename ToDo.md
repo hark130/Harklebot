@@ -8,7 +8,7 @@
         [X] Modify Template Scraper to include this new functionality
     [ ] Refactor necessary Scraper Functions to utilize urlparse functionality (e.g., get root, valid URL)
     [ ] Write Accursed Dragon Scraper
-    [/] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
+    [X] Wrap the new function calls in try/except/else statements since the new functions raise Exceptions
     [ ] Verify the XKCD Scraper
         [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
         [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
