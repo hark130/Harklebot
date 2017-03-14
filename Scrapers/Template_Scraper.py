@@ -418,7 +418,15 @@ while True:
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
 #    print("\nFetching Image URL:")
-    imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)               
+    try:
+        imageURL = find_a_URL(comicContentDecoded, imageSearchPhrase, imageBeginPhrase, validFileTypeList)
+    except Exception as err:
+        print("Error encountered with find_a_URL()!") # DEBUGGING
+        print(repr(err))
+        sys.exit() # Harsh...
+    else:
+#        print("Image URL:\t{}".format(imageURL)) # DEBUGGING    
+        pass
 
 
     # 7. CHANGE RELATIVE URLS TO ABSOLUTE URLS
@@ -450,6 +458,7 @@ while True:
         print("Did not find an image URL!")
         sys.exit()
 
+        
     # 8. DETERMINE THE IMAGE FILE EXTENSION
     if imageURL.__len__() > 0:
         for extension in validFileTypeList:
@@ -461,29 +470,38 @@ while True:
             print("Unable to determine image file extension from image URL")
             sys.exit()
 
+            
     # 9. PARSE IMAGE URL FOR FILENAME
     # NEW PROCEDURE FOR VERSION 1-2
-    # get_image_filename(htmlString, [dateSearchPhrase], [nameSearchPhrase], nameEnding, skipDate=False)
+    # get_image_filename(htmlString, [dateSearchPhrase], {nameSearchPairs}, skipDate=False)
     if imageURL.__len__() > 0:
-        ## 9.1. Get the unique filename suffix (does not include prefix or file extension)
-        imageNameSuffix = get_image_filename(comicContentDecoded, dateSearchPhrase, nameSearchPhrase, nameEnding, skipDateIfNotFound)
-
-        if imageNameSuffix == '00000000':
-            print("Unable to determine a valid filename for the image!")
-            sys.exit()
+        try:
+            ## 9.1. Get the unique filename suffix (does not include prefix or file extension)
+            imageNameSuffix = get_image_filename(comicContentDecoded, dateSearchPhrase, nameSearchPairs, skipDateIfNotFound)
+        except Exception as err:
+            print("Error encountered with get_image_filename()!") # DEBUGGING
+            print(repr(err))
+            sys.exit() # Harsh... consider running find_a_URL() again
         else:
-            ## 9.2. Construct the local filename to save the image as
-            incomingFilename = defaultFilename + imageNameSuffix + currentFileExtension
+#            print("Image name suffix:\t{}".format(imageNameSuffix)) # DEBUGGING
+            
+            if imageNameSuffix == '00000000':
+                print("Unable to determine a valid filename for the image!")
+                sys.exit()
+            else:
+                ## 9.2. Construct the local filename to save the image as
+                incomingFilename = defaultFilename + imageNameSuffix + currentFileExtension
 
-            ## 9.3. Final filename trimming
-            incomingFilename = incomingFilename.replace('__','_')
-            incomingFilename = incomingFilename.replace('--','-') 
+                ## 9.3. Final filename trimming
+                incomingFilename = incomingFilename.replace('__','_')
+                incomingFilename = incomingFilename.replace('--','-') 
 
-            ## 9.4. Verify the intended filename hasn't exceeded the OS maximum
-            if incomingFilename.__len__() > MAX_FILENAME_LEN:
-                incomingFilename = incomingFilename[:MAX_FILENAME_LEN - currentFileExtension.__len__()] + currentFileExtension      
+                ## 9.4. Verify the intended filename hasn't exceeded the OS maximum
+                if incomingFilename.__len__() > MAX_FILENAME_LEN:
+                    incomingFilename = incomingFilename[:MAX_FILENAME_LEN - currentFileExtension.__len__()] + currentFileExtension      
+            
+#            print("Filename:\t{}".format(incomingFilename)) # DEBUGGING
 
-#        print("Filename:\t{}".format(incomingFilename)) # DEBUGGING
 
     # 10. DOWNLOAD THE FILE
     if imageURL.__len__() > 0 and incomingFilename.__len__() > 0:
@@ -537,6 +555,7 @@ while True:
             numExistingSkips += 1
             skipping = True
 
+            
     # 11. CHECK IF WE'VE HIT THE END
     ## 11.1. Current URL is actuall the first URL
     if currentURL == firstURL:                   # dynamically read First
@@ -563,6 +582,7 @@ while True:
         print("First URL:\t{}\nCurrent URL:\t{}".format(firstURL, currentURL)) # DEBUGGING
         break
 
+        
     # 12. PROCEED TO THE PREVIOUS PAGE
     # NEW PROCEDURE FOR VERSION 1-2
     # find_a_URL(htmlString, [searchPhrase], [searchStart], [searchEnd])
