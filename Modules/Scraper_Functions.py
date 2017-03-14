@@ -432,8 +432,7 @@ def make_rel_URL_abs(baseURL, targetURL):
     Input:
         htmlString - a string of raw HTML code (not a list)
         dateSearchPhrase - a string or list of strings that indicate we've found an HTML line that contains the date
-        nameSearchPhrase - a string or list of strings that indicate we've found an HTML line that contains the name
-        nameEnding - a string that delimits the end of the name (usually '"')
+        nameSearchPairs - a dict, or OrderedDict, of key/value paired strings that indicate we've found an HTML line that contains the name
         skipDate - boolean that allows the function to ignore the lack of a date
     Output: 
         A string representing one of the following on success
@@ -457,6 +456,9 @@ def make_rel_URL_abs(baseURL, targetURL):
             It will not include a file extension or an appropriate prepended phrase.
         If a <name> is all digits and less than 1000, it will be prepended with zeroes (0) to a minimum length
             of four decimal places.  (e.g., 999 becomes 0999, 31337 stays 31337, 42 becomes 0042)
+        This function calls find_the_date() to find the actual date
+        This function calls get_the_name() to get the name of the file
+        The primary purpose of this function is to respond appropriately to missing dates and/or missing names        
 '''
 def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=False):
     
