@@ -12,6 +12,7 @@
     [ ] Verify the XKCD Scraper
         [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
         [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
+    [ ] Transfer all scrapers to Version 1-4
 
 
 # BACKLOG #
