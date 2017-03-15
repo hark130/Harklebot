@@ -12,7 +12,9 @@
     [ ] Verify the XKCD Scraper
         [ ] Also, the algorithm did not have a good way of skipping over non-image content (see: Interactive flash shenanigans)
         [ ] Changing image URLs cause problems with the full URl indicator list (see: http://www.xkcd.com/1526/)... had to shoe horn in something to trim garbage off the beginning of the imageURL prior to urlopen()
-    [ ] Transfer all scrapers to Version 1-4
+    [X] Modify find_the_name() to support matching key and values (see: {'A':'A'}) in lieu of raising ValueError (moved from backlog to this version because it solved another problem elsewhere)
+    [/] Transfer all scrapers to Version 1-4
+        [ ] Order of the Stick - Current method of determining when to find the 'latest' URL is not working (sleep and ponder)
 
 
 # BACKLOG #
@@ -38,7 +40,6 @@
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=.
         [ ] Add fidelity to verify allowed characters are utilized properly (see: ftp://username:password@domain)
         [ ] Add some manner of sub-search which validates HTML codes from the .findall(URL) results
-    [ ] Modify find_the_name() to support matching key and values (see: {'A':'A'}) in lieu of raising ValueError
     [ ] find_the_name() has is already written to perform case sensitive searches but that functionality hasn't yet been incorporated into get_image_filename() much less the Template Scraper.  Default setting of case INsensitive is currently used by default but there is currently no way to modify this behavior that's been 'baked in' to the Template Scraper or get_image_filename().  This may matter to someone, one day.
 # Bugs #
     [ ] Write check for forbidden filename characters into trim_the_name() (Scraper Functions)
