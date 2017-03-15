@@ -351,7 +351,10 @@ while True:
     #       latestSearchPhrase is not configured
     #       The target URL doesn't match the base (see: root) URL (an indication the script wanted to skip ahead)
     #       latestURL has already been assigned (it's already been found)
-    if latestSearchPhrase.__len__() > 0 and targetComicURL == baseURL and latestURL.__len__() == 0:
+    #       targetComicURL is not equal to currentURL because this means it's not the first run...
+    #           ...Some "latest" pages don't have the "latest" link configured so this is causeing the scrpaer
+    #           ...to double back (see: Business Cat)
+    if latestSearchPhrase.__len__() > 0 and targetComicURL == baseURL and latestURL.__len__() == 0 and targetComicURL == currentURL:
         try:
             latestURL = find_a_URL(comicContentDecoded, latestSearchPhrase, 'href="', '"')
 
