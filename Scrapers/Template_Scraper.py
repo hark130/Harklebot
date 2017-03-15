@@ -198,7 +198,7 @@ if nameSearchPairs.keys().__len__() == 0:
 elif nameSearchPairs.values().__len__() == 0:
     raise ValueError('Name search criteria is missing values')
 else:
-    print('Name search criteria has been built') # DEBUGGING
+#    print('Name search criteria has been built') # DEBUGGING
     pass
 ###################################################
 # Built the nameSearchPairs Ordered Dictionary ####
