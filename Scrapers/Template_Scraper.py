@@ -65,6 +65,7 @@ from urllib.request import Request
 import urllib.error
 import sys, os, time, random, re
 from urllib.error import HTTPError
+from collections import OrderedDict
 
 ################
 # LOAD MODULES #
@@ -160,12 +161,12 @@ nameSearchPairs = OrderedDict()
 ## 0.1. INPUT VALIDATION
 ### 0.1.1. nameSearchPhrase --> list
 if isinstance(nameSearchPhrase, str) is True:
-    nameSearchPhrase = list(nameSearchPhrase)
+    nameSearchPhrase = [nameSearchPhrase]
 elif isinstance(nameSearchPhrase, list) is False:
     raise TypeError('nameSearchPhrase is not a string or a list')
 ### 0.1.2. nameEnding --> list
 if isinstance(nameEnding, str) is True:
-    nameEnding = list(nameEnding)
+    nameEnding = [nameEnding]
 elif isinstance(nameEnding, list) is False:
     raise TypeError('nameEnding is not a string or a list')
 ### 0.1.3. Test content
@@ -185,7 +186,7 @@ for phrase in nameEnding:
 if nameSearchPhrase.__len__() == nameEnding.__len__():
     for key, value in zip(nameSearchPhrase, nameEnding):
         nameSearchPairs[key] = value
-elif nameSearchPhrase.__len__() > 0 and nameEnding.__len__() == 1
+elif nameSearchPhrase.__len__() > 0 and nameEnding.__len__() == 1:
     for key in nameSearchPhrase:
         nameSearchPairs[key] = nameEnding[0]
 else:
