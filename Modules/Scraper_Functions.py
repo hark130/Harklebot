@@ -57,7 +57,6 @@ from collections import OrderedDict
         TypeError('nameSearchPairs contains a non-string')
         ValueError('nameSearchPairs contains an empty string')
         ValueError('nameSearchPairs is empty')
-        ValueError('nameSearchPairs contains a key and value that match')
         TypeError('caseSensitive is not a boolean')
     NOTES:
         This function will not include the search criteria in the return value
@@ -75,12 +74,12 @@ def find_the_name(html, nameSearchPairs, caseSensitive = False):
         htmlList = html
     elif isinstance(html, str) is False:
         raise TypeError('html is not a list or string')
+    else:
+        htmlList = re.split('\n|</a>|</div>', html)
 
     ### 1.1.2. html Values    
     if html.__len__() == 0:
         raise ValueError('html is empty')
-    else:
-        htmlList = re.split('\n|</a>|</div>', html)
         
     ## 1.2. nameSearchPairs
     ### 1.2.1. Container
@@ -97,10 +96,11 @@ def find_the_name(html, nameSearchPairs, caseSensitive = False):
         #### 1.2.2.2. Content Content
         elif key.__len__() == 0 or value.__len__() == 0:
             raise ValueError('nameSearchPairs contains an empty string')
-        elif key == value:
-            raise ValueError('nameSearchPairs contains a key and value that match')
-        elif key.find(value) >= 0:
-            raise ValueError('nameSearchPairs contains a key and value that match')
+        #### No longer necessary to check for matching criteria
+        #elif key == value:
+        #    raise ValueError('nameSearchPairs contains a key and value that match')
+        #elif key.find(value) >= 0:
+        #    raise ValueError('nameSearchPairs contains a key and value that match')
     
     ## 1.3. caseSensitive
     if isinstance(caseSensitive, bool) is False:
@@ -123,14 +123,26 @@ def find_the_name(html, nameSearchPairs, caseSensitive = False):
                 casedEntry = entry.lower()
             else:
                 casedEntry = entry
+
+            ## 2.3. Find the key
+            ### 2.3.1. Slice it up
+            if casedEntry.find(key) >= 0:
+                start = casedEntry.find(key) + key.__len__()
+                trimmedEntry = casedEntry[start::]
+            else:
+                trimmedEntry = casedEntry
+            
             ## 2.3. Found the key (in the necessary case)
-            if casedEntry.find(key) < casedEntry.find(value) and casedEntry.find(key) >= 0:
+#            if casedEntry.find(key) < casedEntry.find(value) and casedEntry.find(key) >= 0: # This did not allow for matching search criteria
+            if trimmedEntry.find(value) >= 0 and casedEntry.find(key) >= 0: # This verifies there is an occurrence of value that occurs *after* key
                 ## 2.4. Return the original case entry
                 ### 2.4.1. Find the starting position
                 start = casedEntry.find(key) + key.__len__()
-                ### 2.4.2. Find the stop position
-                stop = casedEntry.find(value)
-                ### 2.4.3. Use those indices to slice the phrase out of the original string
+                ### 2.4.2. Trim it up so the value doesn't get mixed up with the key
+                trimmedEntry = casedEntry[start::]
+                ### 2.4.3. Find the stop position
+                stop = trimmedEntry.find(value) + start
+                ### 2.4.4. Use those indices to slice the phrase out of the original string
                 retVal = entry[start:stop:]
                 
                 if retVal.__len__() > 0:
@@ -457,7 +469,7 @@ def make_rel_URL_abs(baseURL, targetURL):
         If a <name> is all digits and less than 1000, it will be prepended with zeroes (0) to a minimum length
             of four decimal places.  (e.g., 999 becomes 0999, 31337 stays 31337, 42 becomes 0042)
         This function calls find_the_date() to find the actual date
-        This function calls get_the_name() to get the name of the file
+        This function calls find_the_name() to get the name of the file
         The primary purpose of this function is to respond appropriately to missing dates and/or missing names        
 '''
 def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=False):
@@ -505,7 +517,7 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=F
         for key, val in nameSearchPairs.items():
             if isinstance(key, str) is False or isinstance(val, str) is False:
                 raise TypeError('nameSearchPairs contains a non-string')
-            elif entry.__len__() == 0:
+            elif key.__len__() == 0 or val.__len__() == 0:
                 raise ValueError('nameSearchPairs contains an empty string')
 
     ## 1.4. skipDate
@@ -533,7 +545,7 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=F
     # 4. GO NAME SEARCHING
     if (imageDate.__len__() == 8 and imageDate != '00000000') or skipDate is True:
         try:
-            imageName = get_the_name(htmlList, nameSearchPairs, False)
+            imageName = find_the_name(htmlList, nameSearchPairs, False)
         except Exception as err:
             print(repr(err))
             raise err
@@ -541,7 +553,7 @@ def get_image_filename(htmlString, dateSearchPhrase, nameSearchPairs, skipDate=F
 #            print("Found image name:\t{}".format(imageName)) # DEBUGGING
             pass
             
-### Old algorithm prior to Version 1-4 (see: get_the_name())
+### Old algorithm prior to Version 1-4 (see: find_the_name())
 #        for entry in htmlList:
 #            if imageName.__len__() > 0:
 #                break # Found a name.  Stop looking.

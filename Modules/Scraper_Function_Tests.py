@@ -1033,8 +1033,8 @@ class FindTheName(unittest.TestCase):
             self.fail('Raised an exception')
         else:
             self.assertTrue(isinstance(caseSensitiveResult, str))
-            self.assertTrue(caseSensitiveResult.__len__() == 0)
-            self.assertTrue(caseSensitiveResult == '')
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == 'L')
             
         # Case Insensitive
         try:
@@ -1045,7 +1045,7 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseInsensitiveResult, str))
             self.assertTrue(caseInsensitiveResult.__len__() > 0)
-            self.assertTrue(caseInsensitiveResult == ' littl')
+            self.assertTrue(caseInsensitiveResult == 'rvard.')
             
         # Default Case Sensitivity
         try:
@@ -1056,12 +1056,13 @@ class FindTheName(unittest.TestCase):
         else:
             self.assertTrue(isinstance(caseDefaultResult, str))
             self.assertTrue(caseDefaultResult.__len__() > 0)
-            self.assertTrue(caseDefaultResult == ' littl')
+            self.assertTrue(caseDefaultResult == 'rvard.')
             
         # Default Case Validation
         self.assertTrue(caseInsensitiveResult == caseDefaultResult) # This should always be the case
 
     # Test 31 - ValueError('nameSearchPairs contains a key and value that match')
+    # No longer throws this exception because find_the_name() now distinguishs between matching search criteria
     def test31_NameSearchPairs_InvalidInput09(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
@@ -1070,15 +1071,20 @@ class FindTheName(unittest.TestCase):
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        #except ValueError as err:
+        #    self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
         except Exception as err:
             print(repr(err))
-            self.fail('Raised the wrong exception')
+#            self.fail('Raised the wrong exception')
+            self.fail('Raised an exception')
         else:
-            self.fail('Should have raised an exception')
+#            self.fail('Should have raised an exception')
+            self.assertTrue(isinstance(result, str))
+            self.assertTrue(result.__len__() == 0)
+            self.assertTrue(result == '')
 
     # Test 32 - ValueError('nameSearchPairs contains a key and value that match')
+    # No longer throws this exception because find_the_name() now distinguishs between matching search criteria
     def test32_NameSearchPairs_InvalidInput10(self):
         # Test Variables
         testHtml = 'Do you even HTML?!'
@@ -1092,15 +1098,20 @@ class FindTheName(unittest.TestCase):
         
         try:
             result = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        #except ValueError as err:
+        #    self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
         except Exception as err:
             print(repr(err))
-            self.fail('Raised the wrong exception')
+#            self.fail('Raised the wrong exception')
+            self.fail('Raised an exception')
         else:
-            self.fail('Should have raised an exception')
+#            self.fail('Should have raised an exception')
+            self.assertTrue(isinstance(result, str))
+            self.assertTrue(result.__len__() == 0)
+            self.assertTrue(result == '')
 
     # Test 33 - ValueError('nameSearchPairs contains a key and value that match')
+    # No longer throws this exception because find_the_name() now distinguishs between matching search criteria
     def test33_NameSearchPairs_InvalidInput11(self):
         # Test Variables
         testHtml = 'view-source:https://www.eecs.harvard.edu/~keith/poems/Custard.html\n\
@@ -1125,35 +1136,47 @@ class FindTheName(unittest.TestCase):
         # Case Sensitive
         try:
             caseSensitiveResult = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        #except ValueError as err:
+        #    self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
         except Exception as err:
             print(repr(err))
-            self.fail('Raised the wrong exception')
+#            self.fail('Raised the wrong exception')
+            self.fail('Raised an exception')
         else:
-            self.fail('Should have raised an exception')
+#            self.fail('Should have raised an exception')
+            self.assertTrue(isinstance(caseSensitiveResult, str))
+            self.assertTrue(caseSensitiveResult.__len__() > 0)
+            self.assertTrue(caseSensitiveResult == 'www.eecs.harvard.edu')
             
         # Case Insensitive
         try:
             caseInsensitiveResult = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        #except ValueError as err:
+        #    self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
         except Exception as err:
             print(repr(err))
-            self.fail('Raised the wrong exception')
+#            self.fail('Raised the wrong exception')
+            self.fail('Raised an exception')
         else:
-            self.fail('Should have raised an exception')
+#            self.fail('Should have raised an exception')
+            self.assertTrue(isinstance(caseInsensitiveResult, str))
+            self.assertTrue(caseInsensitiveResult.__len__() > 0)
+            self.assertTrue(caseInsensitiveResult == 'www.eecs.harvard.edu')
             
         # Default Case Sensitivity
         try:
             caseDefaultResult = find_the_name(testHtml, testSearch, testCaseSensitive)
-        except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
+        #except ValueError as err:
+        #    self.assertEqual(err.args[0], 'nameSearchPairs contains a key and value that match')
         except Exception as err:
             print(repr(err))
-            self.fail('Raised the wrong exception')
+#            self.fail('Raised the wrong exception')
+            self.fail('Raised an exception')
         else:
-            self.fail('Should have raised an exception')
+#            self.fail('Should have raised an exception')
+            self.assertTrue(isinstance(caseDefaultResult, str))
+            self.assertTrue(caseDefaultResult.__len__() > 0)
+            self.assertTrue(caseDefaultResult == 'www.eecs.harvard.edu')
             
 
 # This class will test the new get_image_filename() functionality to auto-size number-only filenames
@@ -2783,8 +2806,7 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test10_nameSearchPhrase_TypeError1(self):
-        nameCriteria = OrderedDict()
-        nameCriteria[31337] = 'ending'
+        nameCriteria = [31337, 'ending']
         
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', ['search for this date', 'or this date'], nameCriteria, True)
@@ -2823,18 +2845,18 @@ class GetImageFilename(unittest.TestCase):
             self.fail('Raised the wrong exception')
 
     def test13_nameSearchPhrase_ValueError1(self):
-        nameCriteria = {'':'ending'}
+        nameCriteria = {}
         
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', 'date?', nameCriteria, False)
         except ValueError as err:
-            self.assertEqual(err.args[0], 'nameSearchPhrase is empty')
+            self.assertEqual(err.args[0], 'nameSearchPairs is empty')
         except Exception as err:
             print(repr(err))
             self.fail('Raised the wrong exception')
 
     def test14_nameSearchPhrase_ValueError2(self):
-        nameCriteria = {'beginning':''}
+        nameCriteria = OrderedDict()
         
         try:
             get_image_filename('<a> href="here is some HTML code" </a>', 'I can haz date?', nameCriteria)
@@ -2966,8 +2988,8 @@ class GetImageFilename(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-#            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19'.lower()) # No longer necessary?  Case issue resolved.
-            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19')
+            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19'.lower()) # No longer necessary?  Case issue resolved.
+#            self.assertEqual(testResult, '20151231_Christmas-Special-2015-Part-19') # This doesn't work anymore since the URL now gets put at the top of the html
 
     def test25_Business_Cat_HTML_image_search1(self):
         nameCriteria = {'title="':'"'}
@@ -2994,8 +3016,8 @@ class GetImageFilename(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-#            self.assertEqual(testResult, '20161227_Wanna-Evolve'.lower()) # No longer necessary.  Case issue resolved.
-            self.assertEqual(testResult, '20161227_Wanna-Evolve')
+            self.assertEqual(testResult, '20161227_Wanna-Evolve'.lower()) # No longer necessary.  Case issue resolved.
+#            self.assertEqual(testResult, '20161227_Wanna-Evolve') # This doesn't work anymore since the URL now gets put at the top of the html
 
     def test27_SMBC_HTML_image_search2(self):
         nameCriteria = OrderedDict({'<title>Saturday Morning Breakfast Cereal - ':'</title>'})
@@ -3007,8 +3029,8 @@ class GetImageFilename(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-#            self.assertEqual(testResult, '20161226_Political-Philosophy'.lower()) # No longer necessary.  Case issue resolved.
-            self.assertEqual(testResult, '20161226_Political-Philosophy')
+            self.assertEqual(testResult, '20161226_Political-Philosophy'.lower()) # No longer necessary.  Case issue resolved.
+#            self.assertEqual(testResult, '20161226_Political-Philosophy') # This doesn't work anymore since the URL now gets put at the top of the html
 
     def test28_Penny_Arcade_HTML_image_search1(self):
         nameCriteria = OrderedDict()
@@ -3021,8 +3043,8 @@ class GetImageFilename(unittest.TestCase):
             print(repr(err))
             self.fail('Raised an exception')
         else:
-#            self.assertEqual(testResult, '20100712_Our-Partial-Future'.lower()) # No longer necessary.  Case issue resolved.
-            self.assertEqual(testResult, '20100712_Our-Partial-Future')
+            self.assertEqual(testResult, '20100712_Our-Partial-Future'.lower()) # No longer necessary.  Case issue resolved.
+#            self.assertEqual(testResult, '20100712_Our-Partial-Future') # This doesn't work anymore since the URL now gets put at the top of the html
 
     def test29_XKCD_HTML_image_search1(self):
         nameCriteria = {'Permanent link to this comic: http://xkcd.com/':'/<br'}
